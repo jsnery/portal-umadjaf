@@ -14,7 +14,14 @@ def home(request):
     dicionário opcional que contém variáveis que serão
     passadas para o template.
     '''
-    return render(request, 'home/home.html')
+    return render(
+        request,
+        'home/home.html',
+        context={
+            'title': 'Teste de Template Django',
+            'message': 'Welcome to the home page!'
+        }
+    )
 
 
 def news(request):
