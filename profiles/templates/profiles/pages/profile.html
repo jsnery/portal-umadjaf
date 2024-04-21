@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% include "global/partials/head.html" %}
+    <link rel="stylesheet" href="{% static 'css/profiles/profile.css' %}">
+    <title>{{ user.name }}</title>
+</head>
+<body>
+    {% include 'global/partials/navbar.html' %}
+
+    <div class="wrapper">
+        <div class="content">
+            <div class="container-fluid">
+                <!-- Informações do perfil -->
+                <div id="profile-container" class="row">
+                    <div class="col-12 profile-bio">
+                        <div class="card card-profile-bio">
+                            <div class="d-flex">
+                                <img src="https://via.placeholder.com/150" class="profile-picture" alt="Profile Picture">
+                                <div class="card-body card-body-profile">
+                                    <h5 class="card-title user-name">{{ user.name }}</h5>
+                                    <p class="card-text text-bio">{{ user.bio }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="container-fluid">
+                <!-- Publicações do perfil -->
+                <div class="row justify-content-center mx-auto" style="width: auto;">
+                    <div class="profile-posts">
+                        <div class="row row-profile-posts">
+                            {% for post in user.posts %}
+                                <div class="card post-profile">
+                                    <img src="{{ post.img }}" class="card-img-top post-image" alt="{{ post.title }}">
+                                    <div class="card-body">
+                                        <p class="card-text"><strong>{{ user.name }}</strong> {{ post.title }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        {% include 'global/partials/footer.html' %}
+    </div>
+    
+
+    
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

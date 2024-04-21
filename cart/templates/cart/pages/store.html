@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% load static %}
+    {% include "global/partials/head.html" %}
+    <link rel="stylesheet" href="{% static 'css/cart/store.css' %}">
+    <title>News</title>
+</head>
+
+<body>
+    {% include 'global/partials/navbar.html' %}
+
+    <section id="header">
+        <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                {% for i, v in carousel.items %}
+                <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                {% endfor %}
+            </ol>
+            <div class="carousel-inner">
+                {% for i, v in carousel.items %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img class="d-block w-100" src="{% static '' %}{{ v.image.url }}" alt="{{ v.title }} ">
+                </div>
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Anterior</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Próximo</span>
+            </a>
+        </div>
+    </section>
+
+    
+    <!-- Seção da Loja -->
+    <section id="store-1">
+        <h3>Livros e Bíblias</h3>
+        <div class="product-grid">
+            {% for product in products %}
+                <div class="product">
+                    <img src="{% static '' %}{{ product.image.url }}" alt="{{ product.name }}">
+                    <h4>{{ product.name }}</h4>
+                    {% if product.last_price != product.price %}
+                        <p class="old-price">De: R$ {{ product.last_price }}</p>
+                        <p class="por">Por: <spam class="new-price">R$ {{ product.price }}</spam></p>
+                    {% else %}
+                        <p class="price">R$ {{ product.price }}</p>
+                    {% endif %}
+                    <a href="#" class="btn"><i class="fa fa-cart-plus"></i> Adicionar</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+    <section id="store-2">
+        <h3>Blusas e Camisas</h3>
+        <div class="product-grid">
+            {% for product in products %}
+                <div class="product">
+                    <img src="{% static '' %}{{ product.image.url }}" alt="{{ product.name }}">
+                    <h4>{{ product.name }}</h4>
+                    {% if product.last_price != product.price %}
+                        <p class="old-price">De: R$ {{ product.last_price }}</p>
+                        <p class="por">Por: <spam class="new-price">R$ {{ product.price }}</spam></p>
+                    {% else %}
+                        <p class="price">R$ {{ product.price }}</p>
+                    {% endif %}
+                    <a href="#" class="btn"><i class="fa fa-cart-plus"></i> Adicionar</a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Seção de Rodapé -->
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

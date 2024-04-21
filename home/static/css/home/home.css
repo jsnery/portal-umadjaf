@@ -1,0 +1,152 @@
+/* Seção de Carrosel */
+
+.carousel-item {
+    height: 0;
+    padding-bottom: 45%; /* para uma proporção de 16:9 */
+    position: relative;
+}
+
+@media (max-width: 600px) {
+    .carousel-item {
+        padding-bottom: 56%; /* para uma proporção de 16:9 */
+    }
+}
+
+.carousel-item img {
+    position: absolute;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 100%;
+}
+
+/* Seção do banner de evento */
+
+#section-one {
+    padding: 80px 0;
+    position: relative;
+    background-color: #d4d4d4;
+    background-size: cover;
+    background-position: left center;
+    height: 35vh;
+}
+
+@media (max-width: 1200px) {
+    #section-one {
+        padding: 80px 0;
+        height: 35vh;
+    }
+}
+
+@media (max-width: 1000px) {
+    #section-one {
+        padding: 80px 0;
+        height: 30vh;
+    }
+}
+
+@media (max-width: 800px) {
+    #section-one {
+        padding: 80px 0;
+        height: 25vh;
+    }
+}
+
+@media (max-width: 600px) {
+    #section-one {
+        padding: 80px 0;
+        height: 20vh;
+    }
+}
+
+#section-one h1 {
+    color: white;
+    position: relative;
+    margin-left: clamp(10px, 5vw, 80px);
+    z-index: 2;
+}
+
+#section-one button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    font-size: 25px;
+    border-radius: 8px;
+    border: none;
+    background-color: #940819;
+    color: white;
+    cursor: pointer;
+}
+
+@media (max-width: 800px) {
+    #section-one button {
+        bottom: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+}
+
+#eventid {
+    height: 80%;
+    object-fit: cover;
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 600px) {
+    #eventid {
+        height: 80%;
+        left: 10px;
+    }
+}
+
+/* Seção dos Artigos */
+
+#section-two {
+    position: relative;
+    background-color: #01040e;
+    padding: 25px 0;
+}
+
+#section-two h1 {
+    color: white;
+    position: relative;
+    margin-right: clamp(10px, 5vw, 80px);
+    z-index: 2;
+}
+
+.card-img-top {
+    display: block;
+    width: 100%;
+    height: 0;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    padding-bottom: 56.25%; /* para uma proporção de 16:9 */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.card {
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+}
+
+.articles-container {
+    margin: 0 50px;
+}
+
+@media (max-width: 600px) {
+    .articles-container {
+        margin: 0 5px;
+    }
+}

@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    {% include "global/partials/head.html" %}
+    <link rel="stylesheet" href="{% static 'css/profiles/register.css' %}">
+    <title>Registro</title>
+</head>
+<body>
+    <!-- Barra de Navegação -->
+    {% include 'global/partials/navbar.html' %}
+
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center">Registro</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="username">Nome de usuário</label>
+                        <input type="text" class="form-control" id="username" placeholder="Nome de usuário">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" class="form-control" id="password" placeholder="Senha">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% include 'global/partials/footer.html' %}
+    
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

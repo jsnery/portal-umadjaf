@@ -39,6 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Adicionando a aplicação home ao projeto
     'home',
+    # Adicionando a aplicação profiles ao projeto
+    'profiles',
+    # Adicionando a aplicação cart ao projeto
+    'cart',
+    # Adicionando a aplicação articles ao projeto
+    'articles',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +64,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             BASE_DIR / 'templates',  # Adicionando base_templates
-            BASE_DIR / 'home' / 'temp_templates',  # Adicionando home/templates
+            BASE_DIR / 'resources/templates',  # Adicionando home_templates
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -121,6 +127,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'resources/static',
+    ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
