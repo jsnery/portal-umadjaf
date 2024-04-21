@@ -1,0 +1,40 @@
+{% load static %}
+
+<!-- Seção da Loja -->
+<section id="store-1">
+    <h3>Livros e Bíblias</h3>
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product">
+                <img src="{% static '' %}{{ product.image.url }}" alt="{{ product.name }}">
+                <h4>{{ product.name }}</h4>
+                {% if product.last_price != product.price %}
+                    <p class="old-price">De: R$ {{ product.last_price }}</p>
+                    <p class="por">Por: <spam class="new-price">R$ {{ product.price }}</spam></p>
+                {% else %}
+                    <p class="price">R$ {{ product.price }}</p>
+                {% endif %}
+                <a href="#" class="btn"><i class="fa fa-cart-plus"></i> Adicionar</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="store-2">
+    <h3>Blusas e Camisas</h3>
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product">
+                <img src="{% static '' %}{{ product.image.url }}" alt="{{ product.name }}">
+                <h4>{{ product.name }}</h4>
+                {% if product.last_price != product.price %}
+                    <p class="old-price">De: R$ {{ product.last_price }}</p>
+                    <p class="por">Por: <spam class="new-price">R$ {{ product.price }}</spam></p>
+                {% else %}
+                    <p class="price">R$ {{ product.price }}</p>
+                {% endif %}
+                <a href="#" class="btn"><i class="fa fa-cart-plus"></i> Adicionar</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
