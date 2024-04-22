@@ -1,0 +1,23 @@
+{% load static %}
+
+<!-- Seção da Loja -->
+<section id="store-1">
+    <h3>Mais Procurados</h3>
+    <div class="product-grid">
+        {% for id, product in products_partial.items %}
+            <div class="product">
+                <a href="{% url "product" id %}" class="img">
+                    <img src="{% static '' %}{{ product.image.url }}" alt="{{ product.name }}">
+                    <h4 class="product-name">{{ product.name }}</h4>
+                </a>
+                {% if product.last_price != product.price %}
+                    <p class="old-price">De: R$ {{ product.last_price }}</p>
+                    <p class="por">Por: <spam class="new-price">R$ {{ product.price }}</spam></p>
+                {% else %}
+                    <p class="price">R$ {{ product.price }}</p>
+                {% endif %}
+                <a href="{% url "product" id %}" class="btn"><i class="fa fa-cart-plus"></i> Adicionar</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>

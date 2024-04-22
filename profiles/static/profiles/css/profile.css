@@ -1,0 +1,80 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #01040e;
+}
+
+
+/* Biografia do usuario */
+
+
+.profile-bio {
+    width: 100%;
+    padding-right: 0%;
+    padding-left: 0%;
+}
+
+.user-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.text-bio {
+    font-size: 16px;
+    color: #666;
+}
+
+.profile-picture {
+    margin: 10px;
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+}
+
+.card-body-profile {
+    flex: 1;
+}
+
+.profile-posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 5px;
+}
+
+.row-profile-posts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px; /* Adiciona um espaço de 15px entre os cards */
+}
+
+.post-profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+    margin: auto; /* Mantém o alinhamento centralizado */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.post-profile img {
+    width: 100%;
+    height: 300px; /* Defina a altura para o mesmo valor que a largura */
+    object-fit: cover; /* Garante que a imagem cubra todo o espaço disponível sem distorção */
+}
+
+.profile-posts {
+    margin-top: 20px;
+}
+
+.post-image {
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+

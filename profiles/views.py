@@ -1,12 +1,29 @@
 from django.shortcuts import render
+from utils.profiles.factory import make_fake_users
+
+
+user = make_fake_users()
+is_authenticated = True
 
 
 def login(request):
-    return render(request, 'profiles/pages/login.html')
+    return render(
+        request,
+        'profiles/pages/login.html',
+        context={
+            'is_authenticated': False
+        }
+    )
 
 
 def register(request):
-    return render(request, 'profiles/pages/register.html')
+    return render(
+        request,
+        'profiles/pages/register.html',
+        context={
+            'is_authenticated': False
+        }
+    )
 
 
 def profile(request):
@@ -14,71 +31,7 @@ def profile(request):
         request,
         'profiles/pages/profile.html',
         context={
-            'user': {
-                'name': 'John Doe',
-                'bio': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                'posts': [
-                    {
-                        'title': 'Post 1',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '01/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 2',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '02/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 3',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '03/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 4',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '04/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 5',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '05/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 6',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '06/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 7',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '07/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 8',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '08/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 9',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '09/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                    {
-                        'title': 'Post 10',
-                        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                        'date': '10/01/2021',
-                        'img': 'https://via.placeholder.com/150'
-                    },
-                ]
-            },
+            'is_authenticated': is_authenticated,
+            'user': user
         }
     )

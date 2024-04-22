@@ -1,0 +1,30 @@
+body {
+    padding-top: 55px; /* Ajuste este valor para corresponder à altura da sua navbar */
+    background-color: #01040e;
+}
+
+.navbar {
+    background-color: #d4d4d4;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* para garantir que a navbar esteja sempre no topo */
+}
+
+.nav-link {
+    color: #000;
+}
+
+.navbar-toggler-icon {
+    background-color: #000;
+}
+
+#navbarNav {
+    justify-content: flex-end;
+    display: flex;
+}
+
+.navbar-nav {
+    display: flex;
+    /* Faz com que os itens do menu fiquem na mesma linha */
+}

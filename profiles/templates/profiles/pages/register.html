@@ -2,11 +2,13 @@
 
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
+
     {% include "global/partials/head.html" %}
-    <link rel="stylesheet" href="{% static 'css/profiles/register.css' %}">
-    <title>Registro</title>
-</head>
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'profiles/css/register.css' %}">
+        <title>Registro</title>
+    {% endblock head %}
+
 <body>
     <!-- Barra de Navegação -->
     {% include 'global/partials/navbar.html' %}

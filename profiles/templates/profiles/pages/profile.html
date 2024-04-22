@@ -2,11 +2,13 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+
     {% include "global/partials/head.html" %}
-    <link rel="stylesheet" href="{% static 'css/profiles/profile.css' %}">
-    <title>{{ user.name }}</title>
-</head>
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'profiles/css/profile.css' %}">
+        <title>{{ user.name }}</title>
+    {% endblock head %}
+
 <body>
     {% include 'global/partials/navbar.html' %}
 
@@ -18,7 +20,7 @@
                     <div class="col-12 profile-bio">
                         <div class="card card-profile-bio">
                             <div class="d-flex">
-                                <img src="https://via.placeholder.com/150" class="profile-picture" alt="Profile Picture">
+                                <img src="{{ user.avatar.url }}" class="profile-picture" alt="Profile Picture">
                                 <div class="card-body card-body-profile">
                                     <h5 class="card-title user-name">{{ user.name }}</h5>
                                     <p class="card-text text-bio">{{ user.bio }}</p>

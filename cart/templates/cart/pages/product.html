@@ -1,0 +1,59 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'cart/css/product.css' %}">
+        <title>{{ product.name }}</title>
+    {% endblock head %}
+
+<body>
+    {% include 'global/partials/navbar.html' %}
+
+    <section id="product">
+        <div class="container product-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img class="product-image" src="{% static '' %}{{ product.image.url }}" alt="{{ product.title }}">
+                </div>
+                <div class="col-md-6">
+                    <h1 class="product-title">{{ product.name }}</h1>
+                    <p class="product-description">{{ product.brief_description }}</p>
+                    <p class="product-last-price">De: R$ {{ product.last_price }}</p>
+                    <p class="product-price">R$ {{ product.price }}</p>
+                    <div>
+                        <button class="btn btn-primary">Comprar</button>
+                        <button class="btn btn-primary"><i class="fa fa-cart-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Descrição do Produto -->
+    <section id="product-description">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Descrição</h2>
+                    <p>{{ product.description }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    {% include 'cart/pages/partials/most_wanted.html' %}
+
+    <!-- Seção de Rodapé -->
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+    <script src="{% static 'cart/js/products.js' %}"></script>
+</body>
+
+</html>
