@@ -16,7 +16,7 @@ def make_fake_posts():
             'title': f'Post {i}',
             'content': fake.text(max_nb_chars=500),
             'date': fake.date(pattern='%d/%m/%Y'),
-            'img': 'https://loremflickr.com/%s/%s/igreja' % rand_ratio()
+            'img': 'https://loremflickr.com/%s/%s/pregador' % rand_ratio()
         })
 
     return posts

@@ -1,18 +1,87 @@
-from django.db import models
+from django.db import models  # type: ignore
 
 
 # Create your models here.
+class Roles(models.Model):
+    '''
+    Roles model
+
+    Atibutos:
+
+    role: str
+    '''
+    role = models.CharField(max_length=50)
+
+    def __str__(self):
+        return f'{self.role}'
+
+
 class User(models.Model):
-    name = models.CharField(max_length=100)  # name -> define o nome do usuário
-    email = models.EmailField()  # email -> define o email do usuário
-    password = models.CharField(max_length=50)  # password -> define a senha do usuário
-    igreja = models.CharField(max_length=100)  # igreja -> define a igreja do usuário
-    is_umadjaf = models.BooleanField(default=False)  # is_umadjaf -> define se o usuário é um membro da UMADJAF
-    is_active = models.BooleanField(default=True)  # is_active -> define se o usuário está ativo
-    is_staff = models.BooleanField(default=False)  # is_staff -> define se o usuário é um membro da equipe
-    is_superuser = models.BooleanField(default=False)  # is_superuser -> define se o usuário é um superusuário
-    created_at = models.DateTimeField(auto_now_add=True)  # auto_now_add=True -> seta a data atual no momento da criação
-    updated_at = models.DateTimeField(auto_now=True)  # auto_now=True -> seta a data atual no momento da atualização
+    '''
+    User model
+
+    Atibutos:
+
+    complete_name: str
+    number_phone: str
+    birthday: date
+    password: str
+    church: str
+    is_umadjaf: bool
+    checked: bool
+    profile_picture: image
+    created_at: datetime
+    updated_at: datetime
+    '''
+    complete_name = models.CharField(max_length=100)
+    number_phone = models.CharField(max_length=15)
+    birthday = models.DateField()
+    password = models.CharField(max_length=50)
+    church = models.CharField(max_length=100)
+    is_umadjaf = models.BooleanField(default=False)
+    checked = models.BooleanField(default=False)
+    profile_picture = models.ImageField(upload_to='profiles/',
+                                        default='profiles/default.jpg')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'{self.name} - {self.igreja}'
+
+
+class UserRoles(models.Model):
+    '''
+    UserRoles model
+
+    Atibutos:
+
+    user_id: int
+    role_id: int
+    created_at: datetime
+    updated_at: datetime
+    '''
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    role_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.user} - {self.role}'
+
+
+class UserProfiles(models.Model):
+    '''
+    UserProfiles model
+
+    Atibutos:
+
+    user_id: int
+    bio: str
+    updated_at: datetime
+    '''
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    bio = models.TextField()
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.user_id}'
