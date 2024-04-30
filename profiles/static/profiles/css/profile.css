@@ -2,40 +2,12 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #01040e;
-}
-
-
-/* Biografia do usuario */
-
-
-.profile-bio {
-    width: 100%;
     padding-right: 0%;
-    padding-left: 0%;
 }
 
-.user-name {
-    font-size: 20px;
-    font-weight: bold;
-}
+/* Galeria de imagens */
 
-.text-bio {
-    font-size: 16px;
-    color: #666;
-}
-
-.profile-picture {
-    margin: 10px;
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-}
-
-.card-body-profile {
-    flex: 1;
-}
-
-.profile-posts {
+.profile-gallery {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -44,14 +16,15 @@ body {
     margin: 5px;
 }
 
-.row-profile-posts {
+.row-profile-gallery {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 15px; /* Adiciona um espaço de 15px entre os cards */
 }
 
-.post-profile {
+.gallery-profile {
+    background-color: #01040e;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -61,20 +34,142 @@ body {
     margin: auto; /* Mantém o alinhamento centralizado */
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    transition: transform .2s; /* Animação suave */
+    position: relative; /* Necessário para o z-index funcionar */
+    z-index: 1; /* Coloca o elemento na frente dos outros elementos */
 }
 
-.post-profile img {
+@media (max-width: 600px) {
+    .gallery-profile {
+        max-width: 170px;
+    }
+}
+
+@media (max-width: 400px) {
+    .gallery-profile {
+        max-width: 160px;
+    }
+}
+
+.gallery-profile:hover {
+    transform: scale(1.1); /* (110% zoom - Note que 1.1 equivale a 110%) */
+}
+
+.gallery-profile img {
     width: 100%;
     height: 300px; /* Defina a altura para o mesmo valor que a largura */
     object-fit: cover; /* Garante que a imagem cubra todo o espaço disponível sem distorção */
 }
 
-.profile-posts {
+@media (max-width: 600px) {
+    .gallery-profile img {
+        height: 170px;
+    }   
+}
+
+@media (max-width: 400px) {
+    .gallery-profile img {
+        height: 160px;
+    }
+}
+
+.profile-gallery {
     margin-top: 20px;
 }
 
-.post-image {
-    border-radius: 10px;
-    margin-bottom: 10px;
+@media (max-width: 600px) {
+    .profile-gallery {
+        margin-top: 10px;
+    }
+    
 }
 
+.gallery-image {
+    border-radius: 10px;
+}
+
+/* Publicações */
+
+.profile-posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 5px;
+    margin-top: 20px;
+}
+
+.row-profile-posts {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px; /* Adiciona um espaço de 15px entre os cards */
+}
+
+.pub-profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+    height: 350px;
+    margin: auto; /* Mantém o alinhamento centralizado */
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: transform .2s; /* Animação suave */
+    position: relative; /* Necessário para o z-index funcionar */
+    z-index: 1; /* Coloca o elemento na frente dos outros elementos */
+}
+
+.pub-btn {
+    visibility: hidden;
+    width: 100%;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+}
+
+.pub-profile:hover {
+    transform: scale(1.05); /* (110% zoom - Note que 1.1 equivale a 110%) */
+    z-index: 2; /* Coloca o elemento ainda mais na frente quando o mouse passa sobre ele */
+}
+
+.pub-profile:hover .pub-btn {
+    visibility: visible;
+}
+
+@media (max-width: 600px) {
+    .pub-profile {
+        max-width: 190px;
+        height: 250px;
+    }  
+}
+
+.pub-image-card {
+    display: block;
+    width: 100%;
+    height: 0;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    padding-bottom: 56.25%; /* para uma proporção de 16:9 */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.pub-title {
+    padding: 10px;
+}
+
+.pub-title .card-title {
+    text-align: left;
+    font-size: 1.5em;
+}
+
+@media (max-width: 600px) {
+    .pub-title .card-title {
+        font-size: 1em;
+    }
+}

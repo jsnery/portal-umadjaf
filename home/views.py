@@ -55,7 +55,7 @@ title = 'Teste de Template Django'
 
 message = 'Welcome to the home page!'
 
-is_authenticated = True
+is_authenticated = False
 
 
 

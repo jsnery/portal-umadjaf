@@ -3,61 +3,119 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-    {% include "global/partials/head.html" %}
+    {% include "profiles/pages/partials/head.html" %}
     {% block head %}
         <link rel="stylesheet" href="{% static 'profiles/css/profile.css' %}">
         <title>{{ user.name }}</title>
     {% endblock head %}
 
 <body>
-    {% include 'global/partials/navbar.html' %}
+    {% include 'profiles/pages/partials/nav_profile.html' %}
 
     <div class="wrapper">
         <div class="content">
-            <div class="container-fluid">
-                <!-- Informações do perfil -->
-                <div id="profile-container" class="row">
-                    <div class="col-12 profile-bio">
-                        <div class="card card-profile-bio">
-                            <div class="d-flex">
-                                <img src="{{ user.avatar.url }}" class="profile-picture" alt="Profile Picture">
-                                <div class="card-body card-body-profile">
-                                    <h5 class="card-title user-name">{{ user.name }}</h5>
-                                    <p class="card-text text-bio">{{ user.bio }}</p>
+            <div class="tab-content" id="nav-tabContent">
+
+                <!-- Publicações -->
+                <div class="tab-pane fade show active" id="pub">
+                    <div id="pub" class="container-fluid">
+                        <div class="row justify-content-center mx-auto" style="width: auto;">
+                            <div class="profile-posts">
+                                <div class="row row-profile-posts">
+                                    {% for post in posts %}
+                                        <div class="card pub-profile" style="position: relative;">
+                                            <div class="card-img-top pub-image-card" style="background-image: url('{{ post.img }}');" alt="{{ post.title }}"></div>
+                                            <div class="card-body pub-title">
+                                                <h5 class="card-title">{{ post.title }}</h5>
+                                            </div>
+                                            <div style="position: absolute; bottom: 0; width: 100%;">
+                                                <a href="#" class="btn btn-primary pub-btn">Leia mais</a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        
-            <div class="container-fluid">
-                <!-- Publicações do perfil -->
-                <div class="row justify-content-center mx-auto" style="width: auto;">
-                    <div class="profile-posts">
-                        <div class="row row-profile-posts">
-                            {% for post in user.posts %}
-                                <div class="card post-profile">
-                                    <img src="{{ post.img }}" class="card-img-top post-image" alt="{{ post.title }}">
-                                    <div class="card-body">
-                                        <p class="card-text"><strong>{{ user.name }}</strong> {{ post.title }}</p>
-                                    </div>
+            
+                <!-- Galeria -->
+                <div class="tab-pane fade" id="gallery">
+                    <div id="gallery" class="container-fluid">
+                        <div class="row justify-content-center mx-auto" style="width: auto;">
+                            <div class="profile-gallery">
+                                <div class="row row-profile-gallery">
+                                    {% for post in posts %}
+                                        <div class="card gallery-profile">
+                                            <img src="{{ post.img }}" class="card-img-top gallery-image" alt="{{ post.title }}">
+                                        </div>
+                                    {% endfor %}
                                 </div>
-                            {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    
-        {% include 'global/partials/footer.html' %}
-    </div>
-    
+            
+                <div class="tab-pane fade" id="pedidos">
+                    {% comment %} <div id="pedidos" class="container-fluid">
+                        <!-- Publicações do perfil -->
+                        <div class="row justify-content-center mx-auto" style="width: auto;">
+                            <div class="profile-posts">
+                               <h1>3</h1>
+                                 <div class="row row-profile-posts">
+                                    {% for post in user.posts %}
+                                        <div class="card post-profile">
+                                            <img src="{{ post.img }}" class="card-img-top post-image" alt="{{ post.title }}">
+                                            <div class="card-body">
+                                                <p class="card-text"><strong>{{ user.name }}</strong> {{ post.title }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div> {% endcomment %}
+                </div>
+            
+                <div class="tab-pane fade" id="settings">
+                    {% comment %} <div id="settings" class="container-fluid">
+                        <!-- Publicações do perfil -->
+                        <div class="row justify-content-center mx-auto" style="width: auto;">
+                            <div class="profile-posts">
+                                <h1>4</h1>
+                                <div class="row row-profile-posts">
+                                    {% for post in user.posts %}
+                                        <div class="card post-profile">
+                                            <img src="{{ post.img }}" class="card-img-top post-image" alt="{{ post.title }}">
+                                            <div class="card-body">
+                                                <p class="card-text"><strong>{{ user.name }}</strong> {{ post.title }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div> {% endcomment %}
+                </div>
 
-    
+            </div>
+
+        </div>
+    </div>
+
+    {% include 'global/partials/footer.html' %}
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $(".nav-link").click(function(){
+                $(".nav-link").removeClass("text-dark").addClass("text-grey");
+                $(this).removeClass("text-grey").addClass("text-dark");
+            });
+        });
+    </script>
 </body>
 </html>

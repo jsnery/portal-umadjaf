@@ -3,7 +3,7 @@ from utils.cart.factory import make_fake_products
 
 
 produtos = make_fake_products()
-is_authenticated = True
+is_authenticated = False
 
 
 def store(request):

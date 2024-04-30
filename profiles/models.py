@@ -76,7 +76,7 @@ class UserProfiles(models.Model):
     updated_at: datetime
     '''
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, unique=True)
-    profule_picture = models.ImageField(
+    profile_picture = models.ImageField(
         upload_to='profiles/pictures/profiles_/',
         default='profiles/pictures/default.jpg'
     )

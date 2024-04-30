@@ -1,5 +1,5 @@
 body {
-    background-color: #f8f9fa;
+    background-color: #01040e;
 }
 
 .container {
@@ -29,4 +29,8 @@ h2 {
     font-weight: bold;
     background-color: #5cb85c;
     border: none;
+}
+
+.text-white {
+    color: white;
 }

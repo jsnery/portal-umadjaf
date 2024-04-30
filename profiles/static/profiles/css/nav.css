@@ -1,0 +1,123 @@
+body {
+    padding-top: 280px; /* Ajuste este valor para corresponder à altura da sua navbar */
+    background-color: #01040e;
+}
+
+.fixado {
+    background-color: #d4d4d4;
+}
+
+/* Biografia do usuario */
+
+.profile-bio {
+    width: 100%;
+    padding-right: 0%;
+    padding-left: 0%;
+}
+
+.user-name {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.text-bio p {
+    font-size: 1.2em;
+    color: #666;
+}
+
+.profile-picture {
+    margin: 10px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+@media (max-width: 600px) {
+    .text-bio p {
+        font-size: 1em;
+    }
+
+    .profile-picture {
+        margin-right: 0%;
+        width: 130px;
+        height: 130px;
+    }
+    
+}
+
+.card-body-profile {
+    flex: 1;
+}
+
+/* Navbar */
+
+.navbar {
+    background-color: #d4d4d4;
+    /* position: fixed; */
+    width: 100%;
+    z-index: 1000; /* para garantir que a navbar esteja sempre no topo */
+}
+
+.nav-link {
+    color: #000;
+}
+
+.navbar-toggler-icon {
+    background-color: #000;
+}
+
+#navbarNav {
+    justify-content: flex-end;
+    display: flex;
+}
+
+.navbar-nav {
+    display: flex;
+    /* Faz com que os itens do menu fiquem na mesma linha */
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+    right: 0; /* Alinha o menu suspenso à direita */
+}
+
+.dropdown-content a {
+    display: block; /* Coloca cada item do menu em uma nova linha */
+    text-decoration: none;
+    color: black;
+    padding: 5px 0;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Menu do perfil */
+
+.profile-menu {
+    width: 100%;
+    background-color: #d4d4d4;
+    color: #474747;
+    padding-right: 0%;
+}
+
+@media (max-width: 600px) {
+    .profile-menu {
+        font-size: 0.8em;
+    }
+}
+
+.text-grey {
+    color: rgb(148, 146, 146);
+}

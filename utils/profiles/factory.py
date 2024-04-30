@@ -13,7 +13,7 @@ def make_fake_posts():
     posts = []
     for i in range(1, 19):
         posts.append({
-            'title': f'Post {i}',
+            'title': fake.text(max_nb_chars=90),
             'content': fake.text(max_nb_chars=500),
             'date': fake.date(pattern='%d/%m/%Y'),
             'img': 'https://loremflickr.com/%s/%s/pregador' % rand_ratio()
@@ -24,6 +24,7 @@ def make_fake_posts():
 
 def make_fake_users():
     users = {
+        'id': int(fake.random_number(digits=9999)),
         'name': fake.name(),
         'avatar': {'url': 'https://loremflickr.com/500/500/rosto'},
         'bio': fake.sentence(nb_words=30),

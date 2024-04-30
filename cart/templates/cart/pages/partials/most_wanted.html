@@ -8,7 +8,7 @@
             <div class="product">
                 <a href="{% url "product" id %}" class="img">
                     <img src="{% static '' %}{{ product.image.url }}" alt="{{ product.name }}">
-                    <h4 class="product-name">{{ product.name }}</h4>
+                    <h4 class="product-name">{{ product.name|truncatechars:25 }}</h4>
                 </a>
                 {% if product.last_price != product.price %}
                     <p class="old-price">De: R$ {{ product.last_price }}</p>
