@@ -55,8 +55,6 @@ title = 'Teste de Template Django'
 
 message = 'Welcome to the home page!'
 
-is_authenticated = False
-
 
 
 def home(request):
@@ -75,7 +73,7 @@ def home(request):
         request,
         'home/pages/home.html',
         context={
-            'is_authenticated': is_authenticated,
+            'is_authenticated': request.user.is_authenticated,
             'page': page,
             'title': title,
             'message': message,

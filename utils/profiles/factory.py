@@ -16,7 +16,7 @@ def make_fake_posts():
             'title': fake.text(max_nb_chars=90),
             'content': fake.text(max_nb_chars=500),
             'date': fake.date(pattern='%d/%m/%Y'),
-            'img': 'https://loremflickr.com/%s/%s/pregador' % rand_ratio()
+            'img': 'https://loremflickr.com/%s/%s/culto+evangelico' % rand_ratio()
         })
 
     return posts
@@ -32,3 +32,19 @@ def make_fake_users():
     }
 
     return users
+
+
+def make_fake_pedidos():
+    pedidos = []
+    for i in range(1, 10):  # Gera 10 pedidos falsos
+        pedido = {
+            'id': int(fake.random_number(digits=9999)),
+            'titulo': fake.sentence(nb_words=5),
+            'img': {
+                'url': f'cart/src/products/{i}.webp'
+            },
+            'data': fake.date(pattern='%d/%m/%Y'),
+        }
+        pedidos.append(pedido)
+
+    return pedidos

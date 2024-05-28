@@ -9,7 +9,7 @@ class RolesAdmin(admin.ModelAdmin):
 
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
-    ...
+    list_display = ['number_phone', 'complete_name', 'is_staff']
 
 
 # Register your models here.

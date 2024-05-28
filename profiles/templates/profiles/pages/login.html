@@ -17,14 +17,15 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <h2 class="text-center text-white">Login</h2>
-                <form autocomplete="off">
+                <form autocomplete="off" method="POST" action="{% url 'profiles:login' %}">
+                    {% csrf_token %}
                     <div class="form-group">
-                        <label for="phone" class="text-white">Telefone</label>
-                        <input type="text" class="form-control" id="phone" placeholder="Telefone" oninput="formatPhoneNumber(this)" autocomplete="off" required>
+                        <label for="number_phone" class="text-white">Telefone</label>
+                        <input type="text" class="form-control" id="number_phone" name="number_phone" placeholder="Telefone" oninput="formatPhoneNumber(this)" autocomplete="off" required>
                     </div>
                     <div class="form-group">
                         <label for="password" class="text-white">Senha</label>
-                        <input type="password" class="form-control" id="password" placeholder="Senha">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Senha">
                     </div>
                     <button type="submit" class="btn btn-primary">Entrar</button>
                 </form>

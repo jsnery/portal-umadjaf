@@ -1,7 +1,7 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100%;
 }
 
 .content {
@@ -17,6 +17,9 @@ footer {
 }
 
 .footer-bottom {
-    text-align: center;
-    padding: 5px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 8px;
+    height: 35px; /* Ajuste este valor conforme necessário */
 }

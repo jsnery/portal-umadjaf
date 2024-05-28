@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'cart',
     # Adicionando a aplicação articles ao projeto
     'articles',
+    # Adicionando a aplicação manager ao projeto
+    #'manager',
 ]
 
 MIDDLEWARE = [
@@ -110,6 +112,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'profiles.User'
+
+AUTHENTICATION_BACKENDS = [
+    'profiles.backends.NumberPhoneBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/

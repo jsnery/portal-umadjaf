@@ -1,5 +1,8 @@
 {% load static %}
 
+<head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
 <header>
     <div class="fixed-top fixado">
         <nav class="navbar">
@@ -16,10 +19,10 @@
                     </a>
                     <div class="dropdown-content">
                         {% if not is_authenticated %}
-                        <a href="{% url "login" %}">Entrar</a>
-                        <a href="{% url "register" %}">Cadastrar</a>
+                        <a href="{% url "profiles:login" %}">Entrar</a>
+                        <a href="{% url "profiles:register" %}">Cadastrar</a>
                         {% else %}
-                        <a href="{% url "profile" %}">Perfil</a>
+                        <a href="{% url "profiles:profile" %}">Perfil</a>
                         <a href="#">Sair</a>
                         {% endif %}
                     </div>
@@ -42,6 +45,7 @@
                     </div>
                 </div>
             </div>
+            <!-- Botão de configuração -->
         </div>
     
         <nav class="profile-menu">
@@ -49,7 +53,12 @@
                 <a class="nav-item nav-link active" id="nav-posts-tab" data-toggle="tab" href="#pub" role="tab" aria-controls="nav-posts" aria-selected="true">Publicações</a>
                 <a class="nav-item nav-link text-grey" id="nav-followers-tab" data-toggle="tab" href="#gallery" role="tab" aria-controls="nav-followers" aria-selected="false">Galeria</a>
                 <a class="nav-item nav-link text-grey" id="nav-following-tab" data-toggle="tab" href="#pedidos" role="tab" aria-controls="nav-following" aria-selected="false">Pedidos</a>
-                <a class="nav-item nav-link text-grey" id="nav-following-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="nav-following" aria-selected="false">Configuração</a>
+                {% comment %} <a class="nav-item nav-link text-grey" id="nav-following-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="nav-following" aria-selected="false">Configuração</a> {% endcomment %}
+                <a class="nav-item nav-link btn-config text-grey" id="nav-following-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="nav-following" aria-selected="false">
+                    <span class="material-icons">
+                        settings
+                    </span>
+                </a>
             </div>
         </nav>
     </div>

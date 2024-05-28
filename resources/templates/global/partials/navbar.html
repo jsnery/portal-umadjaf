@@ -15,10 +15,10 @@
                 </a>
                 <div class="dropdown-content">
                     {% if not is_authenticated %}
-                    <a href="{% url "login" %}">Entrar</a>
-                    <a href="{% url "register" %}">Cadastrar</a>
+                    <a href="{% url "profiles:login" %}">Entrar</a>
+                    <a href="{% url "profiles:register" %}">Cadastrar</a>
                     {% else %}
-                    <a href="{% url "profile" %}">Perfil</a>
+                    <a href="{% url "profiles:profile" %}">Perfil</a>
                     <a href="#">Sair</a>
                     {% endif %}
                 </div>

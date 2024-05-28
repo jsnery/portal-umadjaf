@@ -11,7 +11,7 @@ def store(request):
         request,
         'cart/pages/store.html',
         context={
-            'is_authenticated': is_authenticated,
+            'is_authenticated': request.user.is_authenticated,
             'products_partial': produtos,
             'page': 'store',
             'carousel': {
@@ -40,7 +40,7 @@ def product(request, id):
         request,
         'cart/pages/product.html',
         context={
-            'is_authenticated': is_authenticated,
+            'is_authenticated': request.user.is_authenticated,
             'product': produtos[id],
             'products_partial': produtos,
         }

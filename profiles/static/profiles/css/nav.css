@@ -3,6 +3,12 @@ body {
     background-color: #01040e;
 }
 
+@media (max-width: 600px) {
+    body {
+        padding-top: 260px;
+    }
+}
+
 .fixado {
     background-color: #d4d4d4;
 }
@@ -120,4 +126,16 @@ body {
 
 .text-grey {
     color: rgb(148, 146, 146);
+}
+
+.btn-config {
+    position: absolute;
+    top: 60px;
+    right: -5px;
+}
+
+.btn-config:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
 }
