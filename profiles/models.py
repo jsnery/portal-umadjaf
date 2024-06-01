@@ -18,9 +18,33 @@ class Roles(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    '''
+    O modelo User é uma classe abstrata que implementa a interface de usuário do Django.
+    Dessa forma substituímos o modelo de usuário padrão do Django pelo nosso modelo de usuário personalizado.
+
+    O modelo User em sim é independente, mas possui um relacionamento com os modelos UserRoles, UserProfiles e IsUmadjaf.
+    Se o modelo User for apagado, os modelos UserRoles, UserProfiles e IsUmadjaf também serão apagados.
+
+    Atibutos:
+    id: int (primary key)
+    complete_name: str
+    number_phone: str
+    birthday: date
+    church: str
+    is_umadjaf: bool
+    created_at: datetime
+    updated_at: datetime
+    last_login: datetime
+    is_staff: bool
+    is_superuser: bool
+    '''
     complete_name = models.CharField(max_length=100)
     number_phone = models.CharField(max_length=15, unique=True)
     birthday = models.DateField()
+    gender = models.CharField(max_length=1, choices=[
+        ('M', 'Masculino'),
+        ('F', 'Feminino')
+    ], default='M')
     church = models.CharField(max_length=100)
     is_umadjaf = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -59,7 +83,7 @@ class UserRoles(models.Model):
     updated_at: datetime
     '''
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
-    role_id = models.ForeignKey(Roles, on_delete=models.CASCADE)
+    role_id = models.OneToOneField(Roles, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -82,7 +106,7 @@ class UserProfiles(models.Model):
         upload_to='profiles/pictures/profiles_/',
         default='profiles/pictures/default.jpg'
     )
-    bio = models.TextField()
+    bio = models.TextField(max_length=75)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

@@ -19,7 +19,7 @@
                     <a href="{% url "profiles:register" %}">Cadastrar</a>
                     {% else %}
                     <a href="{% url "profiles:profile" %}">Perfil</a>
-                    <a href="#">Sair</a>
+                    <a href="{% url "profiles:logout" %}">Sair</a>
                     {% endif %}
                 </div>
             </div>

@@ -1,19 +1,20 @@
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect, render
 from django.http import JsonResponse
 from profiles.models import IsUmadjaf, Roles, User, UserProfiles, UserRoles
 from utils.profiles.factory import make_fake_pedidos, make_fake_posts
-
 from .forms import ProfileUsePictureForm, ProfileUserBioForm, ProfileUserForm, ProfileUserPassForm
+from manager.models import Congregations
+from articles.models import Article
 
-# poa = make_fake_users()
 pedidos = make_fake_pedidos()
 post = make_fake_posts()
-is_authenticated = False
 
 
+# Funções de cadastro e login
 def register(request):
+    congregations = Congregations.objects.all()
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
     if is_authenticated:
         return redirect('profiles:profile')
@@ -24,6 +25,7 @@ def register(request):
             complete_name=request.POST['full_name'],
             number_phone=request.POST['number_phone'],
             birthday=request.POST['birth_date'],
+            gender=request.POST['gender'],
             church=request.POST['church'],
             is_umadjaf=is_umadjaf,
         )
@@ -64,6 +66,7 @@ def register(request):
         'profiles/pages/register.html',
         context={
             'is_authenticated': is_authenticated,
+            'congregations': congregations
         }
     )
 
@@ -95,8 +98,11 @@ def login_user(request):
     )
 
 
+# Funções de perfil
 def profile(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
+    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
+    user_is_admin = request.user.is_staff and request.user.is_superuser # Verifica se o usuário é admin
+    posts = Article.objects.filter(author=request.user.id)
 
     if is_authenticated:
         user = UserProfiles.objects.get(user_id=request.user.id)
@@ -107,9 +113,10 @@ def profile(request):
             'profiles/pages/profile.html',
             context={
                 'is_authenticated': request.user.is_authenticated,
+                'is_admin': user_is_admin,
                 'profile': user,  # Use a variável user diretamente
                 'user': request.user,  # Use request.user diretamente
-                'posts': post,
+                'posts': posts,
                 'pedidos': pedidos
             }
         )
@@ -166,3 +173,13 @@ def profile_settings(request):
             'user_picture_form': user_picture_form
         }
     )
+
+
+def profile_logout(request):
+    '''
+    Profile logout
+
+    Responsável por deslogar o usuário
+    '''
+    logout(request)
+    return redirect('profiles:login')

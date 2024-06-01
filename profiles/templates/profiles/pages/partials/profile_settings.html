@@ -26,11 +26,14 @@
     $(document).ready(function() {
         $('#profile_form').on('submit', function(event) {
             event.preventDefault();
+            var formData = new FormData(this);
             $.ajax({
                 url: $(this).attr('action'),
                 type: $(this).attr('method'),
-                data: $(this).serialize(),
+                data: formData,
                 dataType: 'json',
+                processData: false,  // Necessário para enviar dados de arquivo
+                contentType: false,  // Necessário para enviar dados de arquivo
                 success: function(data) {
                     if (data.success) {
                         location.reload();

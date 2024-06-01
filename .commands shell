@@ -1,4 +1,9 @@
-# python3 manage.py shell
+'''
+python manage.py shell
+python manage.py makemigrations
+python manage.py migrate
+
+'''
 
 from profiles.models import User, UserProfiles
 

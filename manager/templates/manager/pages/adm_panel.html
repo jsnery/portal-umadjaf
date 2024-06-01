@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+{% include "global/partials/head.html" %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+    <title>Painel de Administração</title>
+    <style>
+        .container h1 {
+            text-align: center;
+            color: #fff;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .container p {
+            text-align: center;
+            color: #fff;
+        }
+    </style>
+{% endblock head %}
+
+<body>
+    {% include 'manager/pages/partials/navbar.html' %}
+
+    
+    <div class="container mt-4">
+        <h1>Bem-vindo ao Painel de Administração</h1>
+        <p>Esta é a página principal do painel de administração. Você pode navegar para diferentes seções usando a barra de navegação acima.</p>
+    </div>
+    
+
+
+    <!-- Seção de Rodapé -->
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

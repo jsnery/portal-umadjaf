@@ -32,8 +32,19 @@
                         <input type="date" class="form-control" id="birth_date" name="birth_date" required>
                     </div>
                     <div class="form-group">
+                        <label for="gender" class="text-white">Gênero</label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="church" class="text-white">Igreja</label>
-                        <input type="text" class="form-control" id="church" name="church" placeholder="Ex.: Adjaf Nova Canaã" required>
+                        <select id="church" name="church" class="form-control" required>
+                            {% for congregation in congregations %}
+                                <option value="{{ congregation.id }}">{{ congregation.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="is_umadjaf" class="text-white">É da UMADJAF?</label>

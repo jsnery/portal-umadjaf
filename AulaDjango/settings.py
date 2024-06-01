@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     # Adicionando a aplicação articles ao projeto
     'articles',
     # Adicionando a aplicação manager ao projeto
-    #'manager',
+    'manager',
 ]
 
 MIDDLEWARE = [
@@ -121,9 +121,9 @@ AUTHENTICATION_BACKENDS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -133,6 +133,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+
+'''
+STATIC_URL é a URL que será usada para acessar os arquivos estáticos.
+STATICFILES_DIRS é uma lista de diretórios onde o Django deve procurar por arquivos estáticos.
+STATIC_ROOT é o diretório onde o Django irá armazenar os arquivos estáticos.
+
+Os arquivos estáticos são arquivos que não são alterados dinamicamente, como arquivos CSS, JavaScript, imagens, etc.
+'''
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'resources/static',
@@ -140,6 +148,13 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'static'
 
 
+'''
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+A pasta media é onde ficam armazenados os arquivos de mídia, como imagens, vídeos, etc.
+No caso, são arquivos de midia que são enviados pelos usuários, como fotos de perfil, fotos de produtos, etc.
+'''
 # Media files (Images, Videos, etc)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

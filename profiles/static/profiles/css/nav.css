@@ -139,3 +139,15 @@ body {
     border: none;
     box-shadow: none;
 }
+
+.btn-adm {
+    position: absolute;
+    top: 100px;
+    right: -5px;
+}
+
+.btn-adm:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}

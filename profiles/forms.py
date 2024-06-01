@@ -1,6 +1,7 @@
 from django import forms  # type: ignore
 from django.contrib.auth.hashers import check_password, make_password
 from profiles.models import User, UserProfiles
+from manager.models import Congregations
 
 
 class NoColonFileInput(forms.FileInput):
@@ -22,8 +23,11 @@ class ProfileUserForm(forms.ModelForm):
         label='Telefone', widget=forms.TextInput(attrs={'autocomplete': 'off'}))
     complete_name = forms.CharField(
         label='Nome Completo', widget=forms.TextInput(attrs={'autocomplete': 'off'}))
-    church = forms.CharField(
-        label='Igreja', widget=forms.TextInput(attrs={'autocomplete': 'off'}))
+    church = forms.ModelChoiceField(
+        queryset=Congregations.objects.all(),
+        empty_label='Selecione uma igreja',
+        label='Congregação'
+    )
 
     class Meta:
         model = User
@@ -34,6 +38,15 @@ class ProfileUserForm(forms.ModelForm):
         super(ProfileUserForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs['id'] = 'form_' + field
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        print((self.cleaned_data['church'].id))
+        print(instance)
+        instance.church = int(self.cleaned_data['church'].id)
+        if commit:
+            instance.save()
+        return instance
 
 
 class ProfileUserPassForm(forms.ModelForm):

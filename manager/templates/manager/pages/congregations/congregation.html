@@ -1,0 +1,215 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <title>Lista de Igrejas</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+    
+            table, th, td {
+                border: 1px solid black;
+            }
+    
+            th, td {
+                padding: 15px;
+                text-align: left;
+            }
+    
+            th {
+                background-color: #f2f2f2;
+            }
+    
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+    
+            tr:nth-child(odd) {
+                background-color: #f2f2f2;
+            }
+    
+            tr:hover {
+                background-color: #f2f2f2;
+            }
+    
+            a {
+                text-decoration: none;
+                color: black;
+            }
+    
+            a:hover {
+                color: blue;
+            }
+    
+            h1 {
+                text-align: center;
+                color: #fff;
+            }
+    
+            .container {
+                margin-top: 50px;
+            }
+    
+            .btn {
+                margin-top: 10px;
+            }
+            
+            #congregation-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+        
+            #congregation-table th, #congregation-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+            }
+        
+            #congregation-table th {
+                padding-top: 12px;
+                padding-bottom: 12px;
+                text-align: left;
+                background-color: #111111;
+                color: white;
+            }
+        
+            #congregation-table tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+        
+            #congregation-table tr:hover {
+                background-color: #ddd;
+            }
+
+            .dataTables_wrapper {
+                background-color: #fff; /* Altere para a cor de fundo desejada */
+                margin-bottom: 0px;
+            }
+        </style>
+    {% endblock head %}
+
+<body>
+    <!-- Barra de Navegação -->
+    {% include 'manager/pages/partials/navbar.html' %}
+
+    
+    <div class="articles-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="text-align: center; flex-grow: 1; margin-bottom: 23px;">Lista de Igrejas</h1>
+            <a href="{% url 'manager:congregation_add' %}" class="btn btn-primary add-link" style="margin-bottom: 25px;">Adicionar</a>
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Adicionar igreja</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div id="modal-body-add" class="modal-body">
+                        <form id="add-congregation" method="POST" action="{% url 'manager:congregation_add' %}">
+                            
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <table id="congregation-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Congregação</th>
+                <th>Endereço</th>
+                <th>Área</th>
+                <th>Menu</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for congregation in congregations_all %}
+            <tr>
+                <td>{{ congregation.id }}</td>
+                <td>{{ congregation.name }}</td>
+                <td>{{ congregation.address }}</td>
+                <td>{{ congregation.area }}</td>
+                <td>
+                    <a href="{% url 'manager:congregation_edit' congregation.id %}" class="edit-link"><i class="fa fa-edit"></i></a>
+                    <div class="modal fade" id="editModal-{{congregation.id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel">Editar Congregação</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div id="modal-body-{{congregation.id}}" class="modal-body">
+                                <form id="editchurch-{{congregation.id}}" method="POST" action="{% url 'manager:congregation_edit' congregation.id %}">
+                                    
+                                </form>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'manager:congregation_delete' congregation.id %}"><i class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
+    <!-- Seção de Rodapé -->
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.add-link').click(function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var userId = url.split('/').pop();
+                $.get(url, function(data) {
+                    $('#modal-body-add #add-congregation').html(data);
+                    $('#addModal').modal('show');
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.edit-link').click(function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var userId = url.split('/').pop();
+                $.get(url, function(data) {
+                    $('#modal-body-' + userId + ' #editchurch-' + userId).html(data);
+                    $('#editModal-' + userId).modal('show');
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready( function () {
+            $('#congregation-table').DataTable({
+                paging: true,
+                ordering: true,
+                info: true,
+                pageLength: 20,  // Define o número inicial de itens por página
+                lengthMenu: [[20, 40, 60, 100], [20, 40, 60, 100]]  // Define as opções de itens por página
+            });
+        });
+    </script>
+</body>
+</html>

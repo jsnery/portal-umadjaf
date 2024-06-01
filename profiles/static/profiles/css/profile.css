@@ -172,19 +172,22 @@ body {
 .pub-title .card-title {
     text-align: left;
     font-size: 1.2em;
-    /* hyphens: auto; */
     text-align:center;
+    word-wrap: break-word;
+    max-width: 25ch;
 }
 
 @media (max-width: 600px) {
     .pub-title .card-title {
         font-size: 1em;
+        max-width: 20ch;
     }
 }
 
 @media (max-width: 400px) {
     .pub-title .card-title {
         font-size: 0.8em;
+        max-width: 19ch;
     }
 }
 

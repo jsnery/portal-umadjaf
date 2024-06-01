@@ -10,11 +10,3 @@ document.getElementById('profile-picture-image').addEventListener('click', funct
 });
 
 
-
-var url = 'profiles:settings';
-
-$.get(url, function(data) {
-    // Substitua 'your-element-id' pelo ID do elemento HTML no qual você deseja inserir os dados
-    $('#settings-x').html(data);
-});
-

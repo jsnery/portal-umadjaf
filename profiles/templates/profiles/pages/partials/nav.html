@@ -23,7 +23,7 @@
                         <a href="{% url "profiles:register" %}">Cadastrar</a>
                         {% else %}
                         <a href="{% url "profiles:profile" %}">Perfil</a>
-                        <a href="#">Sair</a>
+                        <a href="{% url "profiles:logout" %}">Sair</a>
                         {% endif %}
                     </div>
                 </div>
@@ -59,6 +59,13 @@
                         settings
                     </span>
                 </a>
+                {% if is_admin %}
+                    <a class="nav-item nav-link btn-adm text-grey" href="{% url 'manager:admin' %}">
+                        <span class="material-icons">
+                            admin_panel_settings
+                        </span>
+                    </a>
+                {% endif %}
             </div>
         </nav>
     </div>
