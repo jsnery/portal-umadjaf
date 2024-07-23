@@ -73,7 +73,9 @@
                     <div class="name-group-member">{{ member.complete_name }}</div>
                     <div class="bio-group-member">{% return_profile_bio member.id %}</div>
                 </div>
-                <button class="view-button">Visualizar</button>
+                <a href="{% url 'users:other_profile' member.id %}">
+                    <button class="view-button">Visualizar</button>
+                </a>
             </div>
             {% empty %}
             <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 20px; height: 50vh;">

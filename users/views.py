@@ -50,7 +50,8 @@ def register(request):
             )
 
         new_profile = UserProfiles(
-            user_id=new_user
+            user_id=new_user,
+            bio='O Senhor é o meu pastor; de nada terei falta.'
         )
 
         new_profile.save()

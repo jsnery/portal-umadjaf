@@ -1,4 +1,5 @@
 {% load static %}
+{% load member_profile %}
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -29,15 +30,32 @@
                     </div>
                 </div>
             </div>
-            <!-- Botão de configuração -->
         </div>
 
         <nav class="profile-menu">
+            <div class="d-flex justify-content-between w-100">
+                <!-- Grupo Esquerdo (ADM) -->
+                <div>
+                    {% if is_admin %}
+                        <a class="nav-link btn-adm text-grey" href="{% url 'manager:admin' %}">
+                            <i class="fas fa-user-shield"></i>
+                        </a>
+                    {% endif %}
+                </div>
+        
+                <!-- Grupo Central (Menu) -->
                 <div class="nav nav-tabs justify-content-center flex-nowrap" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-posts-tab" data-toggle="tab" href="#pub" role="tab" aria-controls="nav-posts" aria-selected="true">Devocionais</a>
-                    {% if profile.show_gallery %}
-                        <a class="nav-item nav-link text-grey" id="nav-followers-tab" data-toggle="tab" href="#gallery" role="tab" aria-controls="nav-followers" aria-selected="false">Galeria</a>
+                    <a class="nav-item nav-link text-grey" id="nav-followers-tab" data-toggle="tab" href="#gallery" role="tab" aria-controls="nav-followers" aria-selected="false">Galeria</a>
+                </div>
+        
+                <!-- Grupo Direito (Whatsapp) -->
+                <div>
+                    {% if is_admin or is_coordinator%}
+                    <a class="nav-link btn-config text-grey" href="{% return_user_whatsapp user.id %}">
+                        <i class="fab fa-whatsapp"></i>
                     {% endif %}
+                    </a>
                 </div>
             </div>
         </nav>
