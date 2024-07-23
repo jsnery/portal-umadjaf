@@ -61,6 +61,26 @@
         border-radius: 5px;
         cursor: pointer;
     }
+
+    .round-button {
+        display: inline-block;
+        width: 50px; /* Tamanho do botão */
+        height: 50px; /* Tamanho do botão */
+        background-color: #007bff; /* Cor de fundo do botão */
+        color: white; /* Cor do ícone */
+        border-radius: 50%; /* Arredondamento para tornar o botão redondo */
+        text-align: center; /* Centraliza o ícone/texto dentro do botão */
+        line-height: 50px; /* Centraliza o ícone/texto verticalmente */
+        font-size: 20px; /* Tamanho do ícone */
+        text-decoration: none; /* Remove o sublinhado do link */
+    }
+    
+    .round-button:hover {
+        background-color: #0056b3; /* Cor de fundo do botão ao passar o mouse */
+        color: white; /* Mantém a cor do ícone ao passar o mouse */
+        text-decoration: none; /* Garante que o sublinhado do link não apareça ao passar o mouse */
+    }
+    
 </style>
 
 <div class="tab-pane fade" id="group-member">
@@ -73,8 +93,8 @@
                     <div class="name-group-member">{{ member.complete_name }}</div>
                     <div class="bio-group-member">{% return_profile_bio member.id %}</div>
                 </div>
-                <a href="{% url 'users:other_profile' member.id %}">
-                    <button class="view-button">Visualizar</button>
+                <a href="{% url 'users:other_profile' member.id %}" class="round-button">
+                    <i class="fas fa-info-circle"></i>
                 </a>
             </div>
             {% empty %}

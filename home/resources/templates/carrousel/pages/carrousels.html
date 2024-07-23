@@ -56,6 +56,12 @@
             overflow: hidden; /* Esconde qualquer parte do banner que exceda a altura da section */
             position: relative; /* Necessário para posicionamento do pseudo-elemento */
         }
+
+        @media (max-width: 768px) {
+            #bannersect {
+                height: 250px; /* Altura menor para telas menores */
+            }
+        }
         
 
         #eventBanner {

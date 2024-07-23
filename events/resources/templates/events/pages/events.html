@@ -22,7 +22,7 @@
         <div id="calendar">
             {% for i in events %}
                 <!-- Adicione um atributo 'data-banner-url' com a URL do banner do evento -->
-                <div class="event" data-banner-url="{{ i.background }}" data-logo-url="{{ i.logo }}" onclick="changeBanner(this)">
+                <div class="event" data-banner-url="{{ i.background.url }}" data-logo-url="{{ i.logo.url }}" onclick="changeBanner(this)">
                     <div class="event-title">{{ i.title }}: {{ i.theme }}</div>
                     <div class="event-detail">Data: {{ i.date }}</div>
                     <div class="event-detail">Hora: {{ i.hours }}</div>
@@ -46,8 +46,8 @@
                 var logoUrl = eventElement.getAttribute('data-logo-url');
                 
                 // Certifica-se de que a URL do banner começa com '/media/'
-                var correctedBannerUrl = '/media/' + bannerUrl;
-                var correctedLogoUrl = '/media/' + logoUrl;
+                var correctedBannerUrl = bannerUrl;
+                var correctedLogoUrl = logoUrl;
                 
                 // Atualiza o banner na parte superior da página
                 document.getElementById('eventBanner_2').style.backgroundImage = 'url(' + correctedBannerUrl + ')';

@@ -13,7 +13,11 @@ class NoColonFileInput(forms.FileInput):
 class ProfileUsePictureForm(forms.ModelForm):
     profile_picture = forms.FileField(
         label='Alterar',
-        widget=NoColonFileInput(attrs={'class': 'custom-file-input', 'id': 'form_profile_picture'}),
+        widget=NoColonFileInput(attrs={
+            'class': 'custom-file-input',
+            'id': 'form_profile_picture',
+            'accept': 'image/*'
+            }),
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])]
     )
 
