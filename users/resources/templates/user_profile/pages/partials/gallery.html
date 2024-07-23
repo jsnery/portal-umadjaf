@@ -9,6 +9,10 @@
                         <div class="card gallery-profile">
                             <img src="/media/{{ post.banner }}" class="card-img-top gallery-image" alt="{{ post.title }}">
                         </div>
+                    {% empty %}
+                        <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 20px; height: 50vh;">
+                            Nenhum foto encontrada.
+                        </div>
                     {% endfor %}
                 </div>
             </div>

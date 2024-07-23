@@ -132,7 +132,7 @@ def profile(request):
     group_members = User.objects.filter(
         church=request.user.church,
         isumadjaf__checked=True
-        )
+        ).exclude(id=request.user.id)
 
     is_umadjaf = False
     if request.user.is_authenticated:

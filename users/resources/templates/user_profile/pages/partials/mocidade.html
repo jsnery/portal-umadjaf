@@ -1,102 +1,85 @@
-{% load static%}
-{% load users_rename %}
+{% load static %}
+{% load member_profile %}
 
 <style>
-    .name-group-member {
-        font-size: 1em;
-        font-weight: bold;
-        object-fit: cover;
-        margin: 0; /* Mantém a remoção de qualquer margem do nome */
+    #group-member {
+        padding: 20px;
+    }
+    .card-group-member {
+        display: flex;
+        flex-direction: row; /* Garante alinhamento horizontal */
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        width: 100%; /* Faz cada card ocupar a largura total */
     }
     
     .img-group-member {
-        margin: 3px 15px 0px 5px; /* Ajusta o espaço à direita da imagem para ser consistente */
+        flex: 0 0 auto;
         width: 75px;
         height: 75px;
         border-radius: 50%;
-        object-fit: cover;
-    }
-    
-    @media (max-width: 768px) {
-        .img-group-member {
-            margin-right: 15px; /* Mantém o espaço consistente em telas menores */
-            width: 75px;
-            height: 75px;
-        }
-
-        .name-group-member {
-            font-size: 0.9em;
-        }
-    }
-    
-    .card-body-group-member {
-        display: flex;
-        align-items: center; /* Mantém o alinhamento vertical */
-        justify-content: flex-start; /* Alinha os itens ao início para manter o espaçamento consistente */
-        padding: 0;
+        margin-right: 2px;
     }
 
-    .group-member {
+    .details-group-member {
+        flex: 1;
+        padding: 0 15px;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        width: 80%;
-        margin: 5px auto;
+        overflow: hidden; /* Impede que o conteúdo excedente altere o layout */
     }
 
-    .row-group-member .card {
-        margin: 5px;
-        box-sizing: border-box;
+    .name-group-member {
+        margin: 0;
+        font-size: 1.2em;
+        font-weight: bold;
     }
 
-    @media (max-width: 768px) {
-        .row-group-member .card {
-            min-width: calc(50% - 10px);
-        }
-
-        .group-member {
-            width: 100%;
-        }
+    .bio-group-member {
+        font-size: 0.9em;
+        color: #666;
     }
 
-    .card-group-member {
-        border-radius: 50px;
-        padding-top: 0px;
-        min-width: 185px;
-        padding-bottom: 0px;
+    .name-group-member, .bio-group-member {
+        display: block; /* Garante que o nome e a biografia estejam um acima do outro */
+        white-space: nowrap; /* Mantém o texto em uma única linha */
+        overflow: hidden; /* Esconde qualquer conteúdo que exceda o espaço disponível */
+        text-overflow: ellipsis; /* Adiciona reticências ao final do texto se ele for muito longo */
+        margin: 0; /* Remove margens padrão para alinhamento adequado */
     }
-
-    .card-group-member > div {
-        display: flex;
-        width: 100%;
-        align-items: center; /* Garante o alinhamento vertical ao centro */
-    }
-
-    @media (max-width: 768px) {
-        .card-group-member > div {
-            min-width: 175px;
-        }
+    
+    .view-button {
+        flex: 0 0 auto;
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
     }
 </style>
 
 <div class="tab-pane fade" id="group-member">
-    <div id="group-member" class="container-fluid">
+    <div class="container-fluid">
         <div class="row justify-content-center mx-auto" style="width: auto;">
-            <div class="group-member">
-                <div class="row row-group-member">
-                    {% for member in group_members %}
-                    <div class="card card-group-member">
-                        <div>
-                            <img src="{% return_profile_picture member.id %}" class="img-group-member" alt="Profile Picture">
-                            <div class="card-body card-body-group-member">
-                                <h5 class="card-title name-group-member">{% return_first_name member.complete_name|truncatechars:10 %}</h5>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
+            {% for member in group_members %}
+            <div class="card card-group-member">
+                <img src="{% return_profile_picture member.id %}" class="img-group-member" alt="Profile Picture">
+                <div class="details-group-member">
+                    <div class="name-group-member">{{ member.complete_name }}</div>
+                    <div class="bio-group-member">{% return_profile_bio member.id %}</div>
                 </div>
+                <button class="view-button">Visualizar</button>
             </div>
+            {% empty %}
+            <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 20px; height: 50vh;">
+                Nenhum membro encontrado.
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>
