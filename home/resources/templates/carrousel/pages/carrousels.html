@@ -1,0 +1,174 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <title>Adicionar Evento</title>
+    {% endblock head %}
+    <style>
+        .container-custom {
+            display: flex; /* Habilita flexbox */
+            overflow-x: auto; /* Permite rolagem horizontal */
+            white-space: nowrap; /* Evita quebra de linha */
+            padding-bottom: 1rem; /* Espaço abaixo do container para evitar sobreposição */
+        }
+
+        .card {
+            max-width: 360px; /* Define um tamanho máximo para os cards */
+            width: auto; /* Ajusta a largura automaticamente até o máximo definido */
+            height: auto; /* Altura automática para manter a proporção */
+            flex: 0 0 auto; /* Não permite que os itens cresçam ou encolham */
+            margin-right: 20px; /* Espaçamento entre os itens */
+        }
+        
+        .card-img-top {
+            width: 100%; /* Faz a imagem ocupar toda a largura do card */
+            aspect-ratio: 16 / 9; /* Mantém a proporção 16:9 */
+            object-fit: cover; /* Garante que a imagem cubra o espaço sem distorção */
+        }
+
+        .card-body {
+            display: flex; /* Habilita flexbox */
+            justify-content: space-between; /* Alinha itens aos extremos */
+            align-items: center; /* Centraliza itens verticalmente */
+        }
+
+        .card-title {
+            margin: 0; /* Remove margens padrão */
+        }
+
+        .form-check {
+            margin: 0; /* Remove margens padrão */
+        }
+
+        .form-container {
+            margin: 0 20px; /* Adiciona margem à direita e à esquerda */
+        }
+
+        #bannersect {
+            display: flex; /* Habilita flexbox para a section */
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+            height: 400px; /* Altura desejada para a section */
+            background-image: url('/media/events/default/bg.png');
+            overflow: hidden; /* Esconde qualquer parte do banner que exceda a altura da section */
+            position: relative; /* Necessário para posicionamento do pseudo-elemento */
+        }
+        
+
+        #eventBanner {
+            width: auto; /* Permite que a largura seja ajustada automaticamente */
+            height: 100%; /* Faz o banner ocupar a altura total da section */
+            aspect-ratio: 16 / 9; /* Mantém a proporção 16:9 */
+            background-size: cover; /* Garante que o background cubra completamente, cortando o excesso */
+            background-position: center center; /* Centraliza o background, útil para cortar igualmente */
+            background-repeat: no-repeat; /* Evita a repetição do background */
+            position: absolute; /* Posicionamento absoluto dentro da section */
+        }
+        
+        .form-container {
+            margin-top: 45vh; /* Ajuste este valor para garantir que o formulário comece abaixo do banner */
+            margin: 0 20px; /* Adiciona margem à direita e à esquerda */
+        }
+
+        .card-title-centered {
+            text-align: center;
+        }
+
+        .form-check-label {
+            font-size: 1.25rem; /* Aumenta o tamanho da fonte */
+        }
+
+        .form-group {
+            display: flex; /* Habilita flexbox para alinhamento */
+            align-items: center; /* Centraliza verticalmente */
+            gap: 10px; /* Adiciona um espaço entre o checkbox e o texto */
+        }
+
+        #deletebotao {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 10px;
+        }
+
+        .btn-criar {
+            position: absolute;
+            bottom: 20px; /* Distância do fundo da seção */
+            right: 20px; /* Distância da direita da seção */
+            z-index: 1050; /* Garante que o botão esteja acima dos slides do carrossel */
+        }
+    </style>
+</head>
+<body>
+    {% include 'global/partials/navbar.html' %}
+
+    <section id="bannersect"> 
+        <div id="eventBanner" style="">
+        </div>
+        <div class="btn-criar">
+            <a href="{% url 'carrousel_editor' %}" class="btn btn-primary" role="button">
+                Criar
+            </a>
+        </div>
+    </section>
+
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            <div class="container-custom mt-5">
+                <!-- Container com rolagem horizontal -->
+                {% for item in carrousel %}
+                <div class="card" data-banner-url="{{ item.image.url }}" onclick="changeBanner(this)">
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}">
+                    <div class="form-group form-delete">
+                        <a id="deletebotao" href="{% url 'carrousel_delete' item.id %}" class="btn btn-danger rounded-circle" role="button">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title card-title-centered">{{ item.title|truncatechars:20 }}</h5>
+                        <div class="form-group form-check">
+                            <!-- Campo oculto para cada item, valor padrão 'off' -->
+                            <input type="hidden" name="itemid_{{ item.id }}" value="off">
+                            <!-- Checkbox, valor 'on' se marcado -->
+                            <input type="checkbox" class="form-check-input" id="item{{ item.id }}" name="itemid_{{ item.id }}" value="on" {% if item.active %}checked{% endif %}>
+                            <label class="form-check-label" for="item{{ item.id }}">Ativo</label>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% include 'global/partials/footer.html' %}
+    
+
+    <!-- Inclua o JS do Quill -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+
+    <!-- Script do preview -->
+    <script>
+        function changeBanner(eventElement) {
+            // Obtém a URL do banner a partir do atributo de dados do evento clicado
+            var bannerUrl = eventElement.getAttribute('data-banner-url');
+            
+            // Certifica-se de que a URL do banner começa com '/media/'
+            var correctedBannerUrl = bannerUrl;
+            
+            // Atualiza o banner na parte superior da página
+            document.getElementById('eventBanner').style.backgroundImage = 'url(' + correctedBannerUrl + ')';
+        }
+    </script>
+</body>
+</html>
+

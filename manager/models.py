@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models  # type: ignore
 
 
 class Congregations(models.Model):

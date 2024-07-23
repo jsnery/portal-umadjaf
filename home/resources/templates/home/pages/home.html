@@ -1,0 +1,107 @@
+{% load static %}
+{% load home_versicles %}
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+        <title>UMADJAF</title>
+    {% endblock head %}
+
+    <body>
+        <!-- Barra de Navegação -->
+        {% include 'global/partials/navbar.html' %}
+
+        <!-- Carrossel -->
+        <section id="banner-carousel" style="position: relative;">
+            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    {% for i in carousel %}
+                    <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></li>
+                    {% empty %}
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                    {% endfor %}
+                </ol>
+                <div class="carousel-inner">
+                    {% for i in carousel %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        {% if page == 'store' %}
+                        <a href="/store/product/{{ i.id }}"><img class="d-block w-100" src="{{ i.image.url }}" alt="{{ i.title }} "></a>
+                        {% else %}
+                        <img class="d-block w-100" src="{{ i.image.url }}" alt="{{ i.title }} ">
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="carousel-item active">
+                        <img class="d-block w-100" src="/media/carrousel/default.png" alt="Imagem Padrão">
+                    </div>
+                    {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Anterior</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Próximo</span>
+                </a>
+            </div>
+            {% if is_admin %}
+            <div class="btn-editar">
+                <a href="{% url 'carrousel' %}" class="btn btn-primary" role="button">
+                    Editar
+                </a>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Seção 1 -->
+         {% if next_event %}
+            <section id="section-one" style="background-image: url('media/{{ next_event.background }}'); position: relative;">
+                <img id="eventid" src="media/{{ next_event.logo }}" alt="{{ next_event.title }}">
+                <a href="{% url 'events:eventos' %}">
+                    <button>Ver Mais</button>
+                </a>
+            </section>
+        {% else %}
+            <section id="section-one" style="background-image: url('media/events/default/bg.png'); position: relative;">
+                <img id="eventid" src="media/events/default/logo.png" alt="{{ next_event.title }}">
+                <a href="{% url 'events:eventos' %}">
+                    <button>Ver Mais</button>
+                </a>
+            </section>
+        {% endif %}
+        
+        <!-- Seção 2 -->
+        <section id="section-two">
+            <div class="row articles-container">
+                {% for i in article %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-img-top" style="background-image: url('/media/{{ i.banner }}'); aspect-ratio: 32/9;" alt="{{ i.title }}"></div>
+                        <div class="card-body pub-title">
+                            <h5 class="card-title"><b>{{ i.title|truncatechars:35 }}</b></h5>
+                            <blockquote class="blockquote">
+                                <p class="mb-0 card-text"><em>"{% fetch_versicle i.versicle %}"</em></p>
+                            </blockquote>
+                        </div>
+                        <div class="card-footer text-right">
+                            <a id="readmore" href="{% url 'articles:article' i.id %}" class="btn btn-primary">Leia mais</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Seção de Rodapé -->
+        {% include 'global/partials/footer.html' %}
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

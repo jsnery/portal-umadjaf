@@ -26,4 +26,15 @@ urlpatterns = [
     path('adm/member_positive/<int:member_id>', views.member_positive, name='member_positive'),
     path('adm/member_negative/<int:member_id>', views.member_negative, name='member_negative'),
 
+    # Calendar manager
+    path('adm/calendar/', views.calendar, name='calendar'),
+    path('adm/calendar_edit/<int:calendar_id>', views.calendar_edit, name='calendar_edit'),
+    path('adm/calendar_delete/<int:calendar_id>', views.calendar_delete, name='calendar_delete'),
+
+    # Articles manager
+    path('adm/articles/', views.articles, name='articles'),
+    path('adm/article_verify/<int:article_id>', views.article_verify, name='article_verify'),
+    path('adm/article_unverify/<int:article_id>', views.article_unverify, name='article_unverify'),
+    path('adm/article_delete/<int:article_id>', views.article_delete, name='article_delete'),
+
 ]

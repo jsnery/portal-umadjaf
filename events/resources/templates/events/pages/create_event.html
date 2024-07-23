@@ -1,0 +1,164 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'events/css/events.css' %}">
+        <title>Adicionar Evento</title>
+    {% endblock head %}
+    <style>
+        {% comment %} #backgroundPreview {
+            padding: 80px 0;
+            position: relative;
+            background-color: #d4d4d4;
+            background-size: cover;
+            background-position: left center;
+            height: 20vh;
+        } {% endcomment %}
+    
+    
+        #title-calendar {
+            width: 93%;
+        }
+    
+        #theme-calendar {
+            width: 93%;
+        }
+
+        
+    </style>
+</head>
+<body>
+    {% include 'global/partials/navbar.html' %}
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header text-center">
+                <h1>ADICIONE O EVENTO</h1>
+            </div>
+
+            <!-- Preview do banner -->
+            <div id="eventBanner" style="background-image: url('/media/calendar/default/bg.png')">
+                <img id="eventLogo" src="/media/calendar/default/logo.png">
+            </div>
+
+            <!-- Formulário de criação de artigo -->
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="theme" class="form-label">Tema:</label>
+                        <input type="text" class="form-control" id="theme" name="theme" required>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Data:</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="hour" class="form-label">Hora:</label>
+                        <input type="time" class="form-control" id="hour" name="hour" required>
+                    </div>
+            
+                    <div class="mb-3">
+                        <label for="congregation_id" class="form-label">Congregação:</label>
+                        <select class="form-select" id="congregation_id" name="congregation_id" required>
+                            {% for congregation in congregations %}
+                            <option value="{{ congregation.id }}">{{ congregation.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-file">
+                            <input type="file" id="logo" name="logo" class="custom-file-input1" required>
+                            <label class="custom-file-label" for="logo">Selecione o logo...</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-file">
+                            <input type="file" id="background" name="background" class="custom-file-input2" required>
+                            <label class="custom-file-label" for="background">Selecione o background...</label>
+                        </div>
+                    </div>
+            
+                    {% comment %} <div class="mb-3">
+                        <label for="logo" class="form-label">Logo:</label>
+                        <input type="file" class="form-control" id="logo" name="logo">
+                    </div> {% endcomment %}
+            
+                    {% comment %} <div class="mb-3">
+                        <label for="background" class="form-label">Background:</label>
+                        <input type="file" class="form-control" id="background" name="background">
+                    </div> {% endcomment %}
+            
+                    <button type="submit" class="btn btn-primary">Criar Evento</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+    <br>
+
+    {% include 'global/partials/footer.html' %}
+    
+
+    <!-- Inclua o JS do Quill -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    
+
+    <!-- Script do preview -->
+    <script>
+        function readURL(input, previewElementId, isBackground = false) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    if (isBackground) {
+                        document.getElementById(previewElementId).style.backgroundImage = 'url(' + e.target.result + ')';
+                    } else {
+                        var logoPreview = document.getElementById('eventLogo');
+                        logoPreview.src = e.target.result;
+                        logoPreview.style.display = 'block';
+                    }
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        document.getElementById("logo").addEventListener("change", function(){
+            readURL(this, "eventLogo");
+        });
+    
+        document.getElementById("background").addEventListener("change", function(){
+            readURL(this, "eventBanner", true);
+        });
+    </script>
+
+    <!-- Script para exibir o nome do arquivo no input -->
+    <script>
+        document.querySelector('.custom-file-input1').addEventListener('change',function(e){
+            var fileName = document.getElementById("logo").files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        });
+    </script>
+    <script>
+        document.querySelector('.custom-file-input2').addEventListener('change',function(e){
+            var fileName = document.getElementById("background").files[0].name;
+            var nextSibling = e.target.nextElementSibling
+            nextSibling.innerText = fileName
+        });
+    </script>
+</body>
+</html>

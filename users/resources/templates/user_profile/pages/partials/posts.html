@@ -1,0 +1,28 @@
+{% load static%}
+{% load profiles_versicles %}
+
+<div class="tab-pane fade show active" id="pub">
+    <div id="pub" class="container-fluid">
+        <div class="row justify-content-center mx-auto" style="width: auto;">
+            <div class="profile-posts">
+                <div class="row row-profile-posts">
+                    {% for post in posts %}
+                        <div class="card pub-profile" style="position: relative;">
+                            <div class="card-img-top pub-image-card" style="background-image: url('/media/{{ post.banner }}');" alt="{{ post.title }}"></div>
+                            <div class="card-body pub-title">
+                                <h5 class="card-title"><b>{{ post.title|truncatechars:30 }}</b></h5>
+                                <blockquote class="blockquote">
+                                    <p class="card-text"><i>"{% fetch_versicle post.versicle %}"</i></p>
+                                </blockquote>
+                            </div>
+                            <div class="card-footer readmore">
+                                <a href="{% url 'articles:article' post.id %}" class="btn btn-primary pub-btn">Leia mais</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<a id="float-btn" href="{% url 'articles:publish' %}" class="floating-btn">+</a>

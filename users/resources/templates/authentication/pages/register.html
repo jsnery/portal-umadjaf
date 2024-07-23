@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'authentication/css/register.css' %}">
+        <title>Cadastrar</title>
+    {% endblock head %}
+
+<body>
+    <!-- Barra de Navegação -->
+    {% include 'global/partials/navbar.html' %}
+
+
+    <!-- Alerta de Número de Telefone Já Cadastrado -->
+    {% if alert %}
+    <div class="alert alert-danger" role="alert" style="margin-top: 20px;">
+        O número de telefone informado já está cadastrado.
+    </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="POST" action="{% url 'users:register' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="full_name" class="text-white">Nome Completo</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Nome Completo" oninput="capitalizeWords(this)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="text-white">Telefone</label>
+                        <input type="text" class="form-control" id="number_phone" name="number_phone" placeholder="Ex.: (79) 99999-9999" oninput="formatPhoneNumber(this)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="birth_date" class="text-white">Data de Nascimento</label>
+                        <input type="date" class="form-control" id="birth_date" name="birth_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender" class="text-white">Gênero</label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="M">Masculino</option>
+                            <option value="F">Feminino</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="church" class="text-white">Igreja</label>
+                        <select id="church" name="church" class="form-control" required>
+                            {% for congregation in congregations %}
+                                <option value="{{ congregation.id }}">{{ congregation.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="is_umadjaf" class="text-white">É da UMADJAF?</label>
+                        <select class="form-control" id="is_umadjaf" name="is_umadjaf" required>
+                            <option value="false">Não</option>
+                            <option value="true">Sim</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="text-white">Senha</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Senha" required>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Registrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% include 'global/partials/footer.html' %}
+    
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function formatPhoneNumber(input) {
+            // Remove non-digits and replace with empty string
+            let cleaned = ('' + input.value).replace(/\D/g, '');
+        
+            // Check if the input is of correct length
+            let match = cleaned.match(/^(\d{2})(\d{4,5})(\d{4})$/);
+            if (match) {
+                // Insert parentheses and hyphen
+                input.value = '(' + match[1] + ') ' + match[2] + '-' + match[3];
+            }
+        }
+    </script>
+    <script>
+        function capitalizeWords(input) {
+            let words = input.value.split(' ');
+            for (let i = 0; i < words.length; i++) {
+                if (words[i].length > 2) {
+                    words[i] = words[i].charAt(0).toUpperCase() + words[i].substring(1).toLowerCase();
+                }
+            }
+            input.value = words.join(' ');
+        }
+    </script>
+</body>
+</html>

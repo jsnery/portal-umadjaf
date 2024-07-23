@@ -1,0 +1,102 @@
+{% load static%}
+{% load users_rename %}
+
+<style>
+    .name-group-member {
+        font-size: 1em;
+        font-weight: bold;
+        object-fit: cover;
+        margin: 0; /* Mantém a remoção de qualquer margem do nome */
+    }
+    
+    .img-group-member {
+        margin: 3px 15px 0px 5px; /* Ajusta o espaço à direita da imagem para ser consistente */
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+    @media (max-width: 768px) {
+        .img-group-member {
+            margin-right: 15px; /* Mantém o espaço consistente em telas menores */
+            width: 75px;
+            height: 75px;
+        }
+
+        .name-group-member {
+            font-size: 0.9em;
+        }
+    }
+    
+    .card-body-group-member {
+        display: flex;
+        align-items: center; /* Mantém o alinhamento vertical */
+        justify-content: flex-start; /* Alinha os itens ao início para manter o espaçamento consistente */
+        padding: 0;
+    }
+
+    .group-member {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 80%;
+        margin: 5px auto;
+    }
+
+    .row-group-member .card {
+        margin: 5px;
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+        .row-group-member .card {
+            min-width: calc(50% - 10px);
+        }
+
+        .group-member {
+            width: 100%;
+        }
+    }
+
+    .card-group-member {
+        border-radius: 50px;
+        padding-top: 0px;
+        min-width: 185px;
+        padding-bottom: 0px;
+    }
+
+    .card-group-member > div {
+        display: flex;
+        width: 100%;
+        align-items: center; /* Garante o alinhamento vertical ao centro */
+    }
+
+    @media (max-width: 768px) {
+        .card-group-member > div {
+            min-width: 175px;
+        }
+    }
+</style>
+
+<div class="tab-pane fade" id="group-member">
+    <div id="group-member" class="container-fluid">
+        <div class="row justify-content-center mx-auto" style="width: auto;">
+            <div class="group-member">
+                <div class="row row-group-member">
+                    {% for member in group_members %}
+                    <div class="card card-group-member">
+                        <div>
+                            <img src="{% return_profile_picture member.id %}" class="img-group-member" alt="Profile Picture">
+                            <div class="card-body card-body-group-member">
+                                <h5 class="card-title name-group-member">{% return_first_name member.complete_name|truncatechars:10 %}</h5>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

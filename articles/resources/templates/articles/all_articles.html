@@ -1,0 +1,68 @@
+{% load static %}
+{% load articles_versicles %}
+{% load articles_users %}
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% load static %}
+    {% include "global/partials/head.html" %}
+    <link rel="stylesheet" href="{% static 'articles/css/articles.css' %}">
+    <title>Devocionais</title>
+</head>
+<body>
+    {% include 'global/partials/navbar.html' %}
+    
+    <form action="{% url 'articles:search_articles' %}" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" id="search" name="search" placeholder="Digite sua pesquisa..." class="form-control">
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <section id="section-two">
+        <div class="row articles-container">
+            {% for article in articles %}
+                <div class="col-md-4 mb-4">
+                    <a href="{% url 'articles:article' article.id %}" style="text-decoration: none; color: inherit;">
+                        <div class="card cardz">
+                            <div class="card-img-top" style="background-image: url('/media/{{ article.banner }}');" alt="{{ article.title }}"></div>
+                            <div class="card-body pub-title">
+                                <h5 class="card-title">{{ article.title|truncatechars:30 }}</h5>
+                                <p class="card-text"><i>"{% fetch_versicle article.versicle %}"</i></p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="row">
+                                    <div class="col d-flex align-items-center">
+                                        <p style="font-size: 14px; text-align: left; font-style: italic; margin-bottom: 0;">
+                                            Escrito por 
+                                            {% if article.author_id == user_id %}
+                                                <a id="publisher" href="{% url 'users:profile' %}" style="color: inherit;">{% return_user_name article.author_id %}</a>
+                                            {% else %}
+                                                <a id="publisher" href="{% url 'users:other_profile' article.author_id %}" style="color: inherit;">{% return_user_name article.author_id %}</a>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="col-auto">
+                                        {% if article.is_official %}
+                                            <i class="fas fa-check-circle" style="color: #007bff;"></i>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center" style="color: white; font-weight: bold; font-size: 20px;">
+                    Nenhum devocional encontrado.
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% include 'global/partials/footer.html' %}
+</body>
+</html>

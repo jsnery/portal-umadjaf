@@ -1,0 +1,89 @@
+{% load static %}
+<style>
+    .form-control {
+        margin-bottom: 15px;
+    }
+
+    #profile_picture_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #form_profile_picture {
+        display: none;
+    }
+
+    #form_current_password,
+    #form_new_password,
+    #form_number_phone,
+    #form_complete_name,
+    #form_church {
+        display: block;
+        width: 100%;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+
+    #form_bio {
+        display: block;
+        width: 100%;
+        height: 150px; /* Defina a altura desejada aqui */
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: .25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        resize: none; /* Impede o redimensionamento */
+    }
+
+    #settingsx {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+</style>
+
+<div class="tab-pane fade" id="settings">
+    <div id="settingsx" class="container">
+        
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Substitua 'your-url-here' pela URL para a qual você deseja fazer a solicitação
+        var url = "{% url 'users:settings' %}";
+    
+        $.get(url, function(data) {
+            // Insira os dados retornados no formulário
+            $('#settingsx').html(data);
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#form_profile_picture').change(function() {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#form_profile_picture_preview').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        });
+    });
+</script>

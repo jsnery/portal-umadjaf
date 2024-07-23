@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import Carrousel
 
-# Register your models here.
+
+class CarrouselAdmin(admin.ModelAdmin):
+    ...
+
+
+admin.site.register(Carrousel, CarrouselAdmin)

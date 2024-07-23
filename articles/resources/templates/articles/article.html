@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% load static %}
+    {% include "global/partials/head.html" %}
+    <link rel="stylesheet" href="{% static 'articles/css/articles.css' %}">
+    <title>{{ article.title }}</title>
+    <style>
+        #bannerPreview {
+            width: 100%; /* Garante que a largura seja de 100% */
+            height: auto; /* Ajusta a altura automaticamente para manter a proporção */
+            aspect-ratio: 32 / 9; /* Mantém a proporção de 21:9 */
+            position: absolute;
+            min-height: 100%; /* Garante que a altura mínima seja de 100% */
+            object-fit: cover; /* Garante que a imagem cubra o espaço disponível sem distorção */
+        }
+
+        #backgroundPreview {
+            background-color: #d4d4d4;
+            position: relative;
+            width: 100%;
+            aspect-ratio: 32/9;
+        }
+
+        blockquote p {
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            #publisher {
+                font-size: 0.8rem;
+            }
+
+            blockquote p {
+                font-size: 0.9rem;
+            }
+
+        }
+
+        .floating-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        #deleteButton, #verifyButton, #unverifyButton {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        #deleteButton {
+            background-color: #ff4d4d; /* Vermelho */
+            color: white;
+        }
+
+        #unverifyButton {
+            background-color: #ff4d4d; /* Vermelho */
+            color: white;
+        }
+        
+        #verifyButton {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    {% include 'global/partials/navbar.html' %}
+
+    <div class="container mt-5">
+        <div class="card">
+
+            <!-- Cabeçalho do artigo -->
+            <div class="card-header">
+                <h1>{{ article.title }}</h1>
+            </div>
+
+            <!-- Banner do artigo -->
+            {% if article.banner %} 
+                
+
+                <section id="backgroundPreview">
+                    <img id="bannerPreview" src="{{ article.banner.url }}" alt="Banner do Artigo" class="img-fluid">
+                </section>
+            {% endif %}
+            
+            <div class="card-footer">
+                <p class="text-muted"><b>{{ article.versicle }}</b></p>
+                <blockquote class="blockquote">
+                    <p class="mb-0"><em>"{{ verse_text }}"</em></p>
+                </blockquote>
+            </div>
+
+            <!-- Corpo do artigo -->
+            <div class="card-body">
+                <!-- Conteúdo do artigo -->
+                <div class="article-content">
+                    {{ article.text|safe }}
+                </div>
+            </div>
+
+            <!-- Rodapé do artigo -->
+            <div class="card-footer">
+                <p id="publisher" class="text-muted">Publicado em {{ article.at_created|date:"d/m/Y" }} por 
+                    {% if publisher_id == user_id %}
+                    <a href="{% url 'users:profile' %}">{{ publisher }}</a>
+                    {% else %}
+                    <a href="{% url 'users:other_profile' publisher_id %}">{{ publisher }}</a>
+                    {% endif %}
+                </p>
+            </div>
+            
+        </div>
+    </div>
+
+    {% if not article.is_official or not article.post_unlock %}
+        {% if is_admin %}
+            <div class="floating-buttons">
+                <button id="deleteButton" data-article-id="{{ article.id }}">Apagar</button>
+                <button id="verifyButton" data-article-id="{{ article.id }}">Verificar</button>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if is_admin %}
+            <div class="floating-buttons">
+                <button id="unverifyButton" data-article-id="{{ article.id }}">Retirar Verificação</button>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    {% include 'global/partials/footer.html' %}
+
+    <script>
+        document.getElementById('verifyButton').addEventListener('click', function() {
+            var articleId = this.getAttribute('data-article-id');
+            window.location.href = '/adm/article_verify/' + articleId;
+        });
+    </script>
+    <script>
+        document.getElementById('deleteButton').addEventListener('click', function() {
+            var articleId = this.getAttribute('data-article-id');
+            window.location.href = '/adm/article_delete/' + articleId;
+        });
+    </script>
+    <script>
+        document.getElementById('unverifyButton').addEventListener('click', function() {
+            var articleId = this.getAttribute('data-article-id');
+            window.location.href = '/adm/article_unverify/' + articleId;
+        });
+    </script>
+
+</body>
+</html>

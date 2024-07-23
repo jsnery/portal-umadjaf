@@ -1,5 +1,5 @@
 from django import template  # type: ignore
-from profiles.models import UserRoles, IsUmadjaf, User
+from users.models import UserRoles, IsUmadjaf, User
 from manager.models import Congregations
 
 register = template.Library()  # Serve para registrar as funções abaixo
@@ -34,9 +34,25 @@ def get_user_umadjaf(user_id):
 
 
 @register.simple_tag
+def return_verificated(booleando):
+    if booleando:
+        return 'Sim'
+    return 'Aguardando'
+
+
+@register.simple_tag
 def return_church_name(church_id):
     try:
         church = Congregations.objects.get(id=church_id).name
     except IsUmadjaf.DoesNotExist:
         church = 'False'
     return church
+
+
+@register.simple_tag
+def return_user_name(user_id):
+    try:
+        user = User.objects.get(id=user_id).complete_name
+    except User.DoesNotExist:
+        user = 'Não Encontrado'
+    return user

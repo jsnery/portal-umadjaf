@@ -1,0 +1,107 @@
+/* Seção de Carrosel */
+
+.carousel-item {
+    height: 0;
+    padding-bottom: 45%; /* para uma proporção de 16:9 */
+    position: relative;
+}
+
+@media (max-width: 600px) {
+    .carousel-item {
+        padding-bottom: 56%; /* para uma proporção de 16:9 */
+    }
+}
+
+.carousel-item img {
+    position: absolute;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    height: 100%;
+}
+
+/* Seção dos Artigos */
+
+#section-two {
+    position: relative;
+    background-color: #01040e;
+    padding: 25px 0;
+}
+
+#section-two h1 {
+    color: white;
+    position: relative;
+    margin-right: clamp(10px, 5vw, 80px);
+    z-index: 2;
+}
+
+.card-img-top {
+    display: block;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 32/9;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.card {
+    margin-top: -30px;
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: transform .2s; /* Animação suave */
+    position: relative; /* Necessário para o z-index funcionar */
+    z-index: 1; /* Coloca o elemento na frente dos outros elementos */
+}
+
+.cardz:hover {
+    transform: scale(1.1); /* (110% zoom - Note que 1.1 equivale a 110%) */
+    z-index: 2; /* Coloca o elemento ainda mais na frente quando o mouse passa sobre ele */
+}
+
+.articles-container {
+    margin: 15px 50px 0 50px;
+}
+
+@media (max-width: 600px) {
+    .articles-container {
+        margin: 15px 5px 0 5px;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-custom {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .form-custom .form-control, .form-custom label {
+        margin-bottom: 10px; /* Adiciona um espaço entre os elementos */
+    }
+    .form-custom .form-control {
+        width: auto; /* Garante que os inputs ocupem toda a largura disponível */
+    }
+}
+
+.pub-title .card-title {
+    font-size: 1.3em; /* Tamanho do título */
+    text-align: center; /* Justifica o texto */
+}
+
+.pub-title .card-text {
+    text-align: center; /* Justifica o texto */
+}
+
+@media (max-width: 768px) {
+
+    .pub-title .card-title {
+        font-size: 1.1em; /* Tamanho do título */
+        text-align: center; /* Garante que o texto continue justificado em telas menores */
+    }
+
+    .pub-title .card-text {
+        font-size: 1em; /* Tamanho do texto */
+        text-align: center; /* Garante que o texto continue justificado em telas menores */
+    }
+}

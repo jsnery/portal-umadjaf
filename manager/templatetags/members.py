@@ -1,5 +1,5 @@
 from django import template  # type: ignore
-from profiles.models import UserRoles, IsUmadjaf, User
+from users.models import UserRoles, IsUmadjaf, User
 from manager.models import Congregations
 
 register = template.Library()  # Serve para registrar as funções abaixo

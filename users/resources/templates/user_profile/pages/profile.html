@@ -1,0 +1,131 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'user_profile/css/profile.css' %}">
+        <link rel="stylesheet" href="{% static 'user_profile/css/nav.css' %}">
+        <title>{{ user.complete_name }}</title>
+    {% endblock head %}
+
+<body>
+    {% include 'global/partials/navbar.html' %}
+    <section>
+        <div class="container-fluid">
+            <!-- Informações do perfil -->
+            <div id="profile-container" class="row">
+                <div class="col-12 profile-bio">
+                    <div class="card card-profile-bio">
+                        <div class="d-flex">
+                            <img src="{{ profile.profile_picture.url }}" class="profile-picture" alt="Profile Picture">
+                            <div class="card-body card-body-profile">
+                                <h5 class="card-title user-name">{{ user.complete_name }}</h5>
+                                <div class="card-text text-bio">{{ profile.bio|linebreaks }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Botão de configuração -->
+        </div>
+
+        <nav class="profile-menu">
+            <div class="d-flex justify-content-between w-100">
+                <!-- Grupo Esquerdo (ADM) -->
+                <div>
+                    {% if is_admin %}
+                        <a class="nav-link btn-adm text-grey" href="{% url 'manager:admin' %}">
+                            <i class="fas fa-user-shield"></i>
+                        </a>
+                    {% endif %}
+                    {% if is_coordinator %}
+                        <a class="nav-link btn-adm text-grey" href="">
+                            <span class="material-icons">
+                                date_range
+                            </span>
+                        </a>
+                    {% endif %}
+                </div>
+        
+                <!-- Grupo Central (Menu) -->
+                <div class="nav nav-tabs justify-content-center flex-nowrap" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-posts-tab" data-toggle="tab" href="#pub" role="tab" aria-controls="nav-posts" aria-selected="true">Devocionais</a>
+                    <a class="nav-item nav-link text-grey" id="nav-followers-tab" data-toggle="tab" href="#gallery" role="tab" aria-controls="nav-followers" aria-selected="false">Galeria</a>
+                    {% if is_admin or is_coordinator %}
+                        <a class="nav-item nav-link text-grey" id="nav-following-tab" data-toggle="tab" href="#group-member" role="tab" aria-controls="nav-following" aria-selected="false">Membros</a>
+                    {% endif %}
+                </div>
+        
+                <!-- Grupo Direito (Configurações) -->
+                <div>
+                    <a class="nav-item nav-link btn-config text-grey" id="nav-following-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="nav-following" aria-selected="false">
+                        <i class="fas fa-user-cog"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        
+    </section>
+
+    <section>
+        <div class="wrapper">
+            <div class="content">
+                <div class="tab-content" id="nav-tabContent">
+    
+                    <!-- Publicações -->
+                    {% include 'user_profile/pages/partials/posts.html' %}
+                
+                    <!-- Galeria -->
+                    {% include 'user_profile/pages/partials/gallery.html' %}
+
+                    <!-- Mocidade -->
+                    {% include 'user_profile/pages/partials/mocidade.html' %}
+    
+                    <!-- Pedidos -->
+                    {% include 'user_profile/pages/partials/orders.html' %}
+                
+                    <!-- Configurações -->
+                    {% include 'user_profile/pages/partials/settings.html' %}
+    
+                </div>
+    
+            </div>
+        </div>
+    </section>
+
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'user_profile/js/profile.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            var url = 'profiles:settings';
+
+            $.get(url, function(data) {
+                // Substitua 'your-element-id' pelo ID do elemento HTML no qual você deseja inserir os dados
+                $('#settings-x').html(data);
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {       
+            // Evento de clique para o nav-posts-tab
+            $('#nav-posts-tab').click(function() {
+                // Mostra o botão flutuante
+                $('#float-btn').show();
+            });
+        
+            // Opcional: esconde o botão flutuante quando outros tabs são clicados
+            $('.nav-item.nav-link').not('#nav-posts-tab').click(function() {
+                $('#float-btn').hide();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% load static %}
+<style>
+    label {
+        color: #fff;
+    }
+</style>
+<br>
+<form id="profile_form" method="POST" enctype="multipart/form-data" action="{% url 'users:settings' %}">
+    {% csrf_token %}
+    <div id="profile_picture_container">
+        <img id="form_profile_picture_preview" src="{{ user.userprofiles.profile_picture.url }}" alt="Profile Picture" style="border-radius: 50%; width: 140px; height: 140px; object-fit: cover;">
+        {{ user_picture_form.as_p }}  
+    </div>
+    {{ user_form.as_p }}
+    {{ user_password_form.as_p }}
+    {{ user_profile_form.as_p }}
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </div>
+    <br>
+</form>
+
+<script>
+    document.getElementById("form_profile_picture").onchange = function (event) {
+        var reader = new FileReader();
+        reader.onload = function(){
+            var output = document.getElementById('form_profile_picture_preview');
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    };
+</script>
+<script>
+    $(document).ready(function() {
+        $('#profile_form').on('submit', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: formData,
+                dataType: 'json',
+                processData: false,  // Necessário para enviar dados de arquivo
+                contentType: false,  // Necessário para enviar dados de arquivo
+                success: function(data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        // Houve um erro ao enviar o formulário
+                        // Exiba um pop-up de erro aqui
+                        alert(data.error);
+                    }
+                }
+            });
+        });
+    });
+</script>

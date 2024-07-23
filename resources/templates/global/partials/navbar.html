@@ -6,8 +6,14 @@
             <img src="{% static 'ico.png' %}" alt="Logo" width="30" height="30" class="d-inline-block align-top">
         </a>
         <div class="" id="navbarNav">
-            <a class="nav-link" href="{% url "store"%}">
+            {% comment %} <a class="nav-link" href="{% url "store"%}">
                 <i class="fa fa-store"></i><!-- Adiciona o ícone de notícias -->
+            </a> {% endcomment %}
+            <a class="nav-link" href="{% url 'events:eventos' %}">
+                <i class="fas fa-calendar"></i><!-- Adiciona o ícone de notícias -->
+            </a>
+            <a class="nav-link" href="{% url 'articles:all_articles' %}">
+                <i class="fas fa-book-open"></i><!-- Adiciona o ícone de notícias -->
             </a>
             <div class="dropdown">
                 <a class="nav-link" href="#">
@@ -15,11 +21,11 @@
                 </a>
                 <div class="dropdown-content">
                     {% if not is_authenticated %}
-                    <a href="{% url "profiles:login" %}">Entrar</a>
-                    <a href="{% url "profiles:register" %}">Cadastrar</a>
+                    <a href="{% url "users:login" %}">Entrar</a>
+                    <a href="{% url "users:register" %}">Cadastrar</a>
                     {% else %}
-                    <a href="{% url "profiles:profile" %}">Perfil</a>
-                    <a href="{% url "profiles:logout" %}">Sair</a>
+                    <a href="{% url "users:profile" %}">Perfil</a>
+                    <a href="{% url "users:logout" %}">Sair</a>
                     {% endif %}
                 </div>
             </div>
