@@ -1,0 +1,100 @@
+#calendar {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+.event {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+.event-title {
+    font-weight: bold;
+    color: #333;
+}
+.event-detail {
+    margin-top: 5px;
+    color: #666;
+}
+
+.event-link {
+    text-decoration: none; /* Remove o sublinhado dos links */
+    color: inherit; /* Mantém a cor do texto igual à do conteúdo envolvente */
+}
+
+.event-link:hover .event {
+    background-color: #e9ecef; /* Muda a cor de fundo ao passar o mouse */
+}
+
+#eventBanner {
+    padding: 80px 0;
+    position: relative;
+    background-color: #d4d4d4;
+    background-size: cover;
+    background-position: left center;
+    height: 35vh;
+}
+
+#eventBanner_2 {
+    padding: 80px 0;
+    position: fixed;
+    top: 50px; /* Ajuste este valor conforme a altura da sua navbar */
+    width: 100%;
+    z-index: 100; /* Garante que o banner fique acima do conteúdo rolável */
+    background-color: #d4d4d4;
+    background-size: cover;
+    background-position: left center;
+    height: 35vh;
+}
+
+@media (max-width: 768px) {
+    #eventBanner_2 {
+        height: 20vh;
+        padding: 60px 0;
+    }
+}
+
+#eventLogo {
+    height: 80%;
+    object-fit: cover;
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+#calendar {
+    margin-top: 36vh; /* Ajuste este valor para a altura do eventBanner mais a navbar */
+    max-height: calc(100vh - 250px); /* Altura da viewport menos a altura do banner e navbar */
+    overflow-y: auto;
+}
+
+.floating-btn {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    bottom: 40px;
+    right: 40px;
+    background-color: #007bff; /* Cor do Bootstrap para btn-primary */
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 30px;
+    z-index: 1000;
+    cursor: pointer;
+    /* box-shadow: 2px 2px 3px #999; Removido para eliminar sombreamento */
+    text-decoration: none; /* Evita texto sublinhado */
+}
+
+/* Estilo para o ícone ou texto dentro do botão, se necessário */
+.floating-btn i {
+    vertical-align: middle;
+}
+
+/* Garante que o botão não fique sublinhado ao passar o mouse ou clicar */
+.floating-btn:hover, .floating-btn:active, .floating-btn:focus {
+    text-decoration: none;
+    color: #fff; /* Mantém a cor do texto ao interagir */
+    outline: none; /* Remove o contorno que pode aparecer ao clicar */
+}

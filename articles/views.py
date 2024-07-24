@@ -2,7 +2,7 @@ from django.shortcuts import render
 import requests
 from django.contrib import messages
 from .models import Articles
-from users.models import User, IsUmadjaf
+from users.models import User, IsUmadjaf, UserRoles, Roles
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Q
@@ -15,17 +15,25 @@ today = timezone.now()
 # Postar artigos
 def publish_articles(request):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
 
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+        is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+        if IsUmadjaf.objects.filter(user_id=request.user).exists():
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+
+    else:
+        is_admin = False
+        is_devotion_manager = False
+        is_coordinator = False
+        is_umadjaf = False
 
     if not is_authenticated:
-        return redirect('users:login')
+        return redirect('articles:all_articles')
+
+    if not (is_devotion_manager or is_admin or is_coordinator):
+        return redirect('articles:all_articles')
 
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -57,7 +65,7 @@ def publish_articles(request):
         if image:
             article.banner = image
 
-        if user_is_admin:
+        if is_admin or is_coordinator:
             article.is_official = True
 
         if is_umadjaf:
@@ -79,8 +87,22 @@ def publish_articles(request):
 # Ver artigo
 def article(request, article_id):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    is_admin = request.user.is_staff  # Verifica se o usuário é admin 
-    user_id = request.user.id
+
+    if is_authenticated:
+        user_id = request.user.id
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+        is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+        if IsUmadjaf.objects.filter(user_id=request.user).exists():
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+
+    else:
+        user_id = 0
+        is_admin = False
+        is_devotion_manager = False
+        is_coordinator = False
+        is_umadjaf = False
+
     article = Articles.objects.get(id=article_id)
     try:
         publisher = User.objects.get(id=article.author_id).complete_name
@@ -89,12 +111,6 @@ def article(request, article_id):
 
     publisher_id = article.author_id
     article_reference = article.versicle
-
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
 
     api_url = f'https://bible-api.com/{article_reference}?translation=almeida'
     response = requests.get(api_url)
@@ -114,7 +130,9 @@ def article(request, article_id):
             'verse_text': verse_text,
             'is_authenticated': is_authenticated,
             'user_id': user_id,
-            'is_admin': is_admin
+            'is_admin': is_admin,
+            'is_devotion_manager': is_devotion_manager,
+            'is_coordinator': is_coordinator
         }
     )
 
@@ -122,14 +140,17 @@ def article(request, article_id):
 # Todos os artigos
 def all_articles(request):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    is_admin = request.user.is_staff  # Verifica se o usuário é admin
-    user_id = request.user.id
 
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    if is_authenticated:
+        user_id = request.user.id
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        if IsUmadjaf.objects.filter(user_id=request.user).exists():
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+
+    else:
+        user_id = 0
+        is_admin = False
+        is_umadjaf = False
 
     articles = Articles.objects.all().filter(post_unlock=True).order_by('-id')
 
@@ -147,14 +168,17 @@ def all_articles(request):
 
 def search_articles(request):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    is_admin = request.user.is_staff  # Verifica se o usuário é admin
-    user_id = request.user.id
 
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    if is_authenticated:
+        user_id = request.user.id
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        if IsUmadjaf.objects.filter(user_id=request.user).exists():
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+
+    else:
+        user_id = 0
+        is_admin = False
+        is_umadjaf = False
 
     search = request.GET.get('search')
     print("Pesquisa: ", search)

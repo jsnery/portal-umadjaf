@@ -1,0 +1,284 @@
+{% load static %}
+{% load gallery_adjust %}
+
+<!DOCTYPE html>
+<html>
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <title>Checagem de marcação</title>
+    {% endblock head %}
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        a:hover {
+            color: blue;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .btn {
+            margin-top: 10px;
+        }
+
+        #user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    
+        #user-table th, #congregation-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+    
+        #user-table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #111111;
+            color: white;
+        }
+    
+        #user-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    
+        #user-table tr:hover {
+            background-color: #ddd;
+        }
+
+        .dataTables_wrapper {
+            background-color: #fff; /* Altere para a cor de fundo desejada */
+            margin-bottom: 0px;
+        }
+
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed; /* Fica fixo na tela */
+            z-index: 1; /* Senta no topo */
+            left: 0;
+            top: 50px;
+            width: 100%; /* Largura total */
+            height: 100%; /* Altura total */
+            overflow: auto; /* Habilita a rolagem se necessário */
+            background-color: rgb(0,0,0); /* Cor de fundo */
+            background-color: rgba(0,0,0,0.4); /* Cor de fundo com opacidade */
+            padding-top: 60px; /* Espaçamento no topo */
+        }
+        
+        /* Modal Content */
+        .modal-header {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: none; /* Remove bordas */
+        }
+
+        .modal-button-top-right {
+            border-radius: 50%; /* Borda arredondada no canto inferior esquerdo */
+            height: 40px; /* Altura do botão */
+            width: 40px; /* Largura do botão */
+        }
+
+        .modal-card {
+            background-color: #fefefe;
+            margin: 5% auto; /* Centraliza o modal */
+            padding: 0px;
+            width: 80%; /* Largura do modal */
+            max-width: 600px; /* Largura máxima do modal */
+            position: relative; /* Necessário para o botão no canto superior direito */
+        }
+
+        .modal-content {
+            margin: auto;
+            padding: 0px;
+            width: 100%; /* Largura do conteúdo do modal */
+            max-width: 600px; /* Máxima largura do conteúdo para não ficar muito grande em telas grandes */
+        }
+
+    </style>
+<body>
+    <!-- Barra de Navegação -->
+    {% include 'global/partials/navbar.html' %}
+
+
+    <div class="articles-container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="text-align: center; flex-grow: 1; margin-bottom: 23px;">Analise de marcação</h1>
+        </div>
+    </div>
+
+    <table id="user-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Evento</th>
+                <th>Usuário</th>
+                <th>Verficado <i class="fas fa-check-circle" style="color: #007bff;"></i></th>
+                <th>Menu</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in galleries_marked %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{% get_event_name c.gallery_marked.gallery.event_id %}</td>
+                <td>{% get_user_complete_name c.user_id %}</td>
+                {% if c.marked_confirm %}
+                    <td>Marcado <i class="fas fa-check-circle" style="color: #007bff;"></i></td>
+                {% else %}
+                    <td>Aguardando...</td>
+                {% endif %}
+                <td>
+                    <a onclick="selectPhoto(this, '{{ c.id }}')"><i class="fas fa-eye"></i></a>
+                    <div id="photoModal-{{ c.id }}" class="modal">
+                        <div class="modal-card">
+                            <img class="modal-content" id="selected-photo" src="{{ c.gallery_marked.gallery.image.url }}" >
+                            <!-- Contêiner para o título e o botão -->
+                            {% if is_umadjaf %}
+                                {% get_gallery_marked_confirm user_id c.id as get_confirm %}
+                                {% with gallery_id=c.id %}
+                                {% if get_confirm == 'checked' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-check"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+    
+                                {% elif get_confirm == 'waiting' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-dash"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% else %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:mark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{% url 'gallery:check_mark_gallery' c.gallery_marked.gallery.id c.user_id %}"><i class="fas fa-check-circle" style="color: #007bff;"></i></a>
+                    <a href="{% url 'gallery:unmark_gallery' c.gallery_marked.gallery.id %}"><i class="fa fa-times-circle	" style="color: #ff0000;"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+
+    <!-- Seção de Rodapé -->
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.edit-link').click(function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var userId = url.split('/').pop();
+                $.get(url, function(data) {
+                    $('#modal-body-' + userId + ' #edituser-' + userId).html(data);
+                    $('#editModal-' + userId).modal('show');
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready( function () {
+            $('#user-table').DataTable({
+                paging: true,
+                ordering: true,
+                info: true,
+                pageLength: 20,  // Define o número inicial de itens por página
+                lengthMenu: [[20, 40, 60, 100], [20, 40, 60, 100]]  // Define as opções de itens por página
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.selectPhoto = function(eventElement, galleryId) {
+                var modalId = "photoModal-" + galleryId; // Constrói o ID do modal com base no ID da galeria
+                var modal = document.getElementById(modalId);
+                var modalImg = document.getElementById("selected-photo" + galleryId);
+                var eventNameElement = document.querySelector(".event_name"); // Seleciona o elemento do nome do evento
+                var photoUrl = eventElement.getAttribute('data-photo-url');
+                var eventTitle = eventElement.getAttribute('data-event-title');
+        
+                console.log("Event Title:", eventTitle); // Debugging: Verifica o valor de eventTitle
+        
+                modal.style.display = "block";
+                modalImg.src = photoUrl;
+                eventNameElement.innerHTML = eventTitle; // Atualiza o nome do evento
+        
+                var span = document.getElementsByClassName("close")[0];
+        
+                span.onclick = function() { 
+                    modal.style.display = "none";
+                }
+            }
+        });
+        
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

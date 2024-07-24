@@ -1,7 +1,7 @@
 from django import forms  # type: ignore
 from django.contrib.auth.hashers import check_password, make_password
 from django.core.validators import FileExtensionValidator
-from users.models import User, UserProfiles
+from users.models import User, UserProfiles, IsUmadjaf
 from manager.models import Congregations
 
 
@@ -97,12 +97,12 @@ class ProfileUserBioForm(forms.ModelForm):
         required=False,
         max_length=75,  # Limita o campo bio a 75 caracteres
         widget=forms.Textarea(attrs={'autocomplete': 'off'}))
-    show_gallery = forms.BooleanField(
-        label='Mostrar galeria', required=False)
+    # show_gallery = forms.BooleanField(
+    #     label='Mostrar galeria', required=False)
 
     class Meta:
         model = UserProfiles
-        fields = ['bio', 'show_gallery']  # Adicione aqui os campos que você deseja editar
+        fields = ['bio']  # Adicione aqui os campos que você deseja editar
 
     def __init__(self, *args, **kwargs):
         super(ProfileUserBioForm, self).__init__(*args, **kwargs)

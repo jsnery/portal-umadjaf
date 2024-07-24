@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'manager',
     # Adicionando a aplicação events ao projeto
     'events',
+    # Adicionando a aplicação gallery ao projeto
+    'gallery',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'articles/resources/templates'),
             os.path.join(BASE_DIR, 'manager/resources/templates'),
             os.path.join(BASE_DIR, 'events/resources/templates'),
+            os.path.join(BASE_DIR, 'gallery/resources/templates'),
             BASE_DIR / 'resources/templates'
         ],
         'APP_DIRS': True,
@@ -151,6 +154,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'users/resources/static',
     BASE_DIR / 'articles/resources/static',
     BASE_DIR / 'events/resources/static',
+    BASE_DIR / 'gallery/resources/static',
 ]
 STATIC_ROOT = BASE_DIR / 'static'
 

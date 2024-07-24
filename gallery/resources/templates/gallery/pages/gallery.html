@@ -1,0 +1,298 @@
+{% load static %}
+{% load gallery_adjust %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    {% include "global/partials/head.html" %}
+    <link rel="stylesheet" href="{% static 'events/css/events.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Galeria de eventos</title>
+    <style>
+        .card {
+            margin-top: -30px;
+            margin-bottom: 20px;
+            border: none;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: transform .2s; /* Animação suave */
+            position: relative; /* Necessário para o z-index funcionar */
+            z-index: 1; /* Coloca o elemento na frente dos outros elementos */
+        }
+        
+        .card:hover {
+            transform: scale(1.1); /* (110% zoom - Note que 1.1 equivale a 110%) */
+            z-index: 2; /* Coloca o elemento ainda mais na frente quando o mouse passa sobre ele */
+        }
+        .gallery-container .gallery-item {
+            display: block;
+            width: 100%;
+            height: auto; /* Altura ajustável para manter proporção */
+            aspect-ratio: 1 / 1; /* Mantém a proporção 1:1 */
+            background-size: cover;
+            background-position: center;
+        }
+
+        #section-two {
+            position: relative;
+            background-color: #01040e;
+            padding: 10px 0;
+        }
+
+        .gallery-item {
+            margin: 0px 0px;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: auto; /* Altura ajustável para manter proporção */
+            aspect-ratio: 1 / 1; /* Mantém a proporção 1:1 */
+            object-fit: cover; /* Ajusta a imagem sem distorcer */
+        }
+
+        .gallery-row {
+            justify-content: center; /* Centraliza os itens se não preencherem toda a linha */
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 10px; /* Corrige a margem negativa dos itens  */
+        }
+
+        .gallery-item {
+            width: 300px; /* Tamanho fixo para telas maiores */
+            margin: 0px 10px; /* Ajuste a margem conforme necessário */
+            flex: 0 0 auto; /* Impede que o item cresça além do necessário */
+        }
+
+        @media (max-width: 768px) {
+            .gallery-item {
+                flex: 0 0 50%; /* Ajuste dinâmico para telas menores */
+                max-width: 43%; /* Permite que dois itens fiquem lado a lado em telas pequenas */
+            }
+        }
+        
+        .search-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar input {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .modal {
+            display: none; /* Escondido por padrão */
+            position: fixed; /* Fica fixo na tela */
+            z-index: 1; /* Senta no topo */
+            left: 0;
+            top: 50px;
+            width: 100%; /* Largura total */
+            height: 100%; /* Altura total */
+            overflow: auto; /* Habilita a rolagem se necessário */
+            background-color: rgb(0,0,0); /* Cor de fundo */
+            background-color: rgba(0,0,0,0.4); /* Cor de fundo com opacidade */
+            padding-top: 60px; /* Espaçamento no topo */
+        }
+        
+        /* Modal Content */
+        .modal-header {
+            position: absolute;
+            top: 0;
+            right: 0;
+            border: none; /* Remove bordas */
+        }
+
+        .modal-button-top-right {
+            border-radius: 50%; /* Borda arredondada no canto inferior esquerdo */
+            height: 40px; /* Altura do botão */
+            width: 40px; /* Largura do botão */
+        }
+
+        .modal-card {
+            background-color: #fefefe;
+            margin: 5% auto; /* Centraliza o modal */
+            padding: 0px;
+            width: 80%; /* Largura do modal */
+            max-width: 600px; /* Largura máxima do modal */
+            position: relative; /* Necessário para o botão no canto superior direito */
+        }
+
+        .modal-content {
+            margin: auto;
+            padding: 0px;
+            width: 100%; /* Largura do conteúdo do modal */
+            max-width: 600px; /* Máxima largura do conteúdo para não ficar muito grande em telas grandes */
+        }
+
+        .floating-btn {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            bottom: 40px;
+            right: 40px;
+            background-color: #007bff; /* Cor do Bootstrap para btn-primary */
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            z-index: 1000;
+            cursor: pointer;
+            /* box-shadow: 2px 2px 3px #999; Removido para eliminar sombreamento */
+            text-decoration: none; /* Evita texto sublinhado */
+        }
+        
+        /* Estilo para o ícone ou texto dentro do botão, se necessário */
+        .floating-btn i {
+            vertical-align: middle;
+        }
+        
+        /* Garante que o botão não fique sublinhado ao passar o mouse ou clicar */
+        .floating-btn:hover, .floating-btn:active, .floating-btn:focus {
+            text-decoration: none;
+            color: #fff; /* Mantém a cor do texto ao interagir */
+            outline: none; /* Remove o contorno que pode aparecer ao clicar */
+        }
+
+        .floating-btn2 {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            bottom: 40px;
+            right: 100px;
+            background-color: #007bff; /* Cor do Bootstrap para btn-primary */
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 25px;
+            z-index: 1000;
+            cursor: pointer;
+            /* box-shadow: 2px 2px 3px #999; Removido para eliminar sombreamento */
+            text-decoration: none; /* Evita texto sublinhado */
+        }
+        
+        /* Estilo para o ícone ou texto dentro do botão, se necessário */
+        .floating-btn2 i {
+            vertical-align: middle;
+        }
+        
+        /* Garante que o botão não fique sublinhado ao passar o mouse ou clicar */
+        .floating-btn2:hover, .floating-btn:active, .floating-btn:focus {
+            text-decoration: none;
+            color: #fff; /* Mantém a cor do texto ao interagir */
+            outline: none; /* Remove o contorno que pode aparecer ao clicar */
+        }
+        
+    </style>
+</head>
+<body>
+    {% include 'global/partials/navbar.html' %}
+    
+    <form action="{% url 'gallery:search_gallery' %}" method="get" class="mb-3">
+        <div class="input-group">
+            <select class="form-select form-control" id="eventSelect" name="eventSelect">
+                <option value="">Selecione um evento</option>
+                {% for event in events %}
+                    <option value="{{ event.id }}">{{ event.title }}</option>
+                {% endfor %}
+                    <option value="0">Não listados</option>
+            </select>
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <!-- Barra de filtragem adicional -->
+
+    <section id="section-two">
+        <div class="row gallery-row">
+            {% for gallery in galleries %}
+                <div class="gallery-item">
+                    <img src="{{ gallery.image.url }}" alt="{% get_event_name gallery.event_id %}" onclick="selectPhoto(this, '{{ gallery.id }}')" data-photo-url="{{ gallery.image.url }}" data-event-title="{% get_event_name gallery.event_id %}" title="{% get_event_name gallery.event_id %}">
+                </div>
+                <div id="photoModal-{{ gallery.id }}" class="modal">
+                    <div class="modal-card">
+                        <img class="modal-content" id="selected-photo" src="{{ gallery.image.url }}" >
+                        <!-- Contêiner para o título e o botão -->
+                        {% if is_umadjaf %}
+                            {% get_gallery_marked_confirm user_id gallery.id as get_confirm %}
+                            {% with gallery_id=gallery.id %}
+                            {% if get_confirm == 'checked' %}
+                                    <div class="modal-header" style="">
+                                        <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                            <button type="button" class="btn btn-primary modal-button-top-right">
+                                                <i class="bi bi-bookmark-check"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                            </button>
+                                        </a>
+                                    </div>
+
+                            {% elif get_confirm == 'waiting' %}
+                                    <div class="modal-header" style="">
+                                        <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                            <button type="button" class="btn btn-primary modal-button-top-right">
+                                                <i class="bi bi-bookmark-dash"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                            </button>
+                                        </a>
+                                    </div>
+                            {% else %}
+                                    <div class="modal-header" style="">
+                                        <a href="{% url 'gallery:mark_gallery' gallery_id %}">
+                                            <button type="button" class="btn btn-primary modal-button-top-right">
+                                                <i class="bi bi-bookmark"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                            </button>
+                                        </a>
+                                    </div>
+                            {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center" style="color: white; font-weight: bold; font-size: 20px;">
+                    Nenhuma foto encontrada.
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if is_admin or is_media_manager %}
+    <a id="float-btn2" href="{% url 'gallery:gallery_marked_user_manager' %}" class="floating-btn2"><i class="bi bi-bookmark"></i></a>
+    <a id="float-btn" href="{% url 'gallery:add_to_gallery' %}" class="floating-btn">+</a>
+    {% endif %}
+
+    {% include 'global/partials/footer.html' %}
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.selectPhoto = function(eventElement, galleryId) {
+                var modalId = "photoModal-" + galleryId; // Constrói o ID do modal com base no ID da galeria
+                var modal = document.getElementById(modalId);
+                var modalImg = document.getElementById("selected-photo" + galleryId);
+                var eventNameElement = document.querySelector(".event_name"); // Seleciona o elemento do nome do evento
+                var photoUrl = eventElement.getAttribute('data-photo-url');
+                var eventTitle = eventElement.getAttribute('data-event-title');
+        
+                console.log("Event Title:", eventTitle); // Debugging: Verifica o valor de eventTitle
+        
+                modal.style.display = "block";
+                modalImg.src = photoUrl;
+                eventNameElement.innerHTML = eventTitle; // Atualiza o nome do evento
+        
+                var span = document.getElementsByClassName("close")[0];
+        
+                span.onclick = function() { 
+                    modal.style.display = "none";
+                }
+            }
+        });
+        
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

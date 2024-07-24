@@ -2,10 +2,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect, render
 from django.http import JsonResponse
-from users.models import IsUmadjaf, Roles, User, UserProfiles, UserRoles
-from .forms import ProfileUsePictureForm, ProfileUserBioForm, ProfileUserForm, ProfileUserPassForm
 from manager.models import Congregations
 from articles.models import Articles
+from gallery.models import GalleryMarkedUser
+from .models import IsUmadjaf, Roles, User, UserProfiles, UserRoles
+from .forms import ProfileUsePictureForm, ProfileUserBioForm, ProfileUserForm, ProfileUserPassForm
 
 from utils.profiles.factory import make_fake_pedidos, make_fake_posts
 
@@ -121,28 +122,26 @@ def login_(request):
 
 # Funções de perfil do usuário logado
 def profile(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    user_is_coordinator = UserRoles.objects.filter(user_id=request.user.id, role_id=Roles.objects.get(role='Coordinator')).exists()
-
-    # Bacos de dados
-    posts = Articles.objects.filter(
-        author_id=request.user.id
-        ).order_by('-id')
-
-    group_members = User.objects.filter(
-        church=request.user.church,
-        isumadjaf__checked=True
-        ).exclude(id=request.user.id)
-
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
 
     if is_authenticated:
+        user_id = request.user.id
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+        if IsUmadjaf.objects.filter(user_id=request.user).exists():
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+
+        posts = Articles.objects.filter(
+            author_id=request.user.id
+            ).order_by('-id')
+
+        group_members = User.objects.filter(
+            church=request.user.church,
+            isumadjaf__checked=True
+            ).exclude(id=request.user.id)
+
+        gallery = GalleryMarkedUser.objects.filter(user_id=user_id)
+
         user = UserProfiles.objects.get(user_id=request.user.id)
 
         return render(
@@ -150,27 +149,22 @@ def profile(request):
             'user_profile/pages/profile.html',
             context={
                 'is_authenticated': request.user.is_authenticated,
-                'is_admin': user_is_admin,
+                'is_admin': is_admin,
                 'is_umadjaf': is_umadjaf,
-                'is_coordinator': user_is_coordinator,
+                'is_coordinator': is_coordinator,
                 'profile': user,  # Use a variável user diretamente
                 'user': request.user,  # Use request.user diretamente
                 'posts': posts,
                 'group_members': group_members,
-                'pedidos': pedidos
+                'pedidos': pedidos,
+                'gallery': gallery,
             }
         )
     else:
-        return redirect('profiles:login')
+        return redirect('users:login')
 
 
 def profile_settings(request):
-    '''
-    Profile settings
-
-    Responsavel por gerar o formulário de configurações do perfil do usuário
-    Ele permite que o usuário altere suas informações pessoais, senha e foto de perfil
-    '''
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
     if not is_authenticated:
         return redirect('users:login')
@@ -226,28 +220,28 @@ def profile_logout(request):
 
 
 # Funções de outro perfil
-def other_profile(request, user_id):
-    '''
-    Other profile
-
-    Responsável por gerar o perfil de outro usuário
-    '''
-    print(user_id)
+def other_profile(request, other_user_id):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    user_is_admin = request.user.is_staff  # Verifica se o usuário é admin
-    user_is_coordinator = UserRoles.objects.filter(user_id=request.user.id, role_id=Roles.objects.get(role='Coordinator')).exists()
 
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id_ = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id_).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id_).checked
+    if is_authenticated:
+        user_id = request.user.id
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        if IsUmadjaf.objects.filter(user_id=other_user_id).exists():
+            print('other_user_id:', other_user_id)
+            is_umadjaf = IsUmadjaf.objects.get(user_id=other_user_id).checked
+
+    else:
+        user_id = 0
+        is_admin = False
+        is_umadjaf = False
+
+    gallery = GalleryMarkedUser.objects.filter(user_id=other_user_id)
 
     try:  # Tenta pegar o perfil do usuário
-        profile = UserProfiles.objects.get(user_id=user_id)
-        user = User.objects.get(id=user_id)
-        posts = Articles.objects.filter(author_id=user_id).order_by('-id')
+        profile = UserProfiles.objects.get(user_id=other_user_id)
+        user = User.objects.get(id=other_user_id)
+        posts = Articles.objects.filter(author_id=other_user_id).order_by('-id')
+        print(posts)
     except Exception:  # Se não conseguir, retorna um erro
         return redirect('users:profile_does_not_exists')
 
@@ -256,30 +250,23 @@ def other_profile(request, user_id):
         'other_profile/pages/other_profile.html',
         context={
             'is_authenticated': is_authenticated,
-            'is_admin': user_is_admin,
-            'is_coordinator': user_is_coordinator,
+            'is_admin': is_admin,
             'is_umadjaf': is_umadjaf,
             'profile': profile,
             'user': user,
             'posts': posts,
+            'gallery': gallery,
         }
     )
 
 
 def profile_does_not_exists(request):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id_ = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id_).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id_).checked
 
     return render(
         request,
-        'other_profile/pages/partials/profile_does_not_exists.html',
+        'other_profile/pages/profile_does_not_exists.html',
         context={
-            'is_authenticated': is_authenticated,
-            'is_umadjaf': is_umadjaf
+            'is_authenticated': is_authenticated
         }
     )

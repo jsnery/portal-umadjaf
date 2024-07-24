@@ -5,9 +5,9 @@
         <div class="row justify-content-center mx-auto" style="width: auto;">
             <div class="profile-gallery">
                 <div class="row row-profile-gallery">
-                    {% for post in posts %}
+                    {% for g in gallery %}
                         <div class="card gallery-profile">
-                            <img src="/media/{{ post.banner }}" class="card-img-top gallery-image" alt="{{ post.title }}">
+                            <img src="{{ g.gallery_marked.gallery.image.url }}" class="card-img-top gallery-image" alt="{{ g.gallery_marked.gallery.event_date }}">
                         </div>
                     {% empty %}
                         <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 20px; height: 50vh;">

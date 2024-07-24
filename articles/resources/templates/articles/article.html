@@ -123,14 +123,14 @@
     </div>
 
     {% if not article.is_official or not article.post_unlock %}
-        {% if is_admin %}
+        {% if is_admin or is_coordinator or is_devotion_manager %}
             <div class="floating-buttons">
                 <button id="deleteButton" data-article-id="{{ article.id }}">Apagar</button>
                 <button id="verifyButton" data-article-id="{{ article.id }}">Verificar</button>
             </div>
         {% endif %}
     {% else %}
-        {% if is_admin %}
+        {% if is_admin or is_coordinator or is_devotion_manager %}
             <div class="floating-buttons">
                 <button id="unverifyButton" data-article-id="{{ article.id }}">Retirar Verificação</button>
             </div>

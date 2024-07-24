@@ -31,8 +31,9 @@
             {% endfor %}
         </div>
 
+        {% if is_admin or is_coordinator or is_media_manager %}
         <a id="float-btn" href="{% url 'events:criar_evento' %}" class="floating-btn">+</a>
-
+        {% endif %}
         <!-- Seção de Rodapé -->
         {% include 'global/partials/footer.html' %}
 

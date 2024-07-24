@@ -6,45 +6,46 @@ from .models import Event
 
 
 def eventos(request):
+    is_authenticated = request.user.is_authenticated
     events = Event.objects.filter(date__gte=timezone.now())
-
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+        is_corrdinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+    else:
+        is_admin = False
+        is_media_manager = False
+        is_corrdinator = False
 
     return render(
         request,
         'events/pages/events.html',
         context={
             'events': events,
-            'is_authenticated': request.user.is_authenticated,
-            'is_umadjaf': is_umadjaf,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
+            'is_authenticated': is_authenticated,
+            'is_cordinator': is_corrdinator
         }
     )
 
 
 def criar_evento(request):
     is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    is_admin = request.user.is_staff # Verifica se o usuário é admin
-    is_cordinator = UserRoles.objects.filter(user_id=request.user.id, role_id=Roles.objects.get(role='Coordinator')).exists()
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+        is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+    else:
+        is_admin = False
+        is_media_manager = False
+        is_coordinator = False
 
     if not is_authenticated:
         return redirect('events:eventos')
-    elif not is_cordinator:
-        if is_admin:
-            pass
-        else:
-            return redirect('events:eventos')
 
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    if not (is_media_manager or is_admin or is_coordinator):
+        return redirect('events:eventos')
 
     congregations = Congregations.objects.all()
 
@@ -56,10 +57,6 @@ def criar_evento(request):
         congregation_id = request.POST.get('congregation_id')
         logo = request.FILES.get('logo')
         background = request.FILES.get('background')
-
-        # if not title or not content:
-        #     messages.error(request, 'Título e conteúdo são obrigatórios.')
-        #     return render(request, 'articles/create_articles.html')
 
         event = Event(
             title=title,
@@ -74,10 +71,10 @@ def criar_evento(request):
             event.logo = logo
             event.background = background
 
-        if is_cordinator:
+        if is_coordinator:
             event.is_general = False
 
-        if is_admin:
+        if is_media_manager or is_admin:
             event.is_general = True
 
         event.save()
@@ -89,6 +86,8 @@ def criar_evento(request):
         context={
             'congregations': congregations,
             'is_authenticated': is_authenticated,
-            'is_umadjaf': is_umadjaf,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
+            'is_coordinator': is_coordinator
         }
     )

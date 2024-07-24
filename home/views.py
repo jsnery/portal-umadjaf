@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from events.models import Event
 from articles.models import Articles
 from .models import Carrousel
-from users.models import IsUmadjaf
+from users.models import User, UserProfiles, UserRoles, Roles, IsUmadjaf
 from django.utils import timezone
 
 
@@ -47,41 +47,26 @@ message = 'Welcome to the home page!'
 
 
 def home(request):
-    '''
-    O render() é uma função que renderiza o template 
-    especificado e retorna o objeto HttpResponse com
-    o conteúdo do template.
-
-    O primeiro argumento é o objeto request, que é
-    obrigatório. O segundo argumento é o caminho do template
-    que será renderizado. O terceiro argumento é um
-    dicionário opcional que contém variáveis que serão
-    passadas para o template.
-    '''
-    
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-
+    is_authenticated = request.user.is_authenticated
     evento = Event.objects.filter(is_general=True, date__gte=timezone.now()).order_by('date').first()
     articles = Articles.objects.filter(is_official=True).filter(post_unlock=True).order_by('-id')[:3]
     carousel = Carrousel.objects.filter(active=True).order_by('-id')
 
-    is_umadjaf = False
-    if request.user.is_authenticated:
-        user_id = request.user.id
-        member_ok = IsUmadjaf.objects.filter(user_id=user_id).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=user_id).checked
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+
+    else:
+        is_admin = False
+        is_media_manager = False
 
     return render(
         request,
         'home/pages/home.html',
         context={
-            'is_authenticated': request.user.is_authenticated,
-            'is_umadjaf': is_umadjaf,
-            'is_admin': user_is_admin,
-            'page': page,
-            'title': title,
-            'message': message,
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
             'carousel': carousel,
             'article': articles,
             'next_event': evento
@@ -90,8 +75,20 @@ def home(request):
 
 
 def carrousel(request):
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
+    is_authenticated = request.user.is_authenticated
     carrousel_itens = Carrousel.objects.all().order_by('-id')
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+    else:
+        is_admin = False
+        is_media_manager = False
+
+    if not is_authenticated:
+        return redirect('home')
+
+    if not (is_media_manager or is_admin):
+        return redirect('home')
 
     if request.method == 'POST':
         print("Iniciando a atualização dos itens do carrossel...")
@@ -116,33 +113,29 @@ def carrousel(request):
         request,
         'carrousel/pages/carrousels.html',
         context={
-            'is_authenticated': request.user.is_authenticated,
-            'is_admin': user_is_admin,
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
             'carrousel': carrousel_itens,
         }
     )
 
 
 def carrousel_editor(request):
-    '''
-    O render() é uma função que renderiza o template 
-    especificado e retorna o objeto HttpResponse com
-    o conteúdo do template.
-
-    O primeiro argumento é o objeto request, que é
-    obrigatório. O segundo argumento é o caminho do template
-    que será renderizado. O terceiro argumento é um
-    dicionário opcional que contém variáveis que serão
-    passadas para o template.
-    '''
     is_authenticated = request.user.is_authenticated
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
+
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+    else:
+        is_admin = False
+        is_media_manager = False
 
     if not is_authenticated:
-        redirect('home')
+        return redirect('home')
 
-    if not user_is_admin:
-        redirect('home')
+    if not (is_media_manager or is_admin):
+        return redirect('home')
 
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -164,21 +157,28 @@ def carrousel_editor(request):
         request,
         'carrousel/pages/carrousel_editor.html',
         context={
-            'is_authenticated': request.user.is_authenticated,
-            'is_admin': user_is_admin,
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager
         }
     )
 
 
 def carrousel_delete(request, item_id):
     is_authenticated = request.user.is_authenticated
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
+
+    if is_authenticated:
+        is_admin = request.user.is_staff # Verifica se o usuário é admin
+        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+    else:
+        is_admin = False
+        is_media_manager = False
 
     if not is_authenticated:
-        redirect('home')
+        return redirect('home')
 
-    if not user_is_admin:
-        redirect('home')
+    if not (is_media_manager or is_admin):
+        return redirect('home')
 
     carrousel = Carrousel.objects.get(id=item_id)
     carrousel.delete()
