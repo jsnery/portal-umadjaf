@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect, render
-from functools import wraps
+from utils.decorators import authenticated_user
 from django.http import JsonResponse
 from manager.models import Congregations
 from articles.models import Articles
@@ -10,53 +10,38 @@ from .models import IsUmadjaf, Roles, User, UserProfiles, UserRoles
 from .forms import ProfileUsePictureForm, ProfileUserBioForm, ProfileUserForm, ProfileUserPassForm
 from utils.profiles.factory import make_fake_pedidos
 
+# Criação de pedidos falsos
 pedidos = make_fake_pedidos()
-
-
-# decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
-def authenticated_user(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        # Verifica se o usuário está logado
-        is_authenticated = request.user.is_authenticated
-        if is_authenticated:
-            is_admin = request.user.is_staff  # Verifica se o usuário é admin
-            is_media_manager = UserRoles.objects.filter(
-                user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotion_manager = UserRoles.objects.filter(
-                user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
-            is_coordinator = UserRoles.objects.filter(
-                user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            if IsUmadjaf.objects.filter(user_id=request.user).exists():
-                is_umadjaf = IsUmadjaf.objects.get(
-                    user_id=request.user).checked
-        else:
-            is_admin = False
-            is_media_manager = False
-            is_devotion_manager = False
-            is_coordinator = False
-            is_umadjaf = False
-
-        return view_func(request, *args, **kwargs,
-                         is_authenticated=is_authenticated,
-                         is_admin=is_admin,
-                         is_media_manager=is_media_manager,
-                         is_devotion_manager=is_devotion_manager,
-                         is_coordinator=is_coordinator,
-                         is_umadjaf=is_umadjaf
-                         )
-
-    return wrapper
 
 
 # Sistema de cadastro de usuário
 @authenticated_user
 def register(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Sistema de cadastro de usuário
+
+    Responsável por cadastrar um novo usuário no sistema
+    e redirecionar para a página de login.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (render)
+    '''
+
     alert = False
-    congregations = Congregations.objects.all()
 
     if is_authenticated:
         return redirect('users:profile')
+
+    congregations = Congregations.objects.all()
 
     if request.method == 'POST':
         is_umadjaf = request.POST['is_umadjaf'] == 'true'
@@ -124,6 +109,24 @@ def register(request, is_authenticated=False, is_admin=False, is_media_manager=F
 # Sistema de login de usuário
 @authenticated_user
 def login_(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Sistema de login de usuário
+
+    Responsável por logar um usuário no sistema
+    e redirecionar para a página de perfil.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (render)'''
+
     alert = False
 
     if is_authenticated:
@@ -155,6 +158,24 @@ def login_(request, is_authenticated=False, is_admin=False, is_media_manager=Fal
 # Funções de perfil do usuário logado
 @authenticated_user
 def profile(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Perfil do usuário logado
+
+    Responsável por mostrar o perfil do usuário logado
+    e redirecionar para a página de login.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (render)
+    '''
 
     if not is_authenticated:
         return redirect('users:login')
@@ -194,6 +215,23 @@ def profile(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 # Funções de edição de perfil
 @authenticated_user
 def profile_settings(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Edição de perfil
+    
+    Responsável por editar o perfil do usuário logado
+    
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (render)
+    '''
 
     if not is_authenticated:
         return redirect('users:login')
@@ -241,10 +279,17 @@ def profile_settings(request, is_authenticated=False, is_admin=False, is_media_m
 # Função de logout
 def profile_logout(request):
     '''
-    Profile logout
+    Logout do usuário
 
-    Responsável por deslogar o usuário
+    Responsável por deslogar o usuário do sistema
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+
+    Retorno:
+        - HttpResponse (redirect)
     '''
+
     logout(request)
     return redirect('users:login')
 
@@ -252,6 +297,24 @@ def profile_logout(request):
 # Funções de outro perfil
 @authenticated_user
 def other_profile(request, other_user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Perfil de outro usuário
+
+    Responsável por mostrar o perfil de outro usuário
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - other_user_id: O ID do usuário a ser exibido.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (render)
+    '''
 
     if is_authenticated:
         user_id = request.user.id
@@ -285,6 +348,23 @@ def other_profile(request, other_user_id, is_authenticated=False, is_admin=False
 # Função de perfil não encontrado
 @authenticated_user
 def profile_does_not_exists(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Perfil não encontrado
+
+    Responsável por mostrar a página de perfil não encontrado
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (render)
+    '''
 
     return render(
         request,

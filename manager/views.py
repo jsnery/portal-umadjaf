@@ -9,6 +9,25 @@ from .models import Congregations
 # Funções do novo painel de controle
 @authenticated_user
 def adm_panel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Página do painel de controle
+
+    Esta view renderiza a página do painel de controle do site. A página
+    contém links para as páginas de gerenciamento de usuários, cargos,
+    congregações e membros da UMADJAF.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página do painel de controle.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -28,6 +47,25 @@ def adm_panel(request, is_authenticated=False, is_admin=False, is_media_manager=
 # Funções de gerenciamento de usuários
 @authenticated_user
 def users(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Página de gerenciamento de usuários
+
+    Esta view renderiza a página de gerenciamento de usuários do site. A página
+    exibe uma lista com todos os usuários cadastrados no site, bem como os cargos
+    de cada usuário.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de gerenciamento de usuários.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -51,6 +89,25 @@ def users(request, is_authenticated=False, is_admin=False, is_media_manager=Fals
 # Função remover usuário
 @authenticated_user
 def delete_user(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para remover um usuário
+
+    Esta view remove um usuário do banco de dados. A view recebe o ID do usuário
+    a ser removido e o remove do banco de dados.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - user_id: ID do usuário a ser removido.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona o usuário para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -69,6 +126,26 @@ def delete_user(request, user_id, is_authenticated=False, is_admin=False, is_med
 # Função editar usuário
 @authenticated_user
 def user_edit(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para editar um usuário
+
+    Esta view edita um usuário no banco de dados. A view recebe o ID do usuário
+    a ser editado e os dados do usuário são carregados em um formulário para
+    edição.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - user_id: ID do usuário a ser editado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com o formulário de edição de usuário.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -113,6 +190,24 @@ def user_edit(request, user_id, is_authenticated=False, is_admin=False, is_media
 # Função de gerenciamento de cargos
 @authenticated_user
 def users_roles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Página de gerenciamento de cargos
+
+    Esta view renderiza a página de gerenciamento de cargos do site. A página
+    exibe uma lista com todos os cargos cadastrados no site.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de gerenciamento de cargos.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -134,6 +229,25 @@ def users_roles(request, is_authenticated=False, is_admin=False, is_media_manage
 # Função de alteração de cargo
 @authenticated_user
 def role_changer(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para alterar o cargo de um usuário
+
+    Esta view altera o cargo de um usuário no banco de dados. A view recebe o ID
+    do usuário e carrega o cargo do usuário em um formulário para edição.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - user_id: ID do usuário a ter o cargo alterado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com o formulário de edição de cargo.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -163,6 +277,24 @@ def role_changer(request, user_id, is_authenticated=False, is_admin=False, is_me
 # Função de gerenciamento de congregações
 @authenticated_user
 def congregations(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Página de gerenciamento de congregações
+
+    Esta view renderiza a página de gerenciamento de congregações do site. A página
+    exibe uma lista com todas as congregações cadastradas no site.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de gerenciamento de congregações.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -184,6 +316,25 @@ def congregations(request, is_authenticated=False, is_admin=False, is_media_mana
 # Função de adicionar congregação
 @authenticated_user
 def congregation_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para adicionar uma congregação
+
+    Esta view adiciona uma nova congregação ao banco de dados. A view recebe os
+    dados da congregação a ser adicionada e salva a nova congregação no banco de
+    dados.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona o usuário para a página de gerenciamento de congregações.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -205,6 +356,26 @@ def congregation_add(request, is_authenticated=False, is_admin=False, is_media_m
 # Função de editar congregação
 @authenticated_user
 def congregation_edit(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para editar uma congregação
+
+    Esta view edita uma congregação no banco de dados. A view recebe o ID da
+    congregação a ser editada e os dados da congregação são carregados em um
+    formulário para edição.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - congregation_id: ID da congregação a ser editada.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com o formulário de edição de congregação.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -232,6 +403,25 @@ def congregation_edit(request, congregation_id, is_authenticated=False, is_admin
 # Função de deletar congregação
 @authenticated_user
 def congregation_delete(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para deletar uma congregação
+
+    Esta view deleta uma congregação do banco de dados. A view recebe o ID da
+    congregação a ser deletada e a deleta do banco de dados.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - congregation_id: ID da congregação a ser deletada.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona o usuário para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -247,6 +437,24 @@ def congregation_delete(request, congregation_id, is_authenticated=False, is_adm
 # Funções de gerenciamento de Membros
 @authenticated_user
 def members(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Página de gerenciamento de membros
+
+    Esta view renderiza a página de gerenciamento de membros da UMADJAF. A página
+    exibe uma lista com todos os membros da UMADJAF cadastrados no site.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de gerenciamento de membros.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -268,6 +476,25 @@ def members(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 # Função de aprovação de membro
 @authenticated_user
 def member_positive(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para aprovar um membro
+
+    Esta view aprova um membro da UMADJAF. A view recebe o ID do membro a ser
+    aprovado e altera o status do membro para aprovado.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - member_id: ID do membro a ser aprovado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona o usuário para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('login')
@@ -293,6 +520,25 @@ def member_positive(request, member_id, is_authenticated=False, is_admin=False, 
 # Função de reprovação de membro
 @authenticated_user
 def member_negative(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para reprovar um membro
+
+    Esta view reprova um membro da UMADJAF. A view recebe o ID do membro a ser
+    reprovado e altera o status do membro para reprovado.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - member_id: ID do membro a ser reprovado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona o usuário para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('login')

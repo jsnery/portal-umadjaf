@@ -2,12 +2,13 @@ from django.db import models  # type: ignore
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 
+# Upload de fotos de perfil
 def get_upload_to_profiles(instance, filename):
     print(instance)
     return f'users/profile_pictures/{instance.user_id.id}/{instance.user_id.id}.jpg'
 
 
-# Create your models here.
+# Permissões
 class Roles(models.Model):
     '''
     Roles model
@@ -22,6 +23,7 @@ class Roles(models.Model):
         return f'({self.id}) {self.role}'
 
 
+# Usuário
 class User(AbstractBaseUser, PermissionsMixin):
     '''
     O modelo User é uma classe abstrata que implementa a interface de usuário do Django.
@@ -76,6 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.is_active and (self.is_superuser or self.user_permissions.filter(content_type__app_label=app_label).exists())
 
 
+# Permissões do usuário
 class UserRoles(models.Model):
     '''
     UserRoles model
@@ -96,6 +99,7 @@ class UserRoles(models.Model):
         return f'{self.user_id} ({self.role_id})'
 
 
+# Perfil do usuário
 class UserProfiles(models.Model):
     '''
     UserProfiles model
@@ -129,6 +133,7 @@ class UserProfiles(models.Model):
         super(UserProfiles, self).save(*args, **kwargs)
 
 
+# Aprovação de usuários
 class IsUmadjaf(models.Model):
     '''
     IsUmadjaf model
