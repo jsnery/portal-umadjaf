@@ -1,21 +1,48 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from functools import wraps
+from django.http import HttpResponseRedirect
 from django.utils import timezone
-from users.models import IsUmadjaf, UserRoles, Roles
+from users.models import UserRoles, Roles, IsUmadjaf
+from .forms import CalendarForm
 from manager.models import Congregations
 from .models import Event
 
 
-def eventos(request):
-    is_authenticated = request.user.is_authenticated
+# Decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+def authenticated_user(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
+        if is_authenticated:
+            is_admin = request.user.is_staff # Verifica se o usuário é admin
+            is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+            is_devotional_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+            if IsUmadjaf.objects.filter(user_id=request.user).exists():
+                is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+        else:
+            is_admin = False
+            is_media_manager = False
+            is_devotional_manager = False
+            is_coordinator = False
+            is_umadjaf = False
+
+        return view_func(request, *args, **kwargs,
+                         is_authenticated=is_authenticated,
+                         is_admin=is_admin,
+                         is_media_manager=is_media_manager,
+                         is_devotional_manager=is_devotional_manager,
+                         is_coordinator=is_coordinator,
+                         is_umadjaf=is_umadjaf
+                         )
+
+    return wrapper
+
+
+# Eventos do calendário
+@authenticated_user
+def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
     events = Event.objects.filter(date__gte=timezone.now())
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-        is_corrdinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
-        is_corrdinator = False
 
     return render(
         request,
@@ -25,21 +52,14 @@ def eventos(request):
             'is_admin': is_admin,
             'is_media_manager': is_media_manager,
             'is_authenticated': is_authenticated,
-            'is_cordinator': is_corrdinator
+            'is_cordinator': is_coordinator
         }
     )
 
 
-def criar_evento(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-        is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
-        is_coordinator = False
+# Criar evento
+@authenticated_user
+def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('events:eventos')
@@ -91,3 +111,68 @@ def criar_evento(request):
             'is_coordinator': is_coordinator
         }
     )
+
+
+# Gerenciar eventos
+@authenticated_user
+def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    calendar = Event.objects.all()
+
+    return render(
+        request,
+        'events/pages/eventos_manager.html',
+        context={
+            'is_authenticated': is_authenticated,
+            'calendar_all': calendar
+        }
+    )
+
+
+# Editar evento
+@authenticated_user
+def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('events:eventos')
+
+    if not (is_media_manager or is_admin):
+        return redirect('events:eventos')
+
+    calendar = get_object_or_404(Event, pk=calendar_id)
+    event_logo = calendar.logo
+    event_background = calendar.background
+    if request.method == 'POST':
+        calendar_edit_form = CalendarForm(request.POST, request.FILES, instance=calendar)
+        if calendar_edit_form.is_valid():
+            # O objeto 'calendar' será atualizado com os dados do formulário
+            calendar_edit_form.save()
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        calendar_edit_form = CalendarForm(instance=calendar)
+
+    return render(
+        request,
+        'events/pages/partials/eventos_edit.html',
+        context={
+            'calendar_edit_form': calendar_edit_form,
+            'calendar_id': calendar_id,
+            'event_logo': event_logo,
+            'event_background': event_background
+        }
+    )
+
+
+# Deletar evento
+@authenticated_user
+def eventos_delete(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('events:eventos')
+
+    if not (is_media_manager or is_admin):
+        return redirect('events:eventos')
+
+    calendar = get_object_or_404(Event, pk=calendar_id)
+    calendar.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

@@ -1,5 +1,53 @@
 {% load static %}
 
+<style>
+    .modal {
+        display: none; /* Escondido por padrão */
+        position: fixed; /* Fica fixo na tela */
+        z-index: 1; /* Senta no topo */
+        left: 0;
+        top: 50px;
+        width: 100%; /* Largura total */
+        height: 100%; /* Altura total */
+        overflow: auto; /* Habilita a rolagem se necessário */
+        background-color: rgb(0,0,0); /* Cor de fundo */
+        background-color: rgba(0,0,0,0.4); /* Cor de fundo com opacidade */
+        padding-top: 60px; /* Espaçamento no topo */
+    }
+    
+    /* Modal Content */
+    .modal-header {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border: none; /* Remove bordas */
+    }
+
+    .modal-button-top-right {
+        border-radius: 50%; /* Borda arredondada no canto inferior esquerdo */
+        height: 40px; /* Altura do botão */
+        width: 40px; /* Largura do botão */
+    }
+
+    .modal-card {
+        background-color: #fefefe;
+        margin: 5% auto; /* Centraliza o modal */
+        padding: 0px;
+        width: 80%; /* Largura do modal */
+        max-width: 600px; /* Largura máxima do modal */
+        position: relative; /* Necessário para o botão no canto superior direito */
+    }
+
+    .modal-content {
+        margin: auto;
+        padding: 0px;
+        width: 100%; /* Largura do conteúdo do modal */
+        max-width: 600px; /* Máxima largura do conteúdo para não ficar muito grande em telas grandes */
+    }
+
+</style>
+
+
 <div class="tab-pane fade" id="gallery">
     <div id="gallery" class="container-fluid">
         <div class="row justify-content-center mx-auto" style="width: auto;">
@@ -7,7 +55,14 @@
                 <div class="row row-profile-gallery">
                     {% for g in gallery %}
                         <div class="card gallery-profile">
-                            <img src="{{ g.gallery_marked.gallery.image.url }}" class="card-img-top gallery-image" alt="{{ g.gallery_marked.gallery.event_date }}">
+                            <a onclick="selectPhoto(this, '{{ g.id }}')">
+                                <img src="{{ g.gallery_marked.gallery.image.url }}" class="card-img-top gallery-image" alt="{{ g.gallery_marked.gallery.event_date }}">
+                            </a>
+                            <div id="photoModal-{{ g.id }}" class="modal">
+                                <div class="modal-card">
+                                    <img class="modal-content" id="selected-photo" src="{{ g.gallery_marked.gallery.image.url }}" >
+                                </div>
+                            </div>
                         </div>
                     {% empty %}
                         <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 20px; height: 50vh;">
@@ -19,3 +74,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        window.selectPhoto = function(eventElement, galleryId) {
+            var modalId = "photoModal-" + galleryId; // Constrói o ID do modal com base no ID da galeria
+            var modal = document.getElementById(modalId);
+            var modalImg = document.getElementById("selected-photo" + galleryId);
+            var eventNameElement = document.querySelector(".event_name"); // Seleciona o elemento do nome do evento
+            var photoUrl = eventElement.getAttribute('data-photo-url');
+            var eventTitle = eventElement.getAttribute('data-event-title');
+    
+            console.log("Event Title:", eventTitle); // Debugging: Verifica o valor de eventTitle
+    
+            modal.style.display = "block";
+            modalImg.src = photoUrl;
+            eventNameElement.innerHTML = eventTitle; // Atualiza o nome do evento
+    
+            var span = document.getElementsByClassName("close")[0];
+    
+            span.onclick = function() { 
+                modal.style.display = "none";
+            }
+        }
+    });
+    
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
+    }
+</script>

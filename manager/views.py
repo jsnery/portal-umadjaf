@@ -1,21 +1,57 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from functools import wraps
 from users.models import IsUmadjaf, Roles, User, UserRoles
-from .forms import (CalendarForm, CongregationForm, IsUmadjafForm, UserForm,
-                    UserRolesForm)
+from .forms import (CongregationForm, IsUmadjafForm, UserForm, UserRolesForm)
 from .models import Congregations
-from events.models import Event
-from articles.models import Articles
+
+
+# decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+def authenticated_user(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        # Verifica se o usuário está logado
+        is_authenticated = request.user.is_authenticated
+        if is_authenticated:
+            is_admin = request.user.is_staff  # Verifica se o usuário é admin
+            is_media_manager = UserRoles.objects.filter(
+                user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+            is_devotional_manager = UserRoles.objects.filter(
+                user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_coordinator = UserRoles.objects.filter(
+                user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+            if IsUmadjaf.objects.filter(user_id=request.user).exists():
+                is_umadjaf = IsUmadjaf.objects.get(
+                    user_id=request.user).checked
+        else:
+            is_admin = False
+            is_media_manager = False
+            is_devotional_manager = False
+            is_coordinator = False
+            is_umadjaf = False
+
+        return view_func(request, *args, **kwargs,
+                         is_authenticated=is_authenticated,
+                         is_admin=is_admin,
+                         is_media_manager=is_media_manager,
+                         is_devotional_manager=is_devotional_manager,
+                         is_coordinator=is_coordinator,
+                         is_umadjaf=is_umadjaf
+                         )
+
+    return wrapper
 
 
 # Funções do novo painel de controle
-def adm_panel(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+@authenticated_user
+def adm_panel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     return render(
         request,
         'manager/pages/adm_panel.html',
@@ -26,13 +62,15 @@ def adm_panel(request):
 
 
 # Funções de gerenciamento de usuários
-def users(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if user_is_admin:
-            return redirect('users:login')
-    
+@authenticated_user
+def users(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     users = User.objects.all()  # Busca todos os usuários cadastrados
     roles = Roles.objects.all()  # Busca todos os cargos cadastrados
     return render(
@@ -46,35 +84,47 @@ def users(request):
     )
 
 
-def delete_user(request, user_id):
+# Função remover usuário
+@authenticated_user
+def delete_user(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     if user_id == 1:
-        return HttpResponseRedirect(reverse('manager:users'))
-    
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
     user = get_object_or_404(User, pk=user_id)  # Busca o usuário pelo ID
     user.delete()  # Deleta o usuário
-    return HttpResponseRedirect(reverse('manager:users'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def user_edit(request, user_id):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+# Função editar usuário
+@authenticated_user
+def user_edit(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     user = User.objects.get(id=user_id)  # Busca o usuário pelo ID
     user_roles = UserRoles.objects.get(user_id=user_id)  # Busca o cargo do usuário pelo ID
     umadjaf = IsUmadjaf.objects.get(user_id=user_id)  # Busca se o usuário é umadjaf pelo ID
 
-    print("Log: Usuário encontrado")
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=user)
         user_roles_form = UserRolesForm(request.POST, instance=user_roles)
         umadjaf_form = IsUmadjafForm(request.POST, instance=umadjaf)
-        print("Log: Formulários recebidos")
+
         if user_form.is_valid() and user_roles_form.is_valid() and umadjaf_form.is_valid():
-            print("Log: Formulários válidos")
+
             if user_id == 1:
-                return HttpResponseRedirect(reverse('manager:users'))
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             user_form.save()
             user_roles_form.save()
             umadjaf_form.save()
@@ -96,13 +146,15 @@ def user_edit(request, user_id):
     )
 
 
-# Funções de gerenciamento de cargos
-def users_roles(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+# Função de gerenciamento de cargos
+@authenticated_user
+def users_roles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
 
     users_roles_all = UserRoles.objects.all()
     return render(
@@ -115,19 +167,22 @@ def users_roles(request):
     )
 
 
-def role_changer(request, user_id):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+# Função de alteração de cargo
+@authenticated_user
+def role_changer(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
 
     user_role = UserRoles.objects.get(user_id=user_id)
     if request.method == 'POST':
         user_role_form = UserRolesForm(request.POST, instance=user_role)
         if user_role_form.is_valid():
             if user_id == 1:
-                return HttpResponseRedirect(reverse('manager:users_roles'))
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             user_role_form.save()
             return redirect('manager:users_roles')
     else:
@@ -141,13 +196,15 @@ def role_changer(request, user_id):
     )
 
 
-# Funções de gerenciamento de congregações
-def congregations(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+# Função de gerenciamento de congregações
+@authenticated_user
+def congregations(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
 
     congregations = Congregations.objects.all()
     return render(
@@ -160,12 +217,15 @@ def congregations(request):
     )
 
 
-def congregation_add(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+# Função de adicionar congregação
+@authenticated_user
+def congregation_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
 
     if request.method == 'POST':
         congregation = Congregations(
@@ -178,7 +238,16 @@ def congregation_add(request):
     return render(request, 'manager/pages/congregations/partials/congregation_add.html')
 
 
-def congregation_edit(request, congregation_id):
+# Função de editar congregação
+@authenticated_user
+def congregation_edit(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     congregation = get_object_or_404(Congregations, pk=congregation_id)
     if request.method == 'POST':
         congregation_form = CongregationForm(request.POST, instance=congregation)
@@ -196,19 +265,30 @@ def congregation_edit(request, congregation_id):
     )
 
 
-def congregation_delete(request, congregation_id):
+# Função de deletar congregação
+@authenticated_user
+def congregation_delete(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     congregation = get_object_or_404(Congregations, pk=congregation_id)
     congregation.delete()
-    return HttpResponseRedirect(reverse('manager:congregations'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 # Funções de gerenciamento de Membros
-def members(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
+@authenticated_user
+def members(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
 
     members = IsUmadjaf.objects.all()
     return render(
@@ -221,7 +301,16 @@ def members(request):
     )
 
 
-def member_positive(request, member_id):
+# Função de aprovação de membro
+@authenticated_user
+def member_positive(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     member = User.objects.get(id=member_id)
     umadjaf = IsUmadjaf.objects.get(user_id=member)
 
@@ -229,15 +318,24 @@ def member_positive(request, member_id):
     umadjaf.checked = True
 
     if member_id == 1:
-        return HttpResponseRedirect(reverse('manager:members'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     member.save()
     umadjaf.save()
 
-    return HttpResponseRedirect(reverse('manager:members'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def member_negative(request, member_id):
+# Função de reprovação de membro
+@authenticated_user
+def member_negative(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('login')
+
+    if not is_admin:
+        return redirect('home')
+
     member = User.objects.get(id=member_id)
     umadjaf = IsUmadjaf.objects.get(user_id=member)
 
@@ -245,102 +343,9 @@ def member_negative(request, member_id):
     umadjaf.checked = False
 
     if member_id == 1:
-        return HttpResponseRedirect(reverse('manager:members'))
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
     member.save()
     umadjaf.save()
 
-    return HttpResponseRedirect(reverse('manager:members'))
-
-
-# Sistema de calendário
-def calendar(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
-
-    calendar = Event.objects.all()
-
-    return render(
-        request,
-        'manager/pages/calendar/calendar.html',
-        context={
-            'is_authenticated': is_authenticated,
-            'calendar_all': calendar
-        }
-    )
-
-
-def calendar_edit(request, calendar_id):
-    calendar = get_object_or_404(Event, pk=calendar_id)
-    event_logo = calendar.logo
-    event_background = calendar.background
-    if request.method == 'POST':
-        calendar_edit_form = CalendarForm(request.POST, request.FILES, instance=calendar)
-        if calendar_edit_form.is_valid():
-            # O objeto 'calendar' será atualizado com os dados do formulário
-            calendar_edit_form.save()
-            return redirect('manager:calendar')
-    else:
-        calendar_edit_form = CalendarForm(instance=calendar)
-
-    return render(
-        request,
-        'manager/pages/calendar/partials/calendar_edit.html',
-        context={
-            'calendar_edit_form': calendar_edit_form,
-            'calendar_id': calendar_id,
-            'event_logo': event_logo,
-            'event_background': event_background
-        }
-    )
-
-
-def calendar_delete(request, calendar_id):
-    calendar = get_object_or_404(Event, pk=calendar_id)
-    calendar.delete()
-    return HttpResponseRedirect(reverse('manager:calendar'))
-
-
-# Funções de gerenciamento de Artigos
-def articles(request):
-    is_authenticated = request.user.is_authenticated  # Verifica se o usuário está autenticado
-    user_is_admin = request.user.is_staff # Verifica se o usuário é admin
-    articles = Articles.objects.all()
-
-    if not is_authenticated:  # Se não estiver autenticado, redireciona para a página de login
-        if not user_is_admin:
-            return redirect('users:login')
-
-    return render(
-        request,
-        'manager/pages/articles/articles.html',
-        context={
-            'is_authenticated': is_authenticated,
-            'articles_all': articles
-        }
-    )
-
-
-def article_verify(request, article_id):
-    article = Articles.objects.get(id=article_id)
-    article.is_official = True
-    article.post_unlock = True
-    article.save()
-    return HttpResponseRedirect(reverse('manager:articles'))
-
-
-def article_unverify(request, article_id):
-    article = Articles.objects.get(id=article_id)
-    article.is_official = False
-    article.post_unlock = False
-    article.save()
-    return HttpResponseRedirect(reverse('manager:articles'))
-
-
-def article_delete(request, article_id):
-    article = get_object_or_404(Articles, pk=article_id)
-    article.delete()
-    return HttpResponseRedirect(reverse('manager:articles'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

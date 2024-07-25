@@ -98,3 +98,32 @@
     color: #fff; /* Mantém a cor do texto ao interagir */
     outline: none; /* Remove o contorno que pode aparecer ao clicar */
 }
+
+.floating-btn2 {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    bottom: 40px;
+    right: 100px;
+    background-color: #007bff; /* Cor do Bootstrap para btn-primary */
+    color: #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 28px;
+    z-index: 1000;
+    cursor: pointer;
+    /* box-shadow: 2px 2px 3px #999; Removido para eliminar sombreamento */
+    text-decoration: none; /* Evita texto sublinhado */
+}
+
+/* Estilo para o ícone ou texto dentro do botão, se necessário */
+.floating-btn2 i {
+    vertical-align: middle;
+}
+
+/* Garante que o botão não fique sublinhado ao passar o mouse ou clicar */
+.floating-btn2:hover, .floating-btn2:active, .floating-btn2:focus {
+    text-decoration: none;
+    color: #fff; /* Mantém a cor do texto ao interagir */
+    outline: none; /* Remove o contorno que pode aparecer ao clicar */
+}

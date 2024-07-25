@@ -1,31 +1,49 @@
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect, render
-from django.http import JsonResponse
-from users.models import IsUmadjaf, Roles, User, UserProfiles, UserRoles
+from functools import wraps
+from users.models import IsUmadjaf, Roles, UserRoles
 from events.models import Event
 from .models import Gallery, GalleryMarked, GalleryMarkedUser
 from django.http import HttpResponseRedirect
 from datetime import datetime
 
 
-def gallery(request):
+# Decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+def authenticated_user(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
+        if is_authenticated:
+            is_admin = request.user.is_staff # Verifica se o usuário é admin
+            is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+            is_devotional_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+            if IsUmadjaf.objects.filter(user_id=request.user).exists():
+                is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+        else:
+            is_admin = False
+            is_media_manager = False
+            is_devotional_manager = False
+            is_coordinator = False
+            is_umadjaf = False
+
+        return view_func(request, *args, **kwargs,
+                         is_authenticated=is_authenticated,
+                         is_admin=is_admin,
+                         is_media_manager=is_media_manager,
+                         is_devotional_manager=is_devotional_manager,
+                         is_coordinator=is_coordinator,
+                         is_umadjaf=is_umadjaf
+                         )
+
+    return wrapper
+
+
+# Galeria de fotos dos eventos
+@authenticated_user
+def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
     gallerie = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        user_id = request.user.id
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-        member_ok = IsUmadjaf.objects.filter(user_id=request.user).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
-    else:
-        user_id = 0
-        is_admin = False
-        is_media_manager = False
-        is_umadjaf = False
+    user_id = request.user.id
 
     return render(
         request, 'gallery/pages/gallery.html',
@@ -41,23 +59,12 @@ def gallery(request):
     )
 
 
-def search_gallery(request):
+# Busca de fotos por evento
+@authenticated_user
+def search_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
     galleries = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        user_id = request.user.id
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-        member_ok = IsUmadjaf.objects.filter(user_id=request.user).exists()
-        if member_ok:
-            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
-    else:
-        user_id = 0
-        is_admin = False
-        is_media_manager = False
-        is_umadjaf = False
+    user_id = request.user.id
 
     search = request.GET.get('eventSelect')
     print("Pesquisa: ", search)
@@ -84,49 +91,53 @@ def search_gallery(request):
     )
 
 
-def gallery_marked_user_manager(request):
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
+# Solicitar marcação de foto
+@authenticated_user
+def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
-        return redirect('users:login')
-
-    if not (is_media_manager or is_admin):
         return redirect('gallery:gallery')
 
-    galleries_marked_user = GalleryMarkedUser.objects.all().order_by('-id')
+    if not is_umadjaf:
+        return redirect('gallery:gallery')
 
-    return render(
-        request, 'gallery/pages/manager_gallery.html',
-        context={
-            'is_authenticated': is_authenticated,
-            'is_admin': is_admin,
-            'is_media_manager': is_media_manager,
-            'galleries_marked': galleries_marked_user,
-        }
-    )
+    gallery = Gallery.objects.get(id=gallery_id)
+    gallery_marked = GalleryMarked.objects.get(gallery=gallery)
+    user_id = request.user.id
+
+    solicitation = GalleryMarkedUser(gallery_marked=gallery_marked, user_id=user_id)
+    solicitation.save()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def add_to_gallery(request):
-    notification = False
-
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
+# Cancelar solicitação de marcação de foto
+@authenticated_user
+def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
-        return redirect('users:login')
+        return redirect('gallery:gallery')
+
+    if not is_umadjaf:
+        return redirect('gallery:gallery')
+
+    gallery = Gallery.objects.get(id=gallery_id)
+    gallery_marked = GalleryMarked.objects.get(gallery=gallery)
+    user_id = request.user.id
+
+    solicitation = GalleryMarkedUser.objects.get(gallery_marked=gallery_marked, user_id=user_id)
+    solicitation.delete()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+# Adicionar foto à galeria
+@authenticated_user
+def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+    notification = False
+
+    if not is_authenticated:
+        return redirect('gallery:gallery')
 
     if not (is_media_manager or is_admin):
         return redirect('gallery:gallery')
@@ -187,62 +198,35 @@ def add_to_gallery(request):
     )
 
 
-def mark_gallery(request, gallery_id):
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        if IsUmadjaf.objects.filter(user_id=request.user).exists():
-            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
-    else:
-        is_umadjaf = False
-
-    if not is_umadjaf:
-        return redirect('gallery:gallery')
-
-    gallery = Gallery.objects.get(id=gallery_id)
-    gallery_marked = GalleryMarked.objects.get(gallery=gallery)
-    user_id = request.user.id
-
-    solicitation = GalleryMarkedUser(gallery_marked=gallery_marked, user_id=user_id)
-    solicitation.save()
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
-def unmark_gallery(request, gallery_id):
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        if IsUmadjaf.objects.filter(user_id=request.user).exists():
-            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
-    else:
-        is_umadjaf = False
-
-    if not is_umadjaf:
-        return redirect('gallery:gallery')
-
-    gallery = Gallery.objects.get(id=gallery_id)
-    gallery_marked = GalleryMarked.objects.get(gallery=gallery)
-    user_id = request.user.id
-
-    solicitation = GalleryMarkedUser.objects.get(gallery_marked=gallery_marked, user_id=user_id)
-    solicitation.delete()
-
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
-def check_mark_gallery(request, gallery_id, user_id):
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
+# Gerenciamento de marcações de fotos
+@authenticated_user
+def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
-        return redirect('users:login')
+        return redirect('gallery:gallery')
+
+    if not (is_media_manager or is_admin):
+        return redirect('gallery:gallery')
+
+    galleries_marked_user = GalleryMarkedUser.objects.all().order_by('-id')
+
+    return render(
+        request, 'gallery/pages/manager_gallery.html',
+        context={
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
+            'galleries_marked': galleries_marked_user,
+        }
+    )
+
+
+# Marcar foto como confirmada
+@authenticated_user
+def check_mark_gallery(request, gallery_id, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('gallery:gallery')
 
     if not (is_media_manager or is_admin):
         return redirect('gallery:gallery')

@@ -46,7 +46,7 @@
                 <!-- Grupo Central (Menu) -->
                 <div class="nav nav-tabs justify-content-center flex-nowrap" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-posts-tab" data-toggle="tab" href="#pub" role="tab" aria-controls="nav-posts" aria-selected="true">Devocionais</a>
-                    {% if profile.show_gallery and is_umadjaf %}
+                    {% if is_umadjaf %}
                         <a class="nav-item nav-link text-grey" id="nav-followers-tab" data-toggle="tab" href="#gallery" role="tab" aria-controls="nav-followers" aria-selected="false">Galeria</a>
                     {% endif %}
                 </div>
@@ -70,7 +70,7 @@
                 {% include 'other_profile/pages/partials/posts.html' %}
 
                 <!-- Galeria -->
-                {% if profile.show_gallery and is_umadjaf %}
+                {% if is_umadjaf %}
                     {% include 'other_profile/pages/partials/gallery.html' %}
                 {% endif %}
             </div>

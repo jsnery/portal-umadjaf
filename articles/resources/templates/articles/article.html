@@ -130,7 +130,7 @@
             </div>
         {% endif %}
     {% else %}
-        {% if is_admin or is_coordinator or is_devotion_manager %}
+        {% if is_admin or is_devotion_manager %}
             <div class="floating-buttons">
                 <button id="unverifyButton" data-article-id="{{ article.id }}">Retirar Verificação</button>
             </div>
@@ -142,19 +142,19 @@
     <script>
         document.getElementById('verifyButton').addEventListener('click', function() {
             var articleId = this.getAttribute('data-article-id');
-            window.location.href = '/adm/article_verify/' + articleId;
+            window.location.href = '/devocional/article_verify/' + articleId;
         });
     </script>
     <script>
         document.getElementById('deleteButton').addEventListener('click', function() {
             var articleId = this.getAttribute('data-article-id');
-            window.location.href = '/adm/article_delete/' + articleId;
+            window.location.href = '/devocional/article_delete/' + articleId;
         });
     </script>
     <script>
         document.getElementById('unverifyButton').addEventListener('click', function() {
             var articleId = this.getAttribute('data-article-id');
-            window.location.href = '/adm/article_unverify/' + articleId;
+            window.location.href = '/devocional/article_unverify/' + articleId;
         });
     </script>
 

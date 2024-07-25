@@ -97,7 +97,7 @@
     </style>
 <body>
     <!-- Barra de Navegação -->
-    {% include 'manager/pages/partials/navbar.html' %}
+    {% include 'global/partials/navbar.html' %}
 
 
     <div class="articles-container">
@@ -133,7 +133,7 @@
 
                 <td>
                     <a href="{% url 'articles:article' c.id %}"><i class="fas fa-eye"></i></a>
-                    <a href="{% url 'manager:article_delete' c.id %}"><i class="fas fa-trash"></i></a>
+                    <a href="{% url 'articles:article_delete' c.id %}"><i class="fas fa-trash"></i></a>
                 </td>
             </tr>
             {% endfor %}

@@ -28,13 +28,13 @@
 
 </style>
 
-<form method="post" enctype="multipart/form-data" action="{% url 'manager:calendar_edit' calendar_id %}">
+<form method="post" enctype="multipart/form-data" action="{% url 'events:eventos_edit' calendar_id %}">
     {% csrf_token %}
     {{ calendar_edit_form.as_p }}
     <br>
     <label for="id_logo">Preview:</label>
-    <section id="backgroundPreview" style="background-image: url('/media/{{ event_background }}');">
-        <img id="logoPreview" src="/media/{{ event_logo }}" alt="" style="display: block;">
+    <section id="backgroundPreview" style="background-image: url('{{ event_background.url }}');">
+        <img id="logoPreview" src="{{ event_logo.url }}" alt="" style="display: block;">
     </section>
     <br>
     <button type="submit" class="btn btn-primary">Salvar</button>

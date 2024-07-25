@@ -1,64 +1,57 @@
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from events.models import Event
-from articles.models import Articles
-from .models import Carrousel
-from users.models import User, UserProfiles, UserRoles, Roles, IsUmadjaf
+from functools import wraps
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.utils import timezone
+from articles.models import Articles
+from events.models import Event
+from users.models import IsUmadjaf, Roles, UserRoles
+from .models import Carrousel
 
 
-article = {
-            'article1': {
-                'image': {'url': 'articles/src/banners/1.png'},
-                'title': 'Artigo 1',
-                'text': 'Loren ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                'link': 'https://www.google.com.br'
-            },
-            'article2': {
-                'image': {'url': 'articles/src/banners/2.png'},
-                'title': 'Artigo 2',
-                'text': 'Loren ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                'link': 'https://www.google.com.br'
-            },
-            'article3': {
-                'image': {'url': 'articles/src/banners/3.png'},
-                'title': 'Artigo 3',
-                'text': 'Loren ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                'link': 'https://www.google.com.br'
-            },
-            'article4': {
-                'image': {'url': 'articles/src/banners/3.png'},
-                'title': 'Artigo 4',
-                'text': 'Loren ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-                'link': 'https://www.google.com.br'
-            }
-}
+# decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+def authenticated_user(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        # Verifica se o usuário está logado
+        is_authenticated = request.user.is_authenticated
+        if is_authenticated:
+            is_admin = request.user.is_staff  # Verifica se o usuário é admin
+            is_media_manager = UserRoles.objects.filter(
+                user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
+            is_devotional_manager = UserRoles.objects.filter(
+                user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_coordinator = UserRoles.objects.filter(
+                user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
+            if IsUmadjaf.objects.filter(user_id=request.user).exists():
+                is_umadjaf = IsUmadjaf.objects.get(
+                    user_id=request.user).checked
+        else:
+            is_admin = False
+            is_media_manager = False
+            is_devotional_manager = False
+            is_coordinator = False
+            is_umadjaf = False
 
-next_event = {
-            'bg': 'home/src/events/1.png',
-            'banner': 'home/src/events/2.png',
-}
+        return view_func(request, *args, **kwargs,
+                         is_authenticated=is_authenticated,
+                         is_admin=is_admin,
+                         is_media_manager=is_media_manager,
+                         is_devotional_manager=is_devotional_manager,
+                         is_coordinator=is_coordinator,
+                         is_umadjaf=is_umadjaf
+                         )
 
-page = 'UMADJAF'
-
-title = 'Teste de Template Django'
-
-message = 'Welcome to the home page!'
+    return wrapper
 
 
-def home(request):
-    is_authenticated = request.user.is_authenticated
-    evento = Event.objects.filter(is_general=True, date__gte=timezone.now()).order_by('date').first()
-    articles = Articles.objects.filter(is_official=True).filter(post_unlock=True).order_by('-id')[:3]
+# Página inicial
+@authenticated_user
+def home(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+    evento = Event.objects.filter(
+        is_general=True, date__gte=timezone.now()).order_by('date').first()
+    articles = Articles.objects.filter(is_official=True).filter(
+        post_unlock=True).order_by('-id')[:3]
     carousel = Carrousel.objects.filter(active=True).order_by('-id')
-
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-
-    else:
-        is_admin = False
-        is_media_manager = False
 
     return render(
         request,
@@ -74,15 +67,10 @@ def home(request):
     )
 
 
-def carrousel(request):
-    is_authenticated = request.user.is_authenticated
+# Gerir banners do carrossel
+@authenticated_user
+def carrousel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
     carrousel_itens = Carrousel.objects.all().order_by('-id')
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
 
     if not is_authenticated:
         return redirect('home')
@@ -104,7 +92,8 @@ def carrousel(request):
                 carrousel_item = Carrousel.objects.get(id=item_id)
                 carrousel_item.active = (status == 'on')
                 carrousel_item.save()
-                print(f"Item ID {item_id} atualizado para {'ativo' if status == 'on' else 'inativo'}.")
+                print(f"Item ID {item_id} atualizado para {
+                      'ativo' if status == 'on' else 'inativo'}.")
         print("Atualização dos itens do carrossel concluída.")
 
         return redirect('home')
@@ -121,15 +110,9 @@ def carrousel(request):
     )
 
 
-def carrousel_editor(request):
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
+# Adicionar banner do carrossel
+@authenticated_user
+def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('home')
@@ -164,15 +147,9 @@ def carrousel_editor(request):
     )
 
 
-def carrousel_delete(request, item_id):
-    is_authenticated = request.user.is_authenticated
-
-    if is_authenticated:
-        is_admin = request.user.is_staff # Verifica se o usuário é admin
-        is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-    else:
-        is_admin = False
-        is_media_manager = False
+# Deletar banner do carrossel
+@authenticated_user
+def carrousel_delete(request, item_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('home')
@@ -183,4 +160,4 @@ def carrousel_delete(request, item_id):
     carrousel = Carrousel.objects.get(id=item_id)
     carrousel.delete()
 
-    return redirect('carrousel')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

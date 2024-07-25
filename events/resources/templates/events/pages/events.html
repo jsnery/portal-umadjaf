@@ -34,6 +34,10 @@
         {% if is_admin or is_coordinator or is_media_manager %}
         <a id="float-btn" href="{% url 'events:criar_evento' %}" class="floating-btn">+</a>
         {% endif %}
+        {% if is_admin or is_media_manager %}
+        <a id="float-btn" href="{% url 'events:eventos_manager' %}" class="floating-btn2"><i class="fa fa-edit"></i></a>
+        {% endif %}
+
         <!-- Seção de Rodapé -->
         {% include 'global/partials/footer.html' %}
 

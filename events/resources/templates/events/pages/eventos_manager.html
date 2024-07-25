@@ -96,7 +96,7 @@
     </style>
 <body>
     <!-- Barra de Navegação -->
-    {% include 'manager/pages/partials/navbar.html' %}
+    {% include 'global/partials/navbar.html' %}
 
 
     <div class="articles-container">
@@ -128,7 +128,7 @@
                 <td>{{ c.congregation }}</td>
 
                 <td>
-                    <a href="{% url 'manager:calendar_edit' c.id %}" class="edit-link"><i class="fa fa-edit"></i></a>
+                    <a href="{% url 'events:eventos_edit' c.id %}" class="edit-link"><i class="fa fa-edit"></i></a>
                     <div class="modal fade" id="editModal-{{c.id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                         <div class="modal-content">
@@ -139,14 +139,14 @@
                             </button>
                             </div>
                             <div id="modal-body-{{c.id}}" class="modal-body">
-                                <form id="edituser-{{c.id}}" method="POST" action="{% url 'manager:calendar_edit' c.id %}">
+                                <form id="edituser-{{c.id}}" method="POST" action="{% url 'events:eventos_edit' c.id %}">
                                     
                                 </form>
                             </div>
                         </div>
                         </div>
                     </div>
-                    <a href="{% url 'manager:calendar_delete' c.id %}"><i class="fas fa-trash"></i></a>
+                    <a href="{% url 'events:eventos_delete' c.id %}"><i class="fas fa-trash"></i></a>
                 </td>
             </tr>
             {% endfor %}

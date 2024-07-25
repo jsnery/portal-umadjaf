@@ -172,6 +172,44 @@
                     <td>Aguardando...</td>
                 {% endif %}
                 <td>
+                    <a onclick="selectPhoto(this, '{{ c.user_id }}')"><i class="fa fa-user"></i></a>
+                    <div id="photoModal-{{ c.user_id }}" class="modal">
+                        <div class="modal-card">
+                            <img class="modal-content" id="selected-photo" src="{% get_user_picture c.user_id %}" >
+                            <!-- Contêiner para o título e o botão -->
+                            {% if is_umadjaf %}
+                                {% get_gallery_marked_confirm user_id c.id as get_confirm %}
+                                {% with gallery_id=c.id %}
+                                {% if get_confirm == 'checked' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-check"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+    
+                                {% elif get_confirm == 'waiting' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-dash"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% else %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:mark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
                     <a onclick="selectPhoto(this, '{{ c.id }}')"><i class="fas fa-eye"></i></a>
                     <div id="photoModal-{{ c.id }}" class="modal">
                         <div class="modal-card">

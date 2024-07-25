@@ -2,7 +2,7 @@ from django import template
 from django.utils.safestring import mark_safe
 from events.models import Event
 from gallery.models import Gallery, GalleryMarked, GalleryMarkedUser
-from users.models import User
+from users.models import User, UserProfiles
 
 register = template.Library()
 
@@ -37,3 +37,10 @@ def get_user_complete_name(user_id):
         return user.complete_name
     except User.DoesNotExist:
         return "Usuário não encontrado"
+
+
+@register.simple_tag
+def get_user_picture(user_id):
+    user = User.objects.get(id=user_id)
+    profile = UserProfiles.objects.get(user_id=user)
+    return profile.profile_picture.url
