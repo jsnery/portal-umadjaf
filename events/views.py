@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from functools import wraps
 from django.http import HttpResponseRedirect
 from django.utils import timezone
@@ -16,14 +16,13 @@ def authenticated_user(view_func):
         if is_authenticated:
             is_admin = request.user.is_staff # Verifica se o usuário é admin
             is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotional_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
             is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            if IsUmadjaf.objects.filter(user_id=request.user).exists():
-                is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
         else:
             is_admin = False
             is_media_manager = False
-            is_devotional_manager = False
+            is_devotion_manager = False
             is_coordinator = False
             is_umadjaf = False
 
@@ -31,7 +30,7 @@ def authenticated_user(view_func):
                          is_authenticated=is_authenticated,
                          is_admin=is_admin,
                          is_media_manager=is_media_manager,
-                         is_devotional_manager=is_devotional_manager,
+                         is_devotion_manager=is_devotion_manager,
                          is_coordinator=is_coordinator,
                          is_umadjaf=is_umadjaf
                          )
@@ -41,7 +40,7 @@ def authenticated_user(view_func):
 
 # Eventos do calendário
 @authenticated_user
-def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     events = Event.objects.filter(date__gte=timezone.now())
 
     return render(
@@ -59,7 +58,7 @@ def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Criar evento
 @authenticated_user
-def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('events:eventos')
@@ -115,7 +114,13 @@ def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manag
 
 # Gerenciar eventos
 @authenticated_user
-def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+
+    if not is_authenticated:
+        return redirect('events:eventos')
+
+    if not (is_media_manager or is_admin):
+        return redirect('events:eventos')
 
     calendar = Event.objects.all()
 
@@ -131,15 +136,18 @@ def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_ma
 
 # Editar evento
 @authenticated_user
-def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('events:eventos')
 
     if not (is_media_manager or is_admin):
         return redirect('events:eventos')
+    try:
+        calendar = Event.objects.get(id=calendar_id)
+    except Event.DoesNotExist:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    calendar = get_object_or_404(Event, pk=calendar_id)
     event_logo = calendar.logo
     event_background = calendar.background
     if request.method == 'POST':
@@ -165,7 +173,7 @@ def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, i
 
 # Deletar evento
 @authenticated_user
-def eventos_delete(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos_delete(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('events:eventos')
@@ -173,6 +181,10 @@ def eventos_delete(request, calendar_id, is_authenticated=False, is_admin=False,
     if not (is_media_manager or is_admin):
         return redirect('events:eventos')
 
-    calendar = get_object_or_404(Event, pk=calendar_id)
+    try:
+        calendar = Event.objects.get(id=calendar_id)
+    except Event.DoesNotExist:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
     calendar.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

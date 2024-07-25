@@ -48,8 +48,17 @@
     </style>
 </head>
 <body>
+    <!-- Barra de Navegação -->
     {% include 'global/partials/navbar.html' %}
 
+    <!-- Notificação -->
+    {% if notification %}
+        <div style="background-color: red; color: white; text-align: center; padding: 10px; position: fixed; top: 50px; left: 0; width: 100%; z-index: 1000;">
+            Algo não está preenchido, favor corrigir!.
+        </div>
+    {% endif %}
+
+    <!-- Contêiner principal -->
     <div class="container mt-5">
         <div class="card">
             <div class="card-header text-center">
@@ -65,11 +74,13 @@
             <div class="card-body">
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
+                    <!-- Contêiner do título -->
                     <div class="form-group d-flex align-items-baseline">
                         <label for="title">Tema:  </label>
                         <input type="text" id="title" name="title" class="form-control" required>
                     </div>
 
+                    <!-- Contêiner da referencia biblica -->
                     <div class="form-group d-flex align-items-baseline form-custom">
                         <label for="book" class="mr-2">Livro:</label>
                         <select id="book" name="book" class="form-control mr-2" required>
@@ -152,8 +163,6 @@
                         <input type="number" id="verse2" name="verse2" class="form-control" min="1">
                     </div>
 
-        
-
                     <!-- Contêiner do Editor Quill -->
                     <div class="form-group">
                         <label for="editor">Texto:</label>
@@ -183,11 +192,14 @@
         </div>
     </div>
 
+    <!-- Seção de Rodapé -->
     {% include 'global/partials/footer.html' %}
     
 
     <!-- Inclua o JS do Quill -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <!-- Script para inicializar o Quill -->
     <script>
         var quill = new Quill('#editor', {
             theme: 'snow',
@@ -226,7 +238,6 @@
         };
     </script>
     
-
     <!-- Script do preview -->
     <script>
         document.getElementById('banner').addEventListener('change', function(event){

@@ -16,7 +16,7 @@ def authenticated_user(view_func):
             is_admin = request.user.is_staff  # Verifica se o usuário é admin
             is_media_manager = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotional_manager = UserRoles.objects.filter(
+            is_devotion_manager = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
             is_coordinator = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
@@ -26,7 +26,7 @@ def authenticated_user(view_func):
         else:
             is_admin = False
             is_media_manager = False
-            is_devotional_manager = False
+            is_devotion_manager = False
             is_coordinator = False
             is_umadjaf = False
 
@@ -34,7 +34,7 @@ def authenticated_user(view_func):
                          is_authenticated=is_authenticated,
                          is_admin=is_admin,
                          is_media_manager=is_media_manager,
-                         is_devotional_manager=is_devotional_manager,
+                         is_devotion_manager=is_devotion_manager,
                          is_coordinator=is_coordinator,
                          is_umadjaf=is_umadjaf
                          )
@@ -44,7 +44,7 @@ def authenticated_user(view_func):
 
 # Funções do novo painel de controle
 @authenticated_user
-def adm_panel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def adm_panel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -63,7 +63,7 @@ def adm_panel(request, is_authenticated=False, is_admin=False, is_media_manager=
 
 # Funções de gerenciamento de usuários
 @authenticated_user
-def users(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def users(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -86,7 +86,7 @@ def users(request, is_authenticated=False, is_admin=False, is_media_manager=Fals
 
 # Função remover usuário
 @authenticated_user
-def delete_user(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def delete_user(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -104,7 +104,7 @@ def delete_user(request, user_id, is_authenticated=False, is_admin=False, is_med
 
 # Função editar usuário
 @authenticated_user
-def user_edit(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def user_edit(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -148,7 +148,7 @@ def user_edit(request, user_id, is_authenticated=False, is_admin=False, is_media
 
 # Função de gerenciamento de cargos
 @authenticated_user
-def users_roles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def users_roles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -169,7 +169,7 @@ def users_roles(request, is_authenticated=False, is_admin=False, is_media_manage
 
 # Função de alteração de cargo
 @authenticated_user
-def role_changer(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def role_changer(request, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -198,7 +198,7 @@ def role_changer(request, user_id, is_authenticated=False, is_admin=False, is_me
 
 # Função de gerenciamento de congregações
 @authenticated_user
-def congregations(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def congregations(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -219,7 +219,7 @@ def congregations(request, is_authenticated=False, is_admin=False, is_media_mana
 
 # Função de adicionar congregação
 @authenticated_user
-def congregation_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def congregation_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -240,7 +240,7 @@ def congregation_add(request, is_authenticated=False, is_admin=False, is_media_m
 
 # Função de editar congregação
 @authenticated_user
-def congregation_edit(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def congregation_edit(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -267,7 +267,7 @@ def congregation_edit(request, congregation_id, is_authenticated=False, is_admin
 
 # Função de deletar congregação
 @authenticated_user
-def congregation_delete(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def congregation_delete(request, congregation_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -282,7 +282,7 @@ def congregation_delete(request, congregation_id, is_authenticated=False, is_adm
 
 # Funções de gerenciamento de Membros
 @authenticated_user
-def members(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def members(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -303,7 +303,7 @@ def members(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Função de aprovação de membro
 @authenticated_user
-def member_positive(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def member_positive(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')
@@ -328,7 +328,7 @@ def member_positive(request, member_id, is_authenticated=False, is_admin=False, 
 
 # Função de reprovação de membro
 @authenticated_user
-def member_negative(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def member_negative(request, member_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('login')

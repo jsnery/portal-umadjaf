@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404
 from functools import wraps
 from django.http import HttpResponseRedirect
 import requests
-from django.contrib import messages
 from .models import Articles
 from users.models import User, IsUmadjaf, UserRoles, Roles
 from django.utils import timezone
@@ -22,14 +21,13 @@ def authenticated_user(view_func):
         if is_authenticated:
             is_admin = request.user.is_staff # Verifica se o usuário é admin
             is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotional_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
             is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            if IsUmadjaf.objects.filter(user_id=request.user).exists():
-                is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
         else:
             is_admin = False
             is_media_manager = False
-            is_devotional_manager = False
+            is_devotion_manager = False
             is_coordinator = False
             is_umadjaf = False
 
@@ -37,7 +35,7 @@ def authenticated_user(view_func):
                          is_authenticated=is_authenticated,
                          is_admin=is_admin,
                          is_media_manager=is_media_manager,
-                         is_devotional_manager=is_devotional_manager,
+                         is_devotion_manager=is_devotion_manager,
                          is_coordinator=is_coordinator,
                          is_umadjaf=is_umadjaf
                          )
@@ -47,7 +45,8 @@ def authenticated_user(view_func):
 
 # Postar artigos
 @authenticated_user
-def publish_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def publish_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    notification = False
 
     if not is_authenticated:
         return redirect('articles:all_articles')
@@ -72,8 +71,15 @@ def publish_articles(request, is_authenticated=False, is_admin=False, is_media_m
         author_id = request.user.id
 
         if not title or not content:
-            messages.error(request, 'Título e conteúdo são obrigatórios.')
-            return render(request, 'articles/create_articles.html')
+            notification = True
+            return render(
+                request,
+                'articles/create_articles.html',
+                context={
+                    'is_authenticated': is_authenticated,
+                    'alert': notification
+                }
+            )
 
         article = Articles(
             title=title,
@@ -85,14 +91,13 @@ def publish_articles(request, is_authenticated=False, is_admin=False, is_media_m
         if image:
             article.banner = image
 
-        if is_admin or is_coordinator:
+        if is_admin or is_coordinator or is_devotion_manager:
             article.is_official = True
 
         if is_umadjaf:
             article.post_unlock = True
 
         article.save()
-        messages.success(request, 'Artigo publicado com sucesso!')
         return redirect('users:profile')
 
     return render(
@@ -100,13 +105,14 @@ def publish_articles(request, is_authenticated=False, is_admin=False, is_media_m
         'articles/create_articles.html',
         context={
             'is_authenticated': is_authenticated,
+            'alert': alert,
         }
     )
 
 
 # Ver artigo
 @authenticated_user
-def article(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def article(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     article = Articles.objects.get(id=article_id)
     user_id = request.user.id
 
@@ -124,7 +130,7 @@ def article(request, article_id, is_authenticated=False, is_admin=False, is_medi
         data = response.json()
         verse_text = data['text']
     else:
-        verse_text = "Versículo não encontrado"
+        verse_text = "Passagem bíblica não encontrada."
 
     return render(
         request, 'articles/article.html',
@@ -145,7 +151,7 @@ def article(request, article_id, is_authenticated=False, is_admin=False, is_medi
 
 # Todos os artigos
 @authenticated_user
-def all_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def all_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     articles = Articles.objects.all().filter(post_unlock=True).order_by('-id')
     user_id = request.user.id
 
@@ -163,7 +169,7 @@ def all_articles(request, is_authenticated=False, is_admin=False, is_media_manag
 
 # Pesquisar artigos
 @authenticated_user
-def search_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def search_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     user_id = request.user.id
     search = request.GET.get('search')
 
@@ -192,7 +198,7 @@ def search_articles(request, is_authenticated=False, is_admin=False, is_media_ma
 
 # Funções de gerenciamento de Artigos
 @authenticated_user
-def articles_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def articles_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     articles = Articles.objects.all().order_by('-id')
 
     if not (is_devotion_manager or is_admin or is_coordinator):
@@ -213,7 +219,7 @@ def articles_manager(request, is_authenticated=False, is_admin=False, is_media_m
 
 # Verificar artigo
 @authenticated_user
-def article_verify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def article_verify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')
@@ -227,7 +233,7 @@ def article_verify(request, article_id, is_authenticated=False, is_admin=False, 
 
 # Desverificar artigo
 @authenticated_user
-def article_unverify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def article_unverify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')
@@ -241,7 +247,7 @@ def article_unverify(request, article_id, is_authenticated=False, is_admin=False
 
 # Deletar artigo
 @authenticated_user
-def article_delete(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def article_delete(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')

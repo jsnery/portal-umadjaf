@@ -15,14 +15,13 @@ def authenticated_user(view_func):
         if is_authenticated:
             is_admin = request.user.is_staff # Verifica se o usuário é admin
             is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotional_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
+            is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
             is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            if IsUmadjaf.objects.filter(user_id=request.user).exists():
-                is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
         else:
             is_admin = False
             is_media_manager = False
-            is_devotional_manager = False
+            is_devotion_manager = False
             is_coordinator = False
             is_umadjaf = False
 
@@ -30,7 +29,7 @@ def authenticated_user(view_func):
                          is_authenticated=is_authenticated,
                          is_admin=is_admin,
                          is_media_manager=is_media_manager,
-                         is_devotional_manager=is_devotional_manager,
+                         is_devotion_manager=is_devotion_manager,
                          is_coordinator=is_coordinator,
                          is_umadjaf=is_umadjaf
                          )
@@ -40,7 +39,7 @@ def authenticated_user(view_func):
 
 # Galeria de fotos dos eventos
 @authenticated_user
-def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     gallerie = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
     user_id = request.user.id
@@ -61,13 +60,13 @@ def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Busca de fotos por evento
 @authenticated_user
-def search_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def search_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     galleries = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
     user_id = request.user.id
 
     search = request.GET.get('eventSelect')
-    print("Pesquisa: ", search)
+    # print("Pesquisa: ", search)
     if search:
         galleries = Gallery.objects.filter(event_id=search).order_by('-id')
 
@@ -93,7 +92,7 @@ def search_gallery(request, is_authenticated=False, is_admin=False, is_media_man
 
 # Solicitar marcação de foto
 @authenticated_user
-def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('gallery:gallery')
@@ -105,7 +104,11 @@ def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is
     gallery_marked = GalleryMarked.objects.get(gallery=gallery)
     user_id = request.user.id
 
-    solicitation = GalleryMarkedUser(gallery_marked=gallery_marked, user_id=user_id)
+    solicitation = GalleryMarkedUser(
+        gallery_marked=gallery_marked,
+        user_id=user_id
+    )
+
     solicitation.save()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -113,7 +116,7 @@ def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is
 
 # Cancelar solicitação de marcação de foto
 @authenticated_user
-def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('gallery:gallery')
@@ -125,7 +128,11 @@ def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, 
     gallery_marked = GalleryMarked.objects.get(gallery=gallery)
     user_id = request.user.id
 
-    solicitation = GalleryMarkedUser.objects.get(gallery_marked=gallery_marked, user_id=user_id)
+    solicitation = GalleryMarkedUser.objects.get(
+        gallery_marked=gallery_marked,
+        user_id=user_id
+    )
+
     solicitation.delete()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -133,7 +140,7 @@ def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, 
 
 # Adicionar foto à galeria
 @authenticated_user
-def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     notification = False
 
     if not is_authenticated:
@@ -143,7 +150,6 @@ def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_man
         return redirect('gallery:gallery')
 
     all_events = Event.objects.all().order_by('-id')
-    # all_members = User.objects.filter(isumadjaf__checked=True).order_by('-complete_name')
 
     if request.method == 'POST':
         event_id = request.POST.get('event_id')
@@ -200,7 +206,7 @@ def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_man
 
 # Gerenciamento de marcações de fotos
 @authenticated_user
-def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('gallery:gallery')
@@ -223,7 +229,7 @@ def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False,
 
 # Marcar foto como confirmada
 @authenticated_user
-def check_mark_gallery(request, gallery_id, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def check_mark_gallery(request, gallery_id, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('gallery:gallery')

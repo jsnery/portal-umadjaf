@@ -18,7 +18,7 @@ def authenticated_user(view_func):
             is_admin = request.user.is_staff  # Verifica se o usuário é admin
             is_media_manager = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotional_manager = UserRoles.objects.filter(
+            is_devotion_manager = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
             is_coordinator = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
@@ -28,7 +28,7 @@ def authenticated_user(view_func):
         else:
             is_admin = False
             is_media_manager = False
-            is_devotional_manager = False
+            is_devotion_manager = False
             is_coordinator = False
             is_umadjaf = False
 
@@ -36,7 +36,7 @@ def authenticated_user(view_func):
                          is_authenticated=is_authenticated,
                          is_admin=is_admin,
                          is_media_manager=is_media_manager,
-                         is_devotional_manager=is_devotional_manager,
+                         is_devotion_manager=is_devotion_manager,
                          is_coordinator=is_coordinator,
                          is_umadjaf=is_umadjaf
                          )
@@ -46,7 +46,7 @@ def authenticated_user(view_func):
 
 # Página inicial
 @authenticated_user
-def home(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def home(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     evento = Event.objects.filter(
         is_general=True, date__gte=timezone.now()).order_by('date').first()
     articles = Articles.objects.filter(is_official=True).filter(
@@ -69,7 +69,7 @@ def home(request, is_authenticated=False, is_admin=False, is_media_manager=False
 
 # Gerir banners do carrossel
 @authenticated_user
-def carrousel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def carrousel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     carrousel_itens = Carrousel.objects.all().order_by('-id')
 
     if not is_authenticated:
@@ -112,7 +112,7 @@ def carrousel(request, is_authenticated=False, is_admin=False, is_media_manager=
 
 # Adicionar banner do carrossel
 @authenticated_user
-def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('home')
@@ -149,7 +149,7 @@ def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_mana
 
 # Deletar banner do carrossel
 @authenticated_user
-def carrousel_delete(request, item_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def carrousel_delete(request, item_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('home')

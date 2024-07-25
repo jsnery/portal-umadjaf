@@ -23,7 +23,7 @@ def authenticated_user(view_func):
             is_admin = request.user.is_staff  # Verifica se o usuário é admin
             is_media_manager = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotional_manager = UserRoles.objects.filter(
+            is_devotion_manager = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
             is_coordinator = UserRoles.objects.filter(
                 user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
@@ -33,7 +33,7 @@ def authenticated_user(view_func):
         else:
             is_admin = False
             is_media_manager = False
-            is_devotional_manager = False
+            is_devotion_manager = False
             is_coordinator = False
             is_umadjaf = False
 
@@ -41,7 +41,7 @@ def authenticated_user(view_func):
                          is_authenticated=is_authenticated,
                          is_admin=is_admin,
                          is_media_manager=is_media_manager,
-                         is_devotional_manager=is_devotional_manager,
+                         is_devotion_manager=is_devotion_manager,
                          is_coordinator=is_coordinator,
                          is_umadjaf=is_umadjaf
                          )
@@ -51,7 +51,7 @@ def authenticated_user(view_func):
 
 # Sistema de cadastro de usuário
 @authenticated_user
-def register(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def register(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     alert = False
     congregations = Congregations.objects.all()
 
@@ -123,7 +123,7 @@ def register(request, is_authenticated=False, is_admin=False, is_media_manager=F
 
 # Sistema de login de usuário
 @authenticated_user
-def login_(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def login_(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
     alert = False
 
     if is_authenticated:
@@ -154,7 +154,7 @@ def login_(request, is_authenticated=False, is_admin=False, is_media_manager=Fal
 
 # Funções de perfil do usuário logado
 @authenticated_user
-def profile(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def profile(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('users:login')
@@ -193,7 +193,7 @@ def profile(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Funções de edição de perfil
 @authenticated_user
-def profile_settings(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def profile_settings(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if not is_authenticated:
         return redirect('users:login')
@@ -251,7 +251,7 @@ def profile_logout(request):
 
 # Funções de outro perfil
 @authenticated_user
-def other_profile(request, other_user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def other_profile(request, other_user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     if is_authenticated:
         user_id = request.user.id
@@ -284,7 +284,7 @@ def other_profile(request, other_user_id, is_authenticated=False, is_admin=False
 
 # Função de perfil não encontrado
 @authenticated_user
-def profile_does_not_exists(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotional_manager=False, is_coordinator=False, is_umadjaf=False):
+def profile_does_not_exists(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
 
     return render(
         request,

@@ -2,11 +2,26 @@ import os
 from django.db import models
 
 
+# Upload do banner do artigo
 def get_upload_to_articles(instance, filename):
     return f'articles/{instance.at_created.strftime('%Y-%m-%d-%H-%M-%S')}/{filename}'
 
 
+# Model de devocional
 class Articles(models.Model):
+    '''
+    Model de artigos
+
+    Atributos:
+    - at_created: Data de criação do devocional
+    - title: Título do devocional
+    - versicle: Versículo do devocional
+    - text: Texto do artigo
+    - banner: Banner do devocional
+    - author_id: ID do autor do devocional
+    - is_official: Selinho Azul
+    - post_unlock: Postagem desbloqueada (Para devocionais de não membros)
+    '''
     at_created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=200)
     versicle = models.CharField(max_length=200, default='')
@@ -19,6 +34,7 @@ class Articles(models.Model):
     is_official = models.BooleanField(default=False)
     post_unlock = models.BooleanField(default=False)
 
+    # Deleta o banner do devocional ao deletar o devocional
     def delete(self, *args, **kwargs):
         if self.banner:
             banner_path = self.banner.path
