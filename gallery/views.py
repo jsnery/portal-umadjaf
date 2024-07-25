@@ -1,64 +1,33 @@
 from django.shortcuts import redirect, render
-from functools import wraps
-from users.models import IsUmadjaf, Roles, UserRoles
+from utils.decorators import authenticated_user
 from events.models import Event
 from .models import Gallery, GalleryMarked, GalleryMarkedUser
 from django.http import HttpResponseRedirect
 from datetime import datetime
 
 
-# Decorator para verificar se o usuário está autenticado e se é da equipe
-def authenticated_user(view_func):
-    '''
-    Decorator para verificar se o usuário está autenticado e se é da equipe
-
-    Este decorator verifica se o usuário está autenticado e se é um membro da
-    equipe de mídia. Caso o usuário esteja autenticado, o decorator adiciona
-    as seguintes variáveis ao contexto da view:
-    - is_authenticated: Indica se o usuário está autenticado.
-    - is_admin: Indica se o usuário é um administrador.
-    - is_media_manager: Indica se o usuário é um gerente de mídia.
-    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
-    - is_coordinator: Indica se o usuário é um coordenador.
-    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
-
-    Parâmetros:
-        - view_func: A função de view a ser decorada.
-
-    Retorna:
-        - A função de view decorada.
-    '''
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
-        if is_authenticated:
-            is_admin = request.user.is_staff # Verifica se o usuário é admin
-            is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
-            is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
-        else:
-            is_admin = False
-            is_media_manager = False
-            is_devotion_manager = False
-            is_coordinator = False
-            is_umadjaf = False
-
-        return view_func(request, *args, **kwargs,
-                         is_authenticated=is_authenticated,
-                         is_admin=is_admin,
-                         is_media_manager=is_media_manager,
-                         is_devotion_manager=is_devotion_manager,
-                         is_coordinator=is_coordinator,
-                         is_umadjaf=is_umadjaf
-                         )
-
-    return wrapper
-
-
 # Galeria de fotos dos eventos
 @authenticated_user
 def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    View para a página de galeria de fotos dos eventos
+
+    Esta view renderiza a página de galeria de fotos dos eventos. A página
+    exibe todas as fotos dos eventos cadastradas no sistema.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de galeria de fotos dos eventos.
+    '''
+
     gallerie = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
     user_id = request.user.id
@@ -80,6 +49,26 @@ def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 # Busca de fotos por evento
 @authenticated_user
 def search_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para buscar fotos por evento na galeria
+
+    Esta função busca fotos por evento na galeria de fotos dos eventos. A
+    função renderiza a página de galeria de fotos dos eventos com as fotos
+    do evento selecionado.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de galeria de fotos dos eventos com as fotos do evento selecionado.
+    '''
+
     galleries = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
     user_id = request.user.id
@@ -112,6 +101,25 @@ def search_gallery(request, is_authenticated=False, is_admin=False, is_media_man
 # Solicitar marcação de foto
 @authenticated_user
 def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para solicitar marcação de foto na galeria
+
+    Esta função solicita a marcação de uma foto na galeria de fotos dos
+    eventos. A função adiciona a solicitação de marcação ao banco de dados.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - gallery_id: ID da foto a ser marcada.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('gallery:gallery')
@@ -136,6 +144,26 @@ def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is
 # Cancelar solicitação de marcação de foto
 @authenticated_user
 def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para cancelar solicitação de marcação de foto na galeria
+
+    Esta função cancela a solicitação de marcação de uma foto na galeria de
+    fotos dos eventos. A função remove a solicitação de marcação do banco de
+    dados.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - gallery_id: ID da foto a ser desmarcada.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('gallery:gallery')
@@ -160,6 +188,25 @@ def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, 
 # Adicionar foto à galeria
 @authenticated_user
 def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para adicionar foto à galeria de fotos dos eventos
+
+    Esta função adiciona uma foto à galeria de fotos dos eventos. A função
+    renderiza a página de adição de fotos à galeria.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de adição de fotos à galeria.
+    '''
+
     notification = False
 
     if not is_authenticated:
@@ -226,6 +273,24 @@ def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_man
 # Gerenciamento de marcações de fotos
 @authenticated_user
 def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para gerenciar marcações de fotos na galeria
+
+    Esta função gerencia as marcações de fotos na galeria de fotos dos eventos.
+    A função renderiza a página de gerenciamento de marcações de fotos.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de gerenciamento de marcações de fotos.
+    '''
 
     if not is_authenticated:
         return redirect('gallery:gallery')
@@ -249,6 +314,27 @@ def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False,
 # Marcar foto como confirmada
 @authenticated_user
 def check_mark_gallery(request, gallery_id, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para marcar foto como confirmada na galeria
+
+    Esta função marca uma foto como confirmada na galeria de fotos dos eventos.
+    A função altera o status de confirmação da marcação da foto no banco de
+    dados.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - gallery_id: ID da foto a ser marcada.
+        - user_id: ID do usuário que marcou a foto.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Redireciona para a página anterior.
+    '''
 
     if not is_authenticated:
         return redirect('gallery:gallery')

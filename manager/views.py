@@ -1,45 +1,9 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
-from functools import wraps
+from utils.decorators import authenticated_user
 from users.models import IsUmadjaf, Roles, User, UserRoles
 from .forms import (CongregationForm, IsUmadjafForm, UserForm, UserRolesForm)
 from .models import Congregations
-
-
-# decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
-def authenticated_user(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        # Verifica se o usuário está logado
-        is_authenticated = request.user.is_authenticated
-        if is_authenticated:
-            is_admin = request.user.is_staff  # Verifica se o usuário é admin
-            is_media_manager = UserRoles.objects.filter(
-                user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotion_manager = UserRoles.objects.filter(
-                user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
-            is_coordinator = UserRoles.objects.filter(
-                user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            if IsUmadjaf.objects.filter(user_id=request.user).exists():
-                is_umadjaf = IsUmadjaf.objects.get(
-                    user_id=request.user).checked
-        else:
-            is_admin = False
-            is_media_manager = False
-            is_devotion_manager = False
-            is_coordinator = False
-            is_umadjaf = False
-
-        return view_func(request, *args, **kwargs,
-                         is_authenticated=is_authenticated,
-                         is_admin=is_admin,
-                         is_media_manager=is_media_manager,
-                         is_devotion_manager=is_devotion_manager,
-                         is_coordinator=is_coordinator,
-                         is_umadjaf=is_umadjaf
-                         )
-
-    return wrapper
 
 
 # Funções do novo painel de controle
