@@ -8,8 +8,27 @@ from manager.models import Congregations
 from .models import Event
 
 
-# Decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+# Decorator para verificar se o usuário está autenticado e se é da equipe
 def authenticated_user(view_func):
+    '''
+    Decorator para verificar se o usuário está autenticado e se é da equipe
+
+    Este decorator verifica se o usuário está autenticado e se é um membro da
+    equipe de mídia. Caso o usuário esteja autenticado, o decorator adiciona
+    as seguintes variáveis ao contexto da view:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Parâmetros:
+        - view_func: A função de view a ser decorada.
+
+    Retorna:
+        - A função de view decorada.
+    '''
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
@@ -41,6 +60,25 @@ def authenticated_user(view_func):
 # Eventos do calendário
 @authenticated_user
 def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Exibe os eventos futuros no portal UMADJAF.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com a lista de eventos futuros.
+
+    Observação:
+        - A função filtra os eventos com base na data atual. Apenas os eventos com data maior ou igual à data atual serão exibidos.
+    '''
+
     events = Event.objects.filter(date__gte=timezone.now())
 
     return render(
@@ -59,6 +97,27 @@ def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 # Criar evento
 @authenticated_user
 def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para criar um novo evento no portal UMADJAF.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com o formulário de criação de evento.
+
+    Observação:
+        - A função verifica se o usuário está autenticado e se é um membro da
+        equipe de mídia. Caso o usuário não esteja autenticado ou não seja um
+        membro da equipe de mídia, ele será redirecionado para a página de
+        eventos.
+    '''
 
     if not is_authenticated:
         return redirect('events:eventos')
@@ -115,6 +174,27 @@ def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manag
 # Gerenciar eventos
 @authenticated_user
 def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para gerenciar os eventos do portal UMADJAF.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com a lista de eventos do portal UMADJAF.
+
+    Observação:
+        - A função verifica se o usuário está autenticado e se é um membro da
+        equipe de mídia. Caso o usuário não esteja autenticado ou não seja um
+        membro da equipe de mídia, ele será redirecionado para a página de
+        eventos.
+    '''
 
     if not is_authenticated:
         return redirect('events:eventos')
@@ -137,6 +217,27 @@ def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_ma
 # Editar evento
 @authenticated_user
 def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para editar um evento no portal UMADJAF.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponse contendo a página HTML renderizada com o formulário de edição de evento.
+
+    Observação:
+        - A função verifica se o usuário está autenticado e se é um membro da
+        equipe de mídia. Caso o usuário não esteja autenticado ou não seja um
+        membro da equipe de mídia, ele será redirecionado para a página de
+        eventos.
+    '''
 
     if not is_authenticated:
         return redirect('events:eventos')
@@ -174,6 +275,27 @@ def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, i
 # Deletar evento
 @authenticated_user
 def eventos_delete(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para deletar um evento no portal UMADJAF.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Um objeto HttpResponseRedirect redirecionando para a página de eventos.
+
+    Observação:
+        - A função verifica se o usuário está autenticado e se é um membro da
+        equipe de mídia. Caso o usuário não esteja autenticado ou não seja um
+        membro da equipe de mídia, ele será redirecionado para a página de
+        eventos.
+    '''
 
     if not is_authenticated:
         return redirect('events:eventos')

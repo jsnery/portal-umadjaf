@@ -8,13 +8,31 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Q
 
-# Create your views here.
 
 today = timezone.now()
 
 
-# Decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+# Decorator para verificar se o usuário está autenticado e se é da equipe
 def authenticated_user(view_func):
+    '''
+    Decorator para verificar se o usuário está autenticado e se é da equipe
+
+    Este decorator verifica se o usuário está autenticado e se é um membro da
+    equipe de mídia. Caso o usuário esteja autenticado, o decorator adiciona
+    as seguintes variáveis ao contexto da view:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Parâmetros:
+        - view_func: A função de view a ser decorada.
+
+    Retorna:
+        - A função de view decorada.
+    '''
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
@@ -43,9 +61,35 @@ def authenticated_user(view_func):
     return wrapper
 
 
-# Postar artigos
+# Postar devicional
 @authenticated_user
 def publish_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para publicar devocionais
+
+    Esta função permite que um usuário autenticado publique um devicional no
+    sistema. O usuário deve fornecer um título, uma referência bíblica,
+    o conteúdo do devicional e, opcionalmente, uma imagem de capa para o
+    devicional.
+
+    O devicional é salvo no banco de dados utilizando o modelo Articles, e é
+    marcado como oficial caso o usuário seja um administrador, coordenador
+    ou gerente de devoções. Caso o usuário seja um membro da UMADJAF, o
+    devicional é marcado como desbloqueado.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP redirecionando o usuário para a página de perfil.
+    '''
+
     notification = False
 
     if not is_authenticated:
@@ -110,9 +154,31 @@ def publish_articles(request, is_authenticated=False, is_admin=False, is_media_m
     )
 
 
-# Ver artigo
+# Ver devicional
 @authenticated_user
 def article(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para exibir um devicional específico
+
+    Esta função retorna a página de um devicional específico, identificado pelo
+    parâmetro 'article_id'. O devicional é obtido a partir do banco de dados,
+    utilizando o modelo Articles, e é exibido na página juntamente com o
+    nome do autor, a passagem bíblica referenciada e o texto da passagem.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - article_id: O ID do artigo a ser exibido.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP contendo a página do devicional específico.
+        '''
+
     article = Articles.objects.get(id=article_id)
     user_id = request.user.id
 
@@ -149,9 +215,30 @@ def article(request, article_id, is_authenticated=False, is_admin=False, is_medi
     )
 
 
-# Todos os artigos
+# Todos os devocionais
 @authenticated_user
 def all_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para exibir todos os devocionais
+
+    Esta função retorna uma lista de todos os devocionais cadastrados no
+    sistema. Os devocionais são filtrados para exibir apenas aqueles que
+    possuem a propriedade 'post_unlock' como True, e são ordenados em ordem
+    decrescente pelo campo 'id'.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP contendo a página de todos os devocionais liberados.
+    '''
+
     articles = Articles.objects.all().filter(post_unlock=True).order_by('-id')
     user_id = request.user.id
 
@@ -167,9 +254,42 @@ def all_articles(request, is_authenticated=False, is_admin=False, is_media_manag
     )
 
 
-# Pesquisar artigos
+# Pesquisar devicional
 @authenticated_user
 def search_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para pesquisar devocionais
+
+    Esta função realiza a pesquisa de devocionais com base em um termo de
+    busca fornecido pelo usuário. O termo de busca é obtido a partir do
+    parâmetro GET 'search' da requisição.
+
+    A pesquisa é realizada utilizando o sistema de pesquisa Q() do Django,
+    que permite realizar consultas complexas utilizando operadores lógicos
+    como OR e AND. Neste caso, a função realiza a busca nos campos 'title',
+    'text' e 'versicle' do modelo Articles, buscando por qualquer palavra
+    que corresponda a algum desses campos.
+
+    Os devocionais encontrados são filtrados para exibir apenas aqueles que
+    possuem a propriedade 'post_unlock' como True, e são ordenados em ordem
+    decrescente pelo campo 'id'.
+
+    Caso nenhum termo de busca seja fornecido, a função retorna uma lista
+    vazia de devocionais.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP contendo a página de resultados da pesquisa de devocionais.
+    '''
+
     user_id = request.user.id
     search = request.GET.get('search')
 
@@ -196,13 +316,40 @@ def search_articles(request, is_authenticated=False, is_admin=False, is_media_ma
     )
 
 
-# Funções de gerenciamento de Artigos
+# Funções de gerenciamento de devocionais
 @authenticated_user
 def articles_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
-    articles = Articles.objects.all().order_by('-id')
+    '''
+    Função para gerenciar devocionais
 
+    Esta função permite que um usuário autenticado e autorizado gerencie os
+    artigos cadastrados no sistema. O usuário deve ser um administrador,
+    coordenador ou gerente de devoções para acessar esta página.
+
+    Os artigos são obtidos a partir do banco de dados, utilizando o modelo
+    Articles, e são exibidos na página juntamente com as seguintes informações:
+    - Título do devocional
+    - Nome do autor
+    - Data de publicação
+    - Estado do devocional (verificado ou não verificado)
+    - Estado de bloqueio do devocional (bloqueado ou desbloqueado)
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP contendo a página de gerenciamento de devocionais.
+    '''
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')
+
+    articles = Articles.objects.all().order_by('-id')
 
     return render(
         request,
@@ -217,9 +364,33 @@ def articles_manager(request, is_authenticated=False, is_admin=False, is_media_m
     )
 
 
-# Verificar artigo
+# Verificar devicional
 @authenticated_user
 def article_verify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para verificar devocionais
+
+    Esta função permite que um usuário autenticado e autorizado verifique um
+    devocional no sistema. O usuário deve ser um administrador, coordenador
+    ou gerente de devoções para acessar esta página.
+
+    O devocional é obtido a partir do banco de dados, utilizando o modelo
+    Articles, e é marcado como oficial e desbloqueado.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - article_id: O ID do devocional a ser verificado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP redirecionando o usuário para a página anterior.
+    '''
+
 
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')
@@ -231,9 +402,32 @@ def article_verify(request, article_id, is_authenticated=False, is_admin=False, 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-# Desverificar artigo
+# Desverificar devicional
 @authenticated_user
 def article_unverify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para desverificar devocionais
+
+    Esta função permite que um usuário autenticado e autorizado desverifique um
+    devocional no sistema. O usuário deve ser um administrador, coordenador
+    ou gerente de devoções para acessar esta página.
+
+    O devocional é obtido a partir do banco de dados, utilizando o modelo
+    Articles, e é marcado como não oficial e bloqueado.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - article_id: O ID do devocional a ser desverificado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP redirecionando o usuário para a página anterior.
+    '''
 
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')
@@ -245,9 +439,32 @@ def article_unverify(request, article_id, is_authenticated=False, is_admin=False
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-# Deletar artigo
+# Deletar devicional
 @authenticated_user
 def article_delete(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+    '''
+    Função para deletar devocionais
+
+    Esta função permite que um usuário autenticado e autorizado delete um
+    devocional no sistema. O usuário deve ser um administrador, coordenador
+    ou gerente de devoções para acessar esta página.
+
+    O devocional é obtido a partir do banco de dados, utilizando o modelo
+    Articles, e é deletado do banco de dados.
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - article_id: O ID do devocional a ser deletado.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - Uma resposta HTTP redirecionando o usuário para a página anterior.
+    '''
 
     if not (is_devotion_manager or is_admin or is_coordinator):
         return redirect('articles:all_articles')

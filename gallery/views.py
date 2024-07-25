@@ -7,8 +7,27 @@ from django.http import HttpResponseRedirect
 from datetime import datetime
 
 
-# Decorator para verificar se o usuário está autenticado e se é um membro da equipe de mídia
+# Decorator para verificar se o usuário está autenticado e se é da equipe
 def authenticated_user(view_func):
+    '''
+    Decorator para verificar se o usuário está autenticado e se é da equipe
+
+    Este decorator verifica se o usuário está autenticado e se é um membro da
+    equipe de mídia. Caso o usuário esteja autenticado, o decorator adiciona
+    as seguintes variáveis ao contexto da view:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Parâmetros:
+        - view_func: A função de view a ser decorada.
+
+    Retorna:
+        - A função de view decorada.
+    '''
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
