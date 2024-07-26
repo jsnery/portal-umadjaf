@@ -1,14 +1,9 @@
 # Portal Umadjaf
 
 ## Sumário
-1. [Home](#home)
-2. [Carrossel](#carrossel)
-3. [Banner](#banner)
-4. [Devocionais](#devocionais)
-5. [Área de Login e Cadastro](#área-de-login-e-cadastro)
-6. [Perfil](#perfil)
-7. [Eventos](#eventos)
-8. [Galeria](#galeria)
-9. [Painel ADM](#painel-adm)
-
-[Documentação Adicional](./docs/home.md)
+1. [Home](./docs/home.MD)
+2. [Users](./docs/users.MD)
+3. [Gallery](./docs/gallery.MD)
+4. [Events](./docs/events.MD)
+5. [Articles](./docs/articles.MD)
+6. [Manager](./docs/manager.MD)
