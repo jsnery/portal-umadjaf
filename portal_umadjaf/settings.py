@@ -88,6 +88,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'builtins': [
+                'articles.templatetags.versicles_api',
+                'manager.templatetags.user_tags',
+            ],
         },
     },
 ]

@@ -1,7 +1,9 @@
+{% load static %}
+{% load versicles_api %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    {% load static %}
     {% include "global/partials/head.html" %}
     <link rel="stylesheet" href="{% static 'articles/css/articles.css' %}">
     <title>{{ article.title }}</title>
@@ -96,7 +98,7 @@
             <div class="card-footer">
                 <p class="text-muted"><b>{{ article.versicle }}</b></p>
                 <blockquote class="blockquote">
-                    <p class="mb-0"><em>"{{ verse_text }}"</em></p>
+                    <p class="mb-0"><em>"{% fetch_versicle article.versicle %}"</em></p>
                 </blockquote>
             </div>
 

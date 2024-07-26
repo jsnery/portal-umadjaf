@@ -139,15 +139,6 @@ def article(request, article_id, is_authenticated=False, is_admin=False, is_medi
         publisher = "Usuário não encontrado"
 
     publisher_id = article.author_id
-    article_reference = article.versicle
-
-    api_url = f'https://bible-api.com/{article_reference}?translation=almeida'
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        data = response.json()
-        verse_text = data['text']
-    else:
-        verse_text = "Passagem bíblica não encontrada."
 
     return render(
         request, 'articles/article.html',
@@ -156,7 +147,6 @@ def article(request, article_id, is_authenticated=False, is_admin=False, is_medi
             'article': article,
             'publisher': publisher,
             'publisher_id': publisher_id,
-            'verse_text': verse_text,
             'is_authenticated': is_authenticated,
             'user_id': user_id,
             'is_admin': is_admin,
