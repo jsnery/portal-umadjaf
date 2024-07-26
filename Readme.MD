@@ -10,4 +10,8 @@
 
 ## Vídeo de Demonstração
 
+<div align="center">
+
 [![Assista ao vídeo](https://img.youtube.com/vi/ASBNKDA90_Y/0.jpg)](https://www.youtube.com/watch?v=ASBNKDA90_Y)
+
+</div>
