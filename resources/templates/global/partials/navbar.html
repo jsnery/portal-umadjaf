@@ -10,17 +10,17 @@
                 <i class="fa fa-store"></i><!-- Adiciona o ícone de notícias -->
             </a> {% endcomment %}
             <a class="nav-link" href="{% url 'gallery:gallery' %}">
-                <i class="fa fa-photo"></i><!-- Adiciona o ícone de notícias -->
+                <i class="bi bi-image-fill"></i><!-- Adiciona o ícone de galeria -->
             </a>
             <a class="nav-link" href="{% url 'events:eventos' %}">
-                <i class="fas fa-calendar"></i><!-- Adiciona o ícone de notícias -->
+                <i class="bi bi-calendar-fill"></i><!-- Adiciona o ícone de eventos -->
             </a>
             <a class="nav-link" href="{% url 'articles:all_articles' %}">
-                <i class="fas fa-book-open"></i><!-- Adiciona o ícone de notícias -->
+                <i class="bi bi-book-fill"></i><!-- Adiciona o ícone de artigos -->
             </a>
             <div class="dropdown">
                 <a class="nav-link" href="#">
-                    <i class="fas fa-user"></i> <!-- Adiciona o ícone de perfil -->
+                    <i class="bi bi-person-fill"></i> <!-- Adiciona o ícone de perfil -->
                 </a>
                 <div class="dropdown-content">
                     {% if not is_authenticated %}

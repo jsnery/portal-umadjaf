@@ -7,7 +7,12 @@ from manager.models import Congregations
 from articles.models import Articles
 from gallery.models import GalleryMarkedUser
 from .models import IsUmadjaf, Roles, User, UserProfiles, UserRoles
-from .forms import ProfileUsePictureForm, ProfileUserBioForm, ProfileUserForm, ProfileUserPassForm
+from .forms import (
+    ProfileUsePictureForm,
+    ProfileUserBioForm,
+    ProfileUserForm,
+    ProfileUserPassForm
+    )
 from utils.profiles.factory import make_fake_pedidos
 
 # Criação de pedidos falsos
@@ -16,7 +21,13 @@ pedidos = make_fake_pedidos()
 
 # Sistema de cadastro de usuário
 @authenticated_user
-def register(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def register(request,
+             is_authenticated=False,
+             is_admin=False, is_media_manager=False,
+             is_devotion_manager=False,
+             is_coordinator=False,
+             is_umadjaf=False
+             ):
     '''
     Sistema de cadastro de usuário
 
@@ -108,7 +119,14 @@ def register(request, is_authenticated=False, is_admin=False, is_media_manager=F
 
 # Sistema de login de usuário
 @authenticated_user
-def login_(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def login_(request,
+           is_authenticated=False,
+           is_admin=False,
+           is_media_manager=False,
+           is_devotion_manager=False,
+           is_coordinator=False,
+           is_umadjaf=False
+           ):
     '''
     Sistema de login de usuário
 
@@ -157,7 +175,14 @@ def login_(request, is_authenticated=False, is_admin=False, is_media_manager=Fal
 
 # Funções de perfil do usuário logado
 @authenticated_user
-def profile(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def profile(request,
+            is_authenticated=False,
+            is_admin=False,
+            is_media_manager=False,
+            is_devotion_manager=False,
+            is_coordinator=False,
+            is_umadjaf=False
+            ):
     '''
     Perfil do usuário logado
 
@@ -214,7 +239,14 @@ def profile(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Funções de edição de perfil
 @authenticated_user
-def profile_settings(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def profile_settings(request,
+                     is_authenticated=False,
+                     is_admin=False,
+                     is_media_manager=False,
+                     is_devotion_manager=False,
+                     is_coordinator=False,
+                     is_umadjaf=False
+                     ):
     '''
     Edição de perfil
     
@@ -296,7 +328,15 @@ def profile_logout(request):
 
 # Funções de outro perfil
 @authenticated_user
-def other_profile(request, other_user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def other_profile(request,
+                  other_user_id,
+                  is_authenticated=False,
+                  is_admin=False,
+                  is_media_manager=False,
+                  is_devotion_manager=False,
+                  is_coordinator=False,
+                  is_umadjaf=False
+                  ):
     '''
     Perfil de outro usuário
 
@@ -316,17 +356,16 @@ def other_profile(request, other_user_id, is_authenticated=False, is_admin=False
         - HttpResponse (render)
     '''
 
-    if is_authenticated:
-        user_id = request.user.id
-    else:
-        user_id = 0
-
-    gallery = GalleryMarkedUser.objects.filter(user_id=other_user_id).filter(marked_confirm=True)
+    gallery = GalleryMarkedUser.objects.filter(
+        user_id=other_user_id).filter(marked_confirm=True)
 
     try:  # Tenta pegar o perfil do usuário
         profile = UserProfiles.objects.get(user_id=other_user_id)
         user = User.objects.get(id=other_user_id)
-        posts = Articles.objects.filter(author_id=other_user_id).order_by('-id')
+
+        posts = Articles.objects.filter(
+            author_id=other_user_id).order_by('-id')
+
     except Exception:  # Se não conseguir, retorna um erro
         return redirect('users:profile_does_not_exists')
 
@@ -347,7 +386,14 @@ def other_profile(request, other_user_id, is_authenticated=False, is_admin=False
 
 # Função de perfil não encontrado
 @authenticated_user
-def profile_does_not_exists(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def profile_does_not_exists(request,
+                            is_authenticated=False,
+                            is_admin=False,
+                            is_media_manager=False,
+                            is_devotion_manager=False,
+                            is_coordinator=False,
+                            is_umadjaf=False
+                            ):
     '''
     Perfil não encontrado
 

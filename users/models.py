@@ -4,8 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 # Upload de fotos de perfil
 def get_upload_to_profiles(instance, filename):
-    print(instance)
-    return f'users/profile_pictures/{instance.user_id.id}/{instance.user_id.id}.jpg'
+    user_id = instance.user_id.id
+    return f'users/profile_pictures/{user_id}/{user_id}.jpg'
 
 
 # Permissões
@@ -20,30 +20,32 @@ class Roles(models.Model):
     role = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
-        return f'({self.id}) {self.role}'
+        return f'({self.id}) {self.role}'  # type: ignore
 
 
 # Usuário
 class User(AbstractBaseUser, PermissionsMixin):
     '''
-    O modelo User é uma classe abstrata que implementa a interface de usuário do Django.
-    Dessa forma substituímos o modelo de usuário padrão do Django pelo nosso modelo de usuário personalizado.
+    O modelo User é uma classe abstrata que implementa a interface de usuário
+    do Django. Dessa forma substituímos o modelo de usuário padrão do Django
+    pelo nosso modelo de usuário personalizado.
 
-    O modelo User em sim é independente, mas possui um relacionamento com os modelos UserRoles, UserProfiles e IsUmadjaf.
-    Se o modelo User for apagado, os modelos UserRoles, UserProfiles e IsUmadjaf também serão apagados.
+    O modelo User em sim é independente, mas possui um relacionamento com os
+    modelos UserRoles, UserProfiles e IsUmadjaf. Se o modelo User for apagado,
+    os modelos UserRoles, UserProfiles e IsUmadjaf também serão apagados.
 
     Atibutos:
-    id: int (primary key)
-    complete_name: str
-    number_phone: str
-    birthday: date
-    church: str
-    is_umadjaf: bool
-    created_at: datetime
-    updated_at: datetime
-    last_login: datetime
-    is_staff: bool
-    is_superuser: bool
+        - id: int (primary key)
+        - complete_name: str
+        - number_phone: str
+        - birthday: date
+        - church: str
+        - is_umadjaf: bool
+        - created_at: datetime
+        - updated_at: datetime
+        - last_login: datetime
+        - is_staff: bool
+        - is_superuser: bool
     '''
     complete_name = models.CharField(max_length=100)
     number_phone = models.CharField(max_length=15, unique=True)
@@ -63,19 +65,24 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'number_phone'
 
     def __str__(self):
-        return f'({self.id}) {self.complete_name}'
+        return f'({self.id}) {self.complete_name}'  # type: ignore
 
     def has_perm(self, perm, obj=None):
         """
         Retorna True se o usuário tiver a permissão especificada.
         """
-        return self.is_active and (self.is_superuser or self.user_permissions.filter(codename=perm).exists())
+        return self.is_active and (
+            self.is_superuser or self.user_permissions.filter(
+                codename=perm).exists())
 
     def has_module_perms(self, app_label):
         """
-        Retorna True se o usuário tiver permissão para acessar modelos no aplicativo especificado.
+        Retorna True se o usuário tiver permissão para acessar modelos
+        no aplicativo especificado.
         """
-        return self.is_active and (self.is_superuser or self.user_permissions.filter(content_type__app_label=app_label).exists())
+        return self.is_active and (
+            self.is_superuser or self.user_permissions.filter(
+                content_type__app_label=app_label).exists())
 
 
 # Permissões do usuário
@@ -125,7 +132,7 @@ class UserProfiles(models.Model):
     def save(self, *args, **kwargs):
         # Tenta excluir o arquivo antigo quando está sendo atualizado
         try:
-            this = UserProfiles.objects.get(id=self.id)
+            this = UserProfiles.objects.get(id=self.id)  # type: ignore
             if this.profile_picture != self.profile_picture:
                 this.profile_picture.delete(save=False)
         except Exception:
@@ -147,4 +154,4 @@ class IsUmadjaf(models.Model):
     checked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.user_id} ({'Aprovado' if self.checked else 'Reprovado'})'
+        return f'{self.user_id} ({'approve' if self.checked else 'reprobate'})'

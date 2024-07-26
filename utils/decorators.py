@@ -1,5 +1,5 @@
 from functools import wraps
-from users.models import User, UserRoles, Roles, IsUmadjaf
+from users.models import UserRoles, Roles, IsUmadjaf
 
 
 # Decorator para verificar se o usuário está autenticado e se é da equipe
@@ -25,13 +25,23 @@ def authenticated_user(view_func):
     '''
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        is_authenticated = request.user.is_authenticated  # Verifica se o usuário está logado
+        is_authenticated = request.user.is_authenticated
         if is_authenticated:
-            is_admin = request.user.is_staff # Verifica se o usuário é admin
-            is_media_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='MediaManager')).exists()
-            is_devotion_manager = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='DevotionManager')).exists()
-            is_coordinator = UserRoles.objects.filter(user_id=request.user, role_id=Roles.objects.get(role='Coordinator')).exists()
-            is_umadjaf = IsUmadjaf.objects.get(user_id=request.user).checked
+            is_admin = request.user.is_staff  # type: ignore
+            is_media_manager = UserRoles.objects.filter(
+                user_id=request.user,
+                role_id=Roles.objects.get(role='MediaManager')).exists()
+
+            is_devotion_manager = UserRoles.objects.filter(
+                user_id=request.user,
+                role_id=Roles.objects.get(role='DevotionManager')).exists()
+
+            is_coordinator = UserRoles.objects.filter(
+                user_id=request.user,
+                role_id=Roles.objects.get(role='Coordinator')).exists()
+
+            is_umadjaf = IsUmadjaf.objects.get(
+                user_id=request.user).checked
         else:
             is_admin = False
             is_media_manager = False
