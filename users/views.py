@@ -249,9 +249,9 @@ def profile_settings(request,
                      ):
     '''
     Edição de perfil
-    
+
     Responsável por editar o perfil do usuário logado
-    
+
     Parâmetros:
         - request: A requisição HTTP recebida.
         - is_authenticated: Indica se o usuário está autenticado.
@@ -269,17 +269,33 @@ def profile_settings(request,
         return redirect('users:login')
 
     user = request.user
-    user_profile = UserProfiles.objects.get(user_id=user)  # Pega o perfil do usuário logado
+    # Pega o perfil do usuário logado
+    user_profile = UserProfiles.objects.get(user_id=user)
 
     # print(user)
 
     if request.method == 'POST':
-        user_form = ProfileUserForm(request.POST, instance=user)  # Cria o formulário de usuário
-        user_password_form = ProfileUserPassForm(request.POST, instance=user)  # Cria o formulário de senha
-        user_profile_form = ProfileUserBioForm(request.POST, instance=user_profile)  # Cria o formulário de perfil
-        user_picture_form = ProfileUsePictureForm(request.POST, request.FILES, instance=user_profile, label_suffix='')  # Cria o formulário de foto de perfil
+        # Cria o formulário de usuário
+        user_form = ProfileUserForm(request.POST, instance=user)
+        # Cria o formulário de senha
+        user_password_form = ProfileUserPassForm(request.POST, instance=user)
+        # Cria o formulário de perfil
+        user_profile_form = ProfileUserBioForm(
+            request.POST,
+            instance=user_profile
+            )
+        # Cria o formulário de foto de perfil
+        user_picture_form = ProfileUsePictureForm(
+            request.POST,
+            request.FILES,
+            instance=user_profile,
+            label_suffix=''
+            )
 
-        if user_form.is_valid() and user_profile_form.is_valid() and user_picture_form.is_valid():
+        if user_form.is_valid() \
+                and user_profile_form.is_valid() \
+                and user_picture_form.is_valid():
+
             if user_password_form.is_valid():
                 user_form.save()
                 user_password_form.save()
@@ -287,7 +303,7 @@ def profile_settings(request,
                 user_picture_form.save()
                 return JsonResponse({'success': True})
             else:
-                return JsonResponse({'success': False, 'error': 'Houve um erro ao enviar o formulário.'})
+                return JsonResponse({'success': False})
 
     else:
         user_form = ProfileUserForm(instance=user)  # Cria o formulário de usuário
