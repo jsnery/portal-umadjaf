@@ -114,7 +114,9 @@ class UserProfiles(models.Model):
     Atibutos:
 
     user_id: int
+    profile_picture: str | ImageField
     bio: str
+    show_gallery: bool
     updated_at: datetime
     '''
     user_id = models.OneToOneField(User, on_delete=models.CASCADE)
