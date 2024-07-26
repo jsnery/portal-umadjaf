@@ -19,6 +19,29 @@ from utils.profiles.factory import make_fake_pedidos
 pedidos = make_fake_pedidos()
 
 
+# Função de formatação de número de telefone
+def format_number_phone(number_phone):
+    '''
+    Formatação de número de telefone
+
+    Responsável por formatar o número de telefone do usuário
+    do padrão (XX) XXXXX-XXXX para XXXXXXXXXXXX.
+
+    Parâmetros:
+        - number_phone: str
+
+    Retorno:
+        - str
+    '''
+
+    number = []
+    for i in number_phone:
+        if i.isdigit():
+            number.append(i)
+
+    return ''.join(number)
+
+
 # Sistema de cadastro de usuário
 @authenticated_user
 def register(request,
@@ -56,11 +79,12 @@ def register(request,
 
     if request.method == 'POST':
         is_umadjaf = request.POST['is_umadjaf'] == 'true'
+        number_phone = format_number_phone(request.POST['number_phone'])
 
         try:
             new_user = User(
                 complete_name=request.POST['full_name'],
-                number_phone=request.POST['number_phone'],
+                number_phone=number_phone,
                 birthday=request.POST['birth_date'],
                 gender=request.POST['gender'],
                 church=request.POST['church'],
@@ -150,7 +174,7 @@ def login_(request,
     if is_authenticated:
         return redirect('users:profile')
     if request.method == 'POST':
-        number_phone = request.POST['number_phone']
+        number_phone = format_number_phone(request.POST['number_phone'])
         password = request.POST['password']
         # user = User.objects.filter(number_phone=number_phone).first()
         user = authenticate(
@@ -215,7 +239,8 @@ def profile(request,
         isumadjaf__checked=True
         ).exclude(id=user_id)
 
-    gallery = GalleryMarkedUser.objects.filter(user_id=user_id).filter(marked_confirm=True)
+    gallery = GalleryMarkedUser.objects.filter(
+        user_id=user_id).filter(marked_confirm=True)
 
     user_profile = UserProfiles.objects.get(user_id=user_id)
 
@@ -227,8 +252,8 @@ def profile(request,
             'is_admin': is_admin,
             'is_umadjaf': is_umadjaf,
             'is_coordinator': is_coordinator,
-            'profile': user_profile,  # Use a variável user diretamente
-            'user': request.user,  # Use request.user diretamente
+            'profile': user_profile,
+            'user': request.user,
             'posts': posts,
             'group_members': group_members,
             'pedidos': pedidos,
@@ -306,16 +331,21 @@ def profile_settings(request,
                 return JsonResponse({'success': False})
 
     else:
-        user_form = ProfileUserForm(instance=user)  # Cria o formulário de usuário
-        user_password_form = ProfileUserPassForm(instance=user)  # Cria o formulário de senha
-        user_profile_form = ProfileUserBioForm(instance=user_profile)  # Cria o formulário de perfil
-        user_picture_form = ProfileUsePictureForm(instance=user_profile, label_suffix='')  # Cria o formulário de foto de perfil
+        # Cria o formulário de usuário
+        user_form = ProfileUserForm(instance=user)
+        # Cria o formulário de senha
+        user_password_form = ProfileUserPassForm(instance=user)
+        # Cria o formulário de perfil
+        user_profile_form = ProfileUserBioForm(instance=user_profile)
+        # Cria o formulário de foto de perfil
+        user_picture_form = ProfileUsePictureForm(
+            instance=user_profile, label_suffix='')
 
     return render(
         request,
         'user_profile/pages/partials/partials/module_settings.html',
         context={
-            'is_authenticated': is_authenticated,  # Faz a verificação se o usuário está logado
+            'is_authenticated': is_authenticated,
             'user_form': user_form,
             'user_password_form': user_password_form,
             'user_profile_form': user_profile_form,
