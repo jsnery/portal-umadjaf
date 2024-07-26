@@ -44,6 +44,94 @@
             width: 93%;
         }
 
+
+        /* Aumenta o espaçamento após cada parágrafo no Quill */
+        .ql-editor p {
+            margin-bottom: 16px; /* Ajuste este valor conforme necessário */
+        }
+
+        /* Ou, para aumentar o espaçamento entre linhas */
+        .ql-editor p {
+            line-height: 1.6; /* Ajuste este valor conforme necessário */
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="8px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="8px"]::before {
+            content: '8';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
+            content: '10';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="12px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="12px"]::before {
+            content: '12';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
+            content: '14';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
+            content: '16';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="18px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
+            content: '18';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20px"]::before {
+            content: '20';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="22px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="22px"]::before {
+            content: '22';
+        }
+
+        .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="24px"]::before,
+        .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="24px"]::before {
+            content: '24';
+        }
+
+        /* Esconde os números padrões e mostra os rótulos personalizados */
+        .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
+        .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
+            content: 'Título';
+        }
+
+        .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+        .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
+            content: 'Sub 1';
+        }
+
+        .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
+        .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
+            content: 'Sub 2';
+        }
+
+        .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="4"]::before,
+        .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="4"]::before {
+            content: 'Sub 3';
+        }
+
+        .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="5"]::before,
+        .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="5"]::before {
+            content: 'Sub 4';
+        }
+
+        /* Para o valor "false", que geralmente representa o texto normal, você pode querer deixá-lo como está ou personalizar também */
+        .ql-snow .ql-picker.ql-header .ql-picker-label:not([data-value]),
+        .ql-snow .ql-picker.ql-header .ql-picker-item:not([data-value])::before {
+            content: 'Normal';
+        }
+
         
     </style>
 </head>
@@ -205,21 +293,24 @@
             theme: 'snow',
             modules: {
                 toolbar: [
+                    [{ 'font': [] }],                                 // Fontes
+                    [{ 'size': ['8px', '10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px'] }],  // custom dropdown for font sizes
                     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                    [{ 'align': [] }],
                     ['blockquote'],
-    
-                    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                    
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                     [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
                     [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
                     [{ 'direction': 'rtl' }],                         // text direction
+                    
     
-                    [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-                    [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                    [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                    [{ 'header': [1, 2, 3, 4, 5, false] }],
     
                     [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-                    [{ 'font': [] }],
-                    [{ 'align': [] }],
+                    
+                    
     
                     ['clean']                                         // remove formatting button
                 ]

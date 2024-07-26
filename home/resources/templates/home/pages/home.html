@@ -85,7 +85,7 @@
                         <div class="card-body pub-title">
                             <h5 class="card-title"><b>{{ i.title|truncatechars:35 }}</b></h5>
                             <blockquote class="blockquote">
-                                <p class="mb-0 card-text"><em>"{% fetch_versicle i.versicle %}"</em></p>
+                                <p class="mb-0 card-text"><em>"{% fetch_versicle i.versicle|truncatechars:110 %}"</em></p>
                             </blockquote>
                         </div>
                         <div class="card-footer text-right">

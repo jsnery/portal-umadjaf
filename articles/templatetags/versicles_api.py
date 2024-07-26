@@ -16,10 +16,13 @@ def fetch_versicle(article_reference, max_length=110):
         verse_text = data['text']
         # Limita o texto ao número máximo de caracteres
         if len(verse_text) > max_length:
-            verse_text = verse_text[:max_length] + '...'
-        # Formata o texto em itálico
-        verse_text = f'<em>{verse_text}</em>'
+            verse_text = verse_text[:max_length] + '..."'
+        else:
+            y = data['text'][:-4]
+            verse_text = y + '..."'
+
+        verse_text = f'<em>"{verse_text}</em>'
     else:
-        verse_text = "<em>Versículo não encontrado</em>"
+        verse_text = '<em>"Versículo não encontrado"</em>'
 
     return mark_safe(verse_text)

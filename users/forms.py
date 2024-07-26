@@ -95,7 +95,7 @@ class ProfileUserBioForm(forms.ModelForm):
     bio = forms.CharField(
         label='Bio',
         required=False,
-        max_length=75,  # Limita o campo bio a 75 caracteres
+        max_length=120,  # Limita o campo bio a 75 caracteres
         widget=forms.Textarea(attrs={'autocomplete': 'off'}))
     # show_gallery = forms.BooleanField(
     #     label='Mostrar galeria', required=False)

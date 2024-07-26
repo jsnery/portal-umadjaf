@@ -31,7 +31,7 @@
                             <div class="card-img-top" style="background-image: url('/media/{{ article.banner }}');" alt="{{ article.title }}"></div>
                             <div class="card-body pub-title">
                                 <h5 class="card-title">{{ article.title|truncatechars:30 }}</h5>
-                                <p class="card-text"><i>"{% fetch_versicle article.versicle %}"</i></p>
+                                <p class="card-text"><i>{% fetch_versicle article.versicle|truncatechars:110 %}</i></p>
                             </div>
                             <div class="card-footer">
                                 <div class="row">
@@ -62,6 +62,12 @@
             {% endfor %}
         </div>
     </section>
+
+    
+    <a id="float-btn" href="{% url 'articles:publish' %}" class="floating-btn">+</a>
+    {% if is_admin or is_devotion_manager %}
+        <a id="float-btn" href="{% url 'articles:articles_manager' %}" class="floating-btn2"><i class="fa fa-edit"></i></a>
+    {% endif %}
 
     {% include 'global/partials/footer.html' %}
 </body>

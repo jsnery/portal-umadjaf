@@ -1,5 +1,5 @@
 {% load static %}
-{% load versicles_api %}
+{% load versicles_api_full %}
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -98,7 +98,7 @@
             <div class="card-footer">
                 <p class="text-muted"><b>{{ article.versicle }}</b></p>
                 <blockquote class="blockquote">
-                    <p class="mb-0"><em>"{% fetch_versicle article.versicle %}"</em></p>
+                    <p class="mb-0"><em>{% fetch_versicle article.versicle %}</em></p>
                 </blockquote>
             </div>
 
