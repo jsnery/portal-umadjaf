@@ -8,7 +8,6 @@
 5. [Articles](./docs/articles.MD)
 6. [Manager](./docs/manager.MD)
 
-<video width="320" height="240" controls>
-  <source src="./docs/assets/example.mp4" type="video/mp4">
-  Seu navegador não suporta o elemento de vídeo.
-</video>
+## Vídeo de Demonstração
+
+[![Assista ao vídeo](https://img.youtube.com/vi/ASBNKDA90_Y/0.jpg)](https://www.youtube.com/watch?v=ASBNKDA90_Y)
