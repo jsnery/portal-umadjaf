@@ -1,4 +1,6 @@
 .commands
+vercel.json
+.vercel
 .commands_shell
 venv
 venv/
@@ -50,3 +52,4 @@ local_settings.py
 db.sqlite3-journal
 
 
+.vercel
