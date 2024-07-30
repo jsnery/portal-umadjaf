@@ -62,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Adicionando o middleware de redirecionamento
+    'utils.404_redirect.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'portal_umadjaf.urls'

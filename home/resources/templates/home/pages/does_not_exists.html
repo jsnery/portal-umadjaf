@@ -1,0 +1,29 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    {% include "global/partials/head.html" %}
+    {% block head %}
+        <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
+        <title>Pagina não encontrada</title>
+    {% endblock head %}
+
+    <body>
+            <!-- Barra de Navegação -->
+            {% include 'global/partials/navbar.html' %}
+
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-12 text-center text-white" style="color: white;">
+                    <h2>Pagina não encontrada (404)</h2>
+                    <p>Desculpe, a página que você está procurando não existe.</p>
+                    <a href="{% url 'home' %}" class="btn btn-primary">Voltar para a página inicial</a>
+                </div>
+            </div>
+        </div>
+
+        {% include 'global/partials/footer.html' %}
+    </body>
+</html>

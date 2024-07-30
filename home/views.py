@@ -241,3 +241,39 @@ def carrousel_delete(request, item_id,
     carrousel.delete()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@authenticated_user
+def does_not_exists(request,
+                    is_authenticated,
+                    is_admin,
+                    is_media_manager,
+                    is_devotion_manager,
+                    is_coordinator,
+                    is_umadjaf
+                    ):
+    '''
+    Página não encontrada
+
+    Esta view renderiza a página de erro 404.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de erro 404.
+    '''
+
+    return render(
+        request,
+        'home/pages/does_not_exists.html',
+        context={
+            'is_authenticated': is_authenticated
+        }
+    )
