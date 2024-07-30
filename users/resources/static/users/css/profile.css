@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #01040e;
+}
+
+/* Abre Profile-Base */
+
+#profile-base {
+    position: fixed;
+    top: 50px; /* Ajuste este valor conforme a altura da sua navbar */
+    width: 100%;
+    z-index: 100; /* Garante que o banner fique acima do conteúdo rolável */
+    background-color: #d4d4d4;
+    background-size: cover;
+    background-position: left center;
+}
+

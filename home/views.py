@@ -7,9 +7,30 @@ from events.models import Event
 from .models import Carrousel
 
 
+'''
+É utilizado o decorator @authenticated_user para verificar se o usuário está
+autenticado.
+
+Ele entrega os seguintes parâmetros para as views:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+'''
+
+
 # Página inicial
 @authenticated_user
-def home(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def home(request,
+         is_authenticated,
+         is_admin,
+         is_media_manager,
+         is_devotion_manager,
+         is_coordinator,
+         is_umadjaf
+         ):
     '''
     Página inicial
 
@@ -51,7 +72,14 @@ def home(request, is_authenticated=False, is_admin=False, is_media_manager=False
 
 # Gerir banners do carrossel
 @authenticated_user
-def carrousel(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def carrousel(request,
+              is_authenticated,
+              is_admin,
+              is_media_manager,
+              is_devotion_manager,
+              is_coordinator,
+              is_umadjaf
+              ):
     '''
     Gerir banners do carrossel
 
@@ -113,7 +141,14 @@ def carrousel(request, is_authenticated=False, is_admin=False, is_media_manager=
 
 # Adicionar banner do carrossel
 @authenticated_user
-def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def carrousel_add(request,
+                  is_authenticated,
+                  is_admin,
+                  is_media_manager,
+                  is_devotion_manager,
+                  is_coordinator,
+                  is_umadjaf
+                  ):
     '''
     Adicionar banner do carrossel
 
@@ -142,12 +177,12 @@ def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_mana
 
     if request.method == 'POST':
         title = request.POST.get('title')
-        description = request.POST.get('description')
+        link = request.POST.get('link')
         image = request.FILES.get('image')
 
         carrousel = Carrousel(
             title=title,
-            description=description,
+            link=link,
             image=image,
             author_id=request.user.id
         )
@@ -169,7 +204,14 @@ def carrousel_add(request, is_authenticated=False, is_admin=False, is_media_mana
 
 # Deletar banner do carrossel
 @authenticated_user
-def carrousel_delete(request, item_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def carrousel_delete(request, item_id,
+                     is_authenticated,
+                     is_admin,
+                     is_media_manager,
+                     is_devotion_manager,
+                     is_coordinator,
+                     is_umadjaf
+                     ):
     '''
     Deletar banner do carrossel
 

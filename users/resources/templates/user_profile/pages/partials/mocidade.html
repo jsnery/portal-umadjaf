@@ -1,88 +1,6 @@
 {% load static %}
 {% load member_profile %}
 
-<style>
-    #group-member {
-        padding: 20px;
-    }
-    .card-group-member {
-        display: flex;
-        flex-direction: row; /* Garante alinhamento horizontal */
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        width: 100%; /* Faz cada card ocupar a largura total */
-    }
-    
-    .img-group-member {
-        flex: 0 0 auto;
-        width: 75px;
-        height: 75px;
-        border-radius: 50%;
-        margin-right: 2px;
-    }
-
-    .details-group-member {
-        flex: 1;
-        padding: 0 15px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        overflow: hidden; /* Impede que o conteúdo excedente altere o layout */
-    }
-
-    .name-group-member {
-        margin: 0;
-        font-size: 1.2em;
-        font-weight: bold;
-    }
-
-    .bio-group-member {
-        font-size: 0.9em;
-        color: #666;
-    }
-
-    .name-group-member, .bio-group-member {
-        display: block; /* Garante que o nome e a biografia estejam um acima do outro */
-        white-space: nowrap; /* Mantém o texto em uma única linha */
-        overflow: hidden; /* Esconde qualquer conteúdo que exceda o espaço disponível */
-        text-overflow: ellipsis; /* Adiciona reticências ao final do texto se ele for muito longo */
-        margin: 0; /* Remove margens padrão para alinhamento adequado */
-    }
-    
-    .view-button {
-        flex: 0 0 auto;
-        padding: 10px 20px;
-        border: none;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .round-button {
-        display: inline-block;
-        width: 50px; /* Tamanho do botão */
-        height: 50px; /* Tamanho do botão */
-        background-color: #007bff; /* Cor de fundo do botão */
-        color: white; /* Cor do ícone */
-        border-radius: 50%; /* Arredondamento para tornar o botão redondo */
-        text-align: center; /* Centraliza o ícone/texto dentro do botão */
-        line-height: 50px; /* Centraliza o ícone/texto verticalmente */
-        font-size: 20px; /* Tamanho do ícone */
-        text-decoration: none; /* Remove o sublinhado do link */
-    }
-    
-    .round-button:hover {
-        background-color: #0056b3; /* Cor de fundo do botão ao passar o mouse */
-        color: white; /* Mantém a cor do ícone ao passar o mouse */
-        text-decoration: none; /* Garante que o sublinhado do link não apareça ao passar o mouse */
-    }
-    
-</style>
-
 <div class="tab-pane fade" id="group-member">
     <div class="container-fluid">
         <div class="row justify-content-center mx-auto" style="width: auto;">
@@ -98,7 +16,7 @@
                 </a>
             </div>
             {% empty %}
-            <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 20px; height: 50vh;">
+            <div class="col-12 d-flex justify-content-center align-items-center" style="color: white; font-weight: bold; font-size: 15px; height: 20vh;">
                 Nenhum membro encontrado.
             </div>
             {% endfor %}

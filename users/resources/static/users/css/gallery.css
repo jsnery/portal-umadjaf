@@ -1,0 +1,72 @@
+/* Estilos Gerais da Galeria */
+#gallery {
+    margin-top: 23vh;
+}
+
+@media (max-width: 720px) {
+    #gallery {
+        margin-top: 21vh;
+    }
+}
+
+@media (max-height: 667px) {
+    #gallery {
+        margin-top: 26vh;
+    }
+}
+
+.profile-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 768px;
+    margin: 5px;
+    margin-top: 2px;
+}
+
+/* Estilos dos Cards da Galeria */
+.row-profile-gallery .card {
+    margin: 5px;
+    background-color: #01040e;
+    max-width: calc(33.333% - 10px);
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .row-profile-gallery .card {
+        max-width: calc(50% - 10px);
+    }
+}
+
+/* Estilos do Perfil da Galeria */
+.gallery-profile {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+/* Estilos das Imagens da Galeria */
+.gallery-image, #selected-photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+#selected-photo {
+    aspect-ratio: 16 / 9;
+}
+
+/* Responsividade */
+.profile-gallery {
+    margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+    .profile-gallery {
+        margin-top: 10px;
+    }
+}

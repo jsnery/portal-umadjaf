@@ -5,14 +5,19 @@
 
     {% include "global/partials/head.html" %}
     {% block head %}
-        <link rel="stylesheet" href="{% static 'user_profile/css/profile.css' %}">
-        <link rel="stylesheet" href="{% static 'user_profile/css/nav.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/nav.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/posts.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/gallery.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/members.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/settings.css' %}">
         <title>{{ user.complete_name }}</title>
     {% endblock head %}
 
 <body>
     {% include 'global/partials/navbar.html' %}
-    <section>
+    
+    <section id="profile-base">
         <div class="container-fluid">
             <!-- Informações do perfil -->
             <div id="profile-container" class="row">
@@ -62,7 +67,6 @@
             </div>
         </nav>
 
-        
     </section>
 
     <section>
@@ -80,9 +84,6 @@
                     
                     <!-- Mocidade -->
                     {% include 'user_profile/pages/partials/mocidade.html' %}
-    
-                    <!-- Pedidos -->
-                    {% include 'user_profile/pages/partials/orders.html' %}
                 
                     <!-- Configurações -->
                     {% include 'user_profile/pages/partials/settings.html' %}
@@ -99,30 +100,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{% static 'user_profile/js/profile.js' %}"></script>
-    <script>
-        $(document).ready(function() {
-            var url = 'profiles:settings';
-
-            $.get(url, function(data) {
-                // Substitua 'your-element-id' pelo ID do elemento HTML no qual você deseja inserir os dados
-                $('#settings-x').html(data);
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {       
-            // Evento de clique para o nav-posts-tab
-            $('#nav-posts-tab').click(function() {
-                // Mostra o botão flutuante
-                $('#float-btn').show();
-            });
-        
-            // Opcional: esconde o botão flutuante quando outros tabs são clicados
-            $('.nav-item.nav-link').not('#nav-posts-tab').click(function() {
-                $('#float-btn').hide();
-            });
-        });
-    </script>
+    <script src="{% static 'users/js/profile.js' %}"></script>
 </body>
 </html>

@@ -48,13 +48,6 @@
     height: 35vh;
 }
 
-@media (max-width: 768px) {
-    #eventBanner_2 {
-        height: 20vh;
-        padding: 60px 0;
-    }
-}
-
 #eventLogo {
     height: 80%;
     object-fit: cover;
@@ -68,6 +61,17 @@
     margin-top: 36vh; /* Ajuste este valor para a altura do eventBanner mais a navbar */
     max-height: calc(100vh - 250px); /* Altura da viewport menos a altura do banner e navbar */
     overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    #eventBanner_2 {
+        height: 20vh;
+        padding: 60px 0;
+    }
+
+    #calendar {
+        margin-top: 21vh;
+    }
 }
 
 .floating-btn {

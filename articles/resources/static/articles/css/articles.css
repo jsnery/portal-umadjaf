@@ -1,14 +1,13 @@
-/* Seção de Carrosel */
-
+/* Carousel Section */
 .carousel-item {
     height: 0;
-    padding-bottom: 45%; /* para uma proporção de 16:9 */
+    padding-bottom: 45%; /* 16:9 aspect ratio */
     position: relative;
 }
 
 @media (max-width: 600px) {
     .carousel-item {
-        padding-bottom: 56%; /* para uma proporção de 16:9 */
+        padding-bottom: 56%; /* 16:9 aspect ratio for smaller screens */
     }
 }
 
@@ -21,8 +20,7 @@
     height: 100%;
 }
 
-/* Seção dos Artigos */
-
+/* Articles Section */
 #section-two {
     position: relative;
     background-color: #01040e;
@@ -51,18 +49,14 @@
     margin-bottom: 20px;
     border: none;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    transition: transform .2s; /* Animação suave */
-    position: relative; /* Necessário para o z-index funcionar */
-    z-index: 1; /* Coloca o elemento na frente dos outros elementos */
+    transition: transform .2s;
+    position: relative;
+    z-index: 1;
 }
 
-.cardz:hover {
-    transform: scale(1.1); /* (110% zoom - Note que 1.1 equivale a 110%) */
-    z-index: 2; /* Coloca o elemento ainda mais na frente quando o mouse passa sobre ele */
-}
-
-.cardz .card-body .card-text{
-    min-height: 80px;
+.card:hover {
+    transform: scale(1.1);
+    z-index: 2;
 }
 
 .articles-container {
@@ -75,29 +69,44 @@
     }
 }
 
+/* Form Customization for Responsive Design */
 @media (max-width: 768px) {
     .form-custom {
         flex-direction: column;
         align-items: stretch;
     }
     .form-custom .form-control, .form-custom label {
-        margin-bottom: 10px; /* Adiciona um espaço entre os elementos */
+        margin-bottom: 10px;
     }
     .form-custom .form-control {
-        width: auto; /* Garante que os inputs ocupem toda a largura disponível */
+        width: auto;
     }
 }
 
+/* Publication Titles */
 .pub-title .card-title {
-    font-size: 1.3em; /* Tamanho do título */
-    text-align: center; /* Justifica o texto */
+    font-size: 1.3em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pub-title .card-text {
-    text-align: center; /* Justifica o texto */
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 1200px) {
+    .col-md-4 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (max-width: 900px) {
     .col-md-4 {
         flex: 0 0 100%;
         max-width: 100%;
@@ -105,72 +114,96 @@
 }
 
 @media (max-width: 768px) {
-
-    .pub-title .card-title {
-        font-size: 1.1em; /* Tamanho do título */
-        text-align: center; /* Garante que o texto continue justificado em telas menores */
-    }
-
-    .pub-title .card-text {
-        font-size: 1em; /* Tamanho do texto */
-        text-align: center; /* Garante que o texto continue justificado em telas menores */
+    .pub-title .card-title, .pub-title .card-text {
+        font-size: 1.1em;
+        text-align: center;
     }
 }
 
-.floating-btn {
+/* Floating Buttons */
+.floating-btn, .floating-btn2 {
     position: fixed;
     width: 50px;
     height: 50px;
     bottom: 40px;
     right: 40px;
-    background-color: #007bff; /* Cor do Bootstrap para btn-primary */
+    background-color: #007bff;
     color: #fff;
     border-radius: 50%;
     text-align: center;
     font-size: 30px;
     z-index: 1000;
     cursor: pointer;
-    /* box-shadow: 2px 2px 3px #999; Removido para eliminar sombreamento */
-    text-decoration: none; /* Evita texto sublinhado */
-}
-
-/* Estilo para o ícone ou texto dentro do botão, se necessário */
-.floating-btn i {
-    vertical-align: middle;
-}
-
-/* Garante que o botão não fique sublinhado ao passar o mouse ou clicar */
-.floating-btn:hover, .floating-btn:active, .floating-btn:focus {
     text-decoration: none;
-    color: #fff; /* Mantém a cor do texto ao interagir */
-    outline: none; /* Remove o contorno que pode aparecer ao clicar */
 }
 
 .floating-btn2 {
-    position: fixed;
-    width: 50px;
-    height: 50px;
-    bottom: 40px;
     right: 100px;
-    background-color: #007bff; /* Cor do Bootstrap para btn-primary */
-    color: #fff;
-    border-radius: 50%;
-    text-align: center;
     font-size: 28px;
-    z-index: 1000;
-    cursor: pointer;
-    /* box-shadow: 2px 2px 3px #999; Removido para eliminar sombreamento */
-    text-decoration: none; /* Evita texto sublinhado */
 }
 
-/* Estilo para o ícone ou texto dentro do botão, se necessário */
-.floating-btn2 i {
-    vertical-align: middle;
-}
-
-/* Garante que o botão não fique sublinhado ao passar o mouse ou clicar */
+.floating-btn:hover, .floating-btn:active, .floating-btn:focus,
 .floating-btn2:hover, .floating-btn2:active, .floating-btn2:focus {
     text-decoration: none;
-    color: #fff; /* Mantém a cor do texto ao interagir */
-    outline: none; /* Remove o contorno que pode aparecer ao clicar */
+    color: #fff;
+    outline: none;
+}
+
+/* Devotional Preview */
+#bannerPreview {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 32 / 9;
+    position: absolute;
+    min-height: 100%;
+    object-fit: cover;
+}
+
+#backgroundPreview {
+    background-color: #d4d4d4;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 32/9;
+}
+
+/* Text Formatting */
+blockquote p {
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    #publisher, blockquote p {
+        font-size: 0.8rem;
+    }
+}
+
+/* Action Buttons */
+.floating-buttons {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#deleteButton, #verifyButton, #unverifyButton {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#deleteButton, #unverifyButton {
+    background-color: #ff4d4d;
+    color: white;
+}
+
+#verifyButton {
+    background-color: #4CAF50;
+    color: white;
 }

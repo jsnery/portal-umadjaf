@@ -15,12 +15,12 @@ body {
 }
 
 .user-name {
-    font-size: 20px;
+    font-size: 1.2em;
     font-weight: bold;
 }
 
 .text-bio p {
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #666;
 }
 
@@ -32,7 +32,7 @@ body {
     object-fit: cover;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 800px) {
     .text-bio p {
         font-size: 1em;
     }
@@ -42,11 +42,30 @@ body {
         width: 130px;
         height: 130px;
     }
+}
+
+@media (max-width: 390px) {
+    .text-bio p {
+        font-size: 0.8em;
+    }
+
+    .profile-picture {
+        margin-right: 0%;
+        width: 110px;
+        height: 110px;
+    }
+
+    .user-name {
+        font-size: 1em;
+        font-weight: bold;
+    }
     
 }
 
 .card-body-profile {
     flex: 1;
+    padding-bottom: 0%;
+    padding-top: 15px;
 }
 
 /* Menu do perfil */

@@ -1,7 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from utils.decorators import authenticated_user
 from django.http import HttpResponseRedirect
-import requests
 from .models import Articles
 from users.models import User
 from django.utils import timezone
@@ -14,7 +13,14 @@ today = timezone.now()
 
 # Postar devicional
 @authenticated_user
-def publish_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def publish_articles(request,
+                     is_authenticated,
+                     is_admin,
+                     is_media_manager,
+                     is_devotion_manager,
+                     is_coordinator,
+                     is_umadjaf
+                     ):
     '''
     Função para publicar devocionais
 
@@ -107,7 +113,14 @@ def publish_articles(request, is_authenticated=False, is_admin=False, is_media_m
 
 # Ver devicional
 @authenticated_user
-def article(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def article(request, article_id,
+            is_authenticated,
+            is_admin,
+            is_media_manager,
+            is_devotion_manager,
+            is_coordinator,
+            is_umadjaf
+            ):
     '''
     Função para exibir um devicional específico
 
@@ -158,7 +171,14 @@ def article(request, article_id, is_authenticated=False, is_admin=False, is_medi
 
 # Todos os devocionais
 @authenticated_user
-def all_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def all_articles(request,
+                 is_authenticated,
+                 is_admin,
+                 is_media_manager,
+                 is_devotion_manager,
+                 is_coordinator,
+                 is_umadjaf
+                 ):
     '''
     Função para exibir todos os devocionais
 
@@ -197,7 +217,14 @@ def all_articles(request, is_authenticated=False, is_admin=False, is_media_manag
 
 # Pesquisar devicional
 @authenticated_user
-def search_articles(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def search_articles(request,
+                    is_authenticated,
+                    is_admin,
+                    is_media_manager,
+                    is_devotion_manager,
+                    is_coordinator,
+                    is_umadjaf
+                    ):
     '''
     Função para pesquisar devocionais
 
@@ -259,7 +286,14 @@ def search_articles(request, is_authenticated=False, is_admin=False, is_media_ma
 
 # Funções de gerenciamento de devocionais
 @authenticated_user
-def articles_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def articles_manager(request,
+                     is_authenticated,
+                     is_admin,
+                     is_media_manager,
+                     is_devotion_manager,
+                     is_coordinator,
+                     is_umadjaf
+                     ):
     '''
     Função para gerenciar devocionais
 
@@ -307,7 +341,14 @@ def articles_manager(request, is_authenticated=False, is_admin=False, is_media_m
 
 # Verificar devicional
 @authenticated_user
-def article_verify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def article_verify(request, article_id,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
     '''
     Função para verificar devocionais
 
@@ -345,7 +386,14 @@ def article_verify(request, article_id, is_authenticated=False, is_admin=False, 
 
 # Desverificar devicional
 @authenticated_user
-def article_unverify(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def article_unverify(request, article_id,
+                     is_authenticated,
+                     is_admin,
+                     is_media_manager,
+                     is_devotion_manager,
+                     is_coordinator,
+                     is_umadjaf
+                     ):
     '''
     Função para desverificar devocionais
 
@@ -382,7 +430,14 @@ def article_unverify(request, article_id, is_authenticated=False, is_admin=False
 
 # Deletar devicional
 @authenticated_user
-def article_delete(request, article_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def article_delete(request, article_id,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
     '''
     Função para deletar devocionais
 

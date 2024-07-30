@@ -1,15 +1,14 @@
-/* Seção de Carrosel */
-
+/* Carrossel */
 .carousel-item {
     height: 0;
-    padding-bottom: 45%; /* para uma proporção de 16:9 */
+    padding-bottom: 45%; /* Proporção de 16:9 */
     aspect-ratio: 16/9;
     position: relative;
 }
 
 @media (max-width: 600px) {
     .carousel-item {
-        padding-bottom: 56%; /* para uma proporção de 16:9 */
+        padding-bottom: 56%; /* Proporção de 16:9 ajustada */
         aspect-ratio: 16/9;
     }
 }
@@ -23,8 +22,7 @@
     height: 100%;
 }
 
-/* Seção do banner de evento */
-
+/* Banner de Evento */
 #section-one {
     padding: 80px 0;
     position: relative;
@@ -108,8 +106,7 @@
     }
 }
 
-/* Seção dos Artigos */
-
+/* Seção de Artigos */
 #section-two {
     position: relative;
     background-color: #01040e;
@@ -137,19 +134,16 @@
     margin: 0 -10px 5px -10px;
     border: none;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    transition: transform .2s; /* Animação suave */
-    position: relative; /* Necessário para o z-index funcionar */
-    z-index: 1; /* Coloca o elemento na frente dos outros elementos */
-    min-height: 280px; /* Define uma altura mínima para todos os cards */
+    transition: transform .2s; /* Animação */
+    position: relative;
+    z-index: 1;
+    min-height: 280px;
 }
 
 .card:hover {
-    transform: scale(1.1); /* (110% zoom - Note que 1.1 equivale a 110%) */
-    z-index: 2; /* Coloca o elemento ainda mais na frente quando o mouse passa sobre ele */
+    transform: scale(1.1);
+    z-index: 2;
 }
-
-
-
 
 .articles-container {
     margin: 15px 50px 0 50px;
@@ -174,35 +168,34 @@
         padding-bottom: 3px;
     }
 
-    blockquote p {
-        padding: 0%;
-    }
-
     .card-body {
         padding-bottom: 5px;
     }
 }
 
 .pub-title .card-title {
-    font-size: 1.4em; /* Tamanho do título */
-    text-align: center; /* Justifica o texto */
+    font-size: 1.4em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .pub-title .card-text {
-    font-size: 1em; /* Tamanho do texto */
-    text-align: center; /* Justifica o texto */
+    font-size: 1em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 768px) {
-
     .pub-title .card-title {
-        font-size: 1.1em; /* Tamanho do título */
-        text-align: center; /* Garante que o texto continue justificado em telas menores */
+        font-size: 1.1em;
     }
 
     .pub-title .card-text {
-        font-size: 0.7em; /* Tamanho do texto */
-        text-align: center; /* Garante que o texto continue justificado em telas menores */
+        font-size: 0.7em;
     }
 }
 
@@ -210,5 +203,5 @@
     position: absolute;
     bottom: 20px;
     right: 20px;
-    z-index: 1050; /* Garante que o botão esteja acima dos slides do carrossel */
+    z-index: 900;
 }

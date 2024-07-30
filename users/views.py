@@ -13,10 +13,20 @@ from .forms import (
     ProfileUserForm,
     ProfileUserPassForm
     )
-from utils.profiles.factory import make_fake_pedidos
 
-# Criação de pedidos falsos
-pedidos = make_fake_pedidos()
+
+'''
+É utilizado o decorator @authenticated_user para verificar se o usuário está
+autenticado.
+
+Ele entrega os seguintes parâmetros para as views:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+'''
 
 
 # Função de formatação de número de telefone
@@ -45,11 +55,11 @@ def format_number_phone(number_phone):
 # Sistema de cadastro de usuário
 @authenticated_user
 def register(request,
-             is_authenticated=False,
-             is_admin=False, is_media_manager=False,
-             is_devotion_manager=False,
-             is_coordinator=False,
-             is_umadjaf=False
+             is_authenticated,
+             is_admin, is_media_manager,
+             is_devotion_manager,
+             is_coordinator,
+             is_umadjaf
              ):
     '''
     Sistema de cadastro de usuário
@@ -144,12 +154,12 @@ def register(request,
 # Sistema de login de usuário
 @authenticated_user
 def login_(request,
-           is_authenticated=False,
-           is_admin=False,
-           is_media_manager=False,
-           is_devotion_manager=False,
-           is_coordinator=False,
-           is_umadjaf=False
+           is_authenticated,
+           is_admin,
+           is_media_manager,
+           is_devotion_manager,
+           is_coordinator,
+           is_umadjaf
            ):
     '''
     Sistema de login de usuário
@@ -200,12 +210,12 @@ def login_(request,
 # Funções de perfil do usuário logado
 @authenticated_user
 def profile(request,
-            is_authenticated=False,
-            is_admin=False,
-            is_media_manager=False,
-            is_devotion_manager=False,
-            is_coordinator=False,
-            is_umadjaf=False
+            is_authenticated,
+            is_admin,
+            is_media_manager,
+            is_devotion_manager,
+            is_coordinator,
+            is_umadjaf
             ):
     '''
     Perfil do usuário logado
@@ -256,7 +266,6 @@ def profile(request,
             'user': request.user,
             'posts': posts,
             'group_members': group_members,
-            'pedidos': pedidos,
             'gallery': gallery,
         }
     )
@@ -265,12 +274,12 @@ def profile(request,
 # Funções de edição de perfil
 @authenticated_user
 def profile_settings(request,
-                     is_authenticated=False,
-                     is_admin=False,
-                     is_media_manager=False,
-                     is_devotion_manager=False,
-                     is_coordinator=False,
-                     is_umadjaf=False
+                     is_authenticated,
+                     is_admin,
+                     is_media_manager,
+                     is_devotion_manager,
+                     is_coordinator,
+                     is_umadjaf
                      ):
     '''
     Edição de perfil
@@ -374,14 +383,13 @@ def profile_logout(request):
 
 # Funções de outro perfil
 @authenticated_user
-def other_profile(request,
-                  other_user_id,
-                  is_authenticated=False,
-                  is_admin=False,
-                  is_media_manager=False,
-                  is_devotion_manager=False,
-                  is_coordinator=False,
-                  is_umadjaf=False
+def other_profile(request, other_user_id,
+                  is_authenticated,
+                  is_admin,
+                  is_media_manager,
+                  is_devotion_manager,
+                  is_coordinator,
+                  is_umadjaf
                   ):
     '''
     Perfil de outro usuário
@@ -412,6 +420,8 @@ def other_profile(request,
         posts = Articles.objects.filter(
             author_id=other_user_id).order_by('-id')
 
+        is_umadjaf = IsUmadjaf.objects.get(user_id=other_user_id).checked
+
     except Exception:  # Se não conseguir, retorna um erro
         return redirect('users:profile_does_not_exists')
 
@@ -433,12 +443,12 @@ def other_profile(request,
 # Função de perfil não encontrado
 @authenticated_user
 def profile_does_not_exists(request,
-                            is_authenticated=False,
-                            is_admin=False,
-                            is_media_manager=False,
-                            is_devotion_manager=False,
-                            is_coordinator=False,
-                            is_umadjaf=False
+                            is_authenticated,
+                            is_admin,
+                            is_media_manager,
+                            is_devotion_manager,
+                            is_coordinator,
+                            is_umadjaf
                             ):
     '''
     Perfil não encontrado

@@ -85,7 +85,7 @@
             position: fixed; /* Fica fixo na tela */
             z-index: 1; /* Senta no topo */
             left: 0;
-            top: 50px;
+            top: 40px;
             width: 100%; /* Largura total */
             height: 100%; /* Altura total */
             overflow: auto; /* Habilita a rolagem se necessário */
@@ -111,17 +111,19 @@
         .modal-card {
             background-color: #fefefe;
             margin: 5% auto; /* Centraliza o modal */
+            aspect-ratio: 16 / 9; /* Mantém a proporção 16:9 */
             padding: 0px;
-            width: 80%; /* Largura do modal */
-            max-width: 600px; /* Largura máxima do modal */
+            width: 90%; /* Largura do modal */
+            max-width: 1000px; /* Largura máxima do modal */
             position: relative; /* Necessário para o botão no canto superior direito */
         }
 
         .modal-content {
             margin: auto;
+            aspect-ratio: 16 / 9; /* Mantém a proporção 16:9 */
             padding: 0px;
             width: 100%; /* Largura do conteúdo do modal */
-            max-width: 600px; /* Máxima largura do conteúdo para não ficar muito grande em telas grandes */
+            max-width: 1000px; /* Máxima largura do conteúdo para não ficar muito grande em telas grandes */
         }
 
         .floating-btn {

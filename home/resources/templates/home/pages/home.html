@@ -28,10 +28,10 @@
                 <div class="carousel-inner">
                     {% for i in carousel %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        {% if page == 'store' %}
-                        <a href="/store/product/{{ i.id }}"><img class="d-block w-100" src="{{ i.image.url }}" alt="{{ i.title }} "></a>
-                        {% else %}
+                        {% if i.link == '' %}
                         <img class="d-block w-100" src="{{ i.image.url }}" alt="{{ i.title }} ">
+                        {% else %}
+                        <a href="{{ i.link }}"><img class="d-block w-100" src="{{ i.image.url }}" alt="{{ i.title }} ">></a>
                         {% endif %}
                     </div>
                     {% empty %}
@@ -58,7 +58,7 @@
             {% endif %}
         </section>
 
-        <!-- Seção 1 -->
+        <!-- Banner do próximo evento -->
          {% if next_event %}
             <section id="section-one" style="background-image: url('media/{{ next_event.background }}'); position: relative;">
                 <img id="eventid" src="media/{{ next_event.logo }}" alt="{{ next_event.title }}">
@@ -75,7 +75,7 @@
             </section>
         {% endif %}
         
-        <!-- Seção 2 -->
+        <!-- Últimos três devocionais -->
         <section id="section-two">
             <div class="row articles-container">
                 {% for i in article %}
@@ -85,7 +85,7 @@
                         <div class="card-body pub-title">
                             <h5 class="card-title"><b>{{ i.title|truncatechars:35 }}</b></h5>
                             <blockquote class="blockquote">
-                                <p class="mb-0 card-text"><em>"{% fetch_versicle i.versicle|truncatechars:110 %}"</em></p>
+                                <p class="mb-0 card-text"><em>{% fetch_versicle i.versicle %}</em></p>
                             </blockquote>
                         </div>
                         <div class="card-footer text-right">

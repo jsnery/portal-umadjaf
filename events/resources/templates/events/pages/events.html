@@ -14,22 +14,27 @@
         {% include 'global/partials/navbar.html' %}
 
         <!-- Banner de exibição do evento selecionado -->
-        <div id="eventBanner_2" style="background-image: url('/media/events/default/bg.png')">
+        <section id="eventBanner_2" style="background-image: url('/media/events/default/bg.png')">
             <img id="eventLogo" src="/media/events/default/logo.png" alt="{{ next_event.title }}">
-        </div>
+        </section>
 
         <!-- Lista dos próximos eventos -->
-        <div id="calendar">
+        <section id="calendar">
             {% for i in events %}
                 <!-- Adicione um atributo 'data-banner-url' com a URL do banner do evento -->
                 <div class="event" data-banner-url="{{ i.background.url }}" data-logo-url="{{ i.logo.url }}" onclick="changeBanner(this)">
                     <div class="event-title">{{ i.title }}: {{ i.theme }}</div>
                     <div class="event-detail">Data: {{ i.date }}</div>
                     <div class="event-detail">Hora: {{ i.hours }}</div>
-                    <div class="event-detail">Local: {{ i.congregation }}</div>
+                    <div class="event-detail">
+                        Local: {{ i.congregation.name }} 
+                        <a href="https://www.google.com.br/maps/place/{{ i.congregation.address|urlencode }}" target="_blank" class="google-maps-btn">
+                            <i class="fas fa-map-marked-alt"></i> <!-- Alterado para um ícone de mapa e aumentado o tamanho -->
+                        </a>
+                    </div>
                 </div>
             {% endfor %}
-        </div>
+        </section>
 
         {% if is_admin or is_coordinator or is_media_manager %}
         <a id="float-btn" href="{% url 'events:criar_evento' %}" class="floating-btn">+</a>

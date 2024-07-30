@@ -13,10 +13,10 @@ def fetch_versicle(article_reference):
     response = requests.get(api_url)
     if response.status_code == 200:
         data = response.json()
-        verse_text = data['text']
+        verse_text = data['text'][:-3]
         # Limita o texto ao número máximo de caracteres
 
-        verse_text = f'<em>"{verse_text}"</em>'
+        verse_text = f'<em>"{verse_text.capitalize()}"</em>'
     else:
         verse_text = '<em>"Versículo não encontrado"</em>'
 

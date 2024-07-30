@@ -24,7 +24,7 @@ class Carrousel(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    link = models.TextField(default="", blank=True)
     image = models.ImageField(upload_to=get_upload_to_carrousel, default='carrousel/default.jpg')
     active = models.BooleanField(default=False)
     author_id = models.IntegerField(default=0)

@@ -1,0 +1,99 @@
+/* Estilos Básicos do Membro do Grupo */
+#group-member {
+    margin-top: 24vh;
+    padding: 20px;
+}
+
+/* Responsividade para Membro do Grupo */
+@media (max-width: 720px) {
+    #group-member {
+        margin-top: 22vh;
+    }
+}
+
+@media (max-height: 667px) {
+    #group-member {
+        margin-top: 28vh;
+    }
+}
+
+/* Estilos do Card do Membro do Grupo */
+.card-group-member {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: 100%;
+}
+
+/* Estilos da Imagem do Membro do Grupo */
+.img-group-member {
+    flex: 0 0 auto;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    margin-right: 2px;
+}
+
+/* Estilos dos Detalhes do Membro do Grupo */
+.details-group-member {
+    flex: 1;
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Estilos do Nome e Biografia do Membro do Grupo */
+.name-group-member, .bio-group-member {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.name-group-member {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.bio-group-member {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Estilos do Botão de Visualização */
+.view-button {
+    flex: 0 0 auto;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Estilos do Botão Redondo */
+.round-button {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.round-button:hover {
+    background-color: #0056b3;
+    color: white;
+    text-decoration: none;
+}

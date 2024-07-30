@@ -7,9 +7,30 @@ from manager.models import Congregations
 from .models import Event
 
 
+'''
+É utilizado o decorator @authenticated_user para verificar se o usuário está
+autenticado.
+
+Ele entrega os seguintes parâmetros para as views:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+'''
+
+
 # Eventos do calendário
 @authenticated_user
-def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos(request,
+            is_authenticated,
+            is_admin,
+            is_media_manager,
+            is_devotion_manager,
+            is_coordinator,
+            is_umadjaf
+            ):
     '''
     Exibe os eventos futuros no portal UMADJAF.
 
@@ -46,7 +67,14 @@ def eventos(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Criar evento
 @authenticated_user
-def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def criar_evento(request,
+                 is_authenticated,
+                 is_admin,
+                 is_media_manager,
+                 is_devotion_manager,
+                 is_coordinator,
+                 is_umadjaf
+                 ):
     '''
     Função para criar um novo evento no portal UMADJAF.
 
@@ -123,7 +151,14 @@ def criar_evento(request, is_authenticated=False, is_admin=False, is_media_manag
 
 # Gerenciar eventos
 @authenticated_user
-def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos_manager(request,
+                    is_authenticated,
+                    is_admin,
+                    is_media_manager,
+                    is_devotion_manager,
+                    is_coordinator,
+                    is_umadjaf
+                    ):
     '''
     Função para gerenciar os eventos do portal UMADJAF.
 
@@ -166,7 +201,14 @@ def eventos_manager(request, is_authenticated=False, is_admin=False, is_media_ma
 
 # Editar evento
 @authenticated_user
-def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos_edit(request, calendar_id,
+                 is_authenticated,
+                 is_admin,
+                 is_media_manager,
+                 is_devotion_manager,
+                 is_coordinator,
+                 is_umadjaf
+                 ):
     '''
     Função para editar um evento no portal UMADJAF.
 
@@ -224,7 +266,14 @@ def eventos_edit(request, calendar_id, is_authenticated=False, is_admin=False, i
 
 # Deletar evento
 @authenticated_user
-def eventos_delete(request, calendar_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def eventos_delete(request, calendar_id,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
     '''
     Função para deletar um evento no portal UMADJAF.
 

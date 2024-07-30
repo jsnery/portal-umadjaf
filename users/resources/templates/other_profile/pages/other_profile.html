@@ -6,22 +6,24 @@
 
     {% include "global/partials/head.html" %}
     {% block head %}
-        <link rel="stylesheet" href="{% static 'other_profile/css/profile.css' %}">
-        <link rel="stylesheet" href="{% static 'other_profile/css/nav.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/nav.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/posts.css' %}">
+        <link rel="stylesheet" href="{% static 'users/css/gallery.css' %}">
         <title>{{ user.complete_name }}</title>
     {% endblock head %}
 
 <body>
     {% include 'global/partials/navbar.html' %}
 
-    <section>
+    <section id="profile-base">
         <div class="container-fluid">
             <!-- Informações do perfil -->
             <div id="profile-container" class="row">
                 <div class="col-12 profile-bio">
                     <div class="card card-profile-bio">
                         <div class="d-flex">
-                            <img src="/media/{{ profile.profile_picture }}" class="profile-picture" alt="Profile Picture">
+                            <img src="{{ profile.profile_picture.url }}" class="profile-picture" alt="Profile Picture">
                             <div class="card-body card-body-profile">
                                 <h5 class="card-title user-name">{{ user.complete_name }}</h5>
                                 <div class="card-text text-bio">{{ profile.bio|linebreaks }}</div>
@@ -84,6 +86,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{% static 'other_profile/js/profile.js' %}"></script>
+    <script src="{% static 'users/js/profile.js' %}"></script>
 </body>
 </html>

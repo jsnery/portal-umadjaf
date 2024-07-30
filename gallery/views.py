@@ -6,9 +6,29 @@ from django.http import HttpResponseRedirect
 from datetime import datetime
 
 
+'''
+É utilizado o decorator @authenticated_user para verificar se o usuário está
+autenticado.
+
+Ele entrega os seguintes parâmetros para as views:
+    - is_authenticated: Indica se o usuário está autenticado.
+    - is_admin: Indica se o usuário é um administrador.
+    - is_media_manager: Indica se o usuário é um gerente de mídia.
+    - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+    - is_coordinator: Indica se o usuário é um coordenador.
+    - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+'''
+
+
 # Galeria de fotos dos eventos
 @authenticated_user
-def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def gallery(request,
+            is_authenticated,
+            is_admin,
+            is_media_manager,
+            is_devotion_manager,
+            is_coordinator,
+            is_umadjaf):
     '''
     View para a página de galeria de fotos dos eventos
 
@@ -48,7 +68,14 @@ def gallery(request, is_authenticated=False, is_admin=False, is_media_manager=Fa
 
 # Busca de fotos por evento
 @authenticated_user
-def search_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def search_gallery(request,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
     '''
     Função para buscar fotos por evento na galeria
 
@@ -100,7 +127,14 @@ def search_gallery(request, is_authenticated=False, is_admin=False, is_media_man
 
 # Solicitar marcação de foto
 @authenticated_user
-def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def mark_gallery(request, gallery_id,
+                 is_authenticated,
+                 is_admin,
+                 is_media_manager,
+                 is_devotion_manager,
+                 is_coordinator,
+                 is_umadjaf
+                 ):
     '''
     Função para solicitar marcação de foto na galeria
 
@@ -143,7 +177,14 @@ def mark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is
 
 # Cancelar solicitação de marcação de foto
 @authenticated_user
-def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def unmark_gallery(request, gallery_id,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
     '''
     Função para cancelar solicitação de marcação de foto na galeria
 
@@ -187,7 +228,14 @@ def unmark_gallery(request, gallery_id, is_authenticated=False, is_admin=False, 
 
 # Adicionar foto à galeria
 @authenticated_user
-def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def add_to_gallery(request,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
     '''
     Função para adicionar foto à galeria de fotos dos eventos
 
@@ -272,7 +320,14 @@ def add_to_gallery(request, is_authenticated=False, is_admin=False, is_media_man
 
 # Gerenciamento de marcações de fotos
 @authenticated_user
-def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def gallery_marked_user_manager(request,
+                                is_authenticated,
+                                is_admin,
+                                is_media_manager,
+                                is_devotion_manager,
+                                is_coordinator,
+                                is_umadjaf
+                                ):
     '''
     Função para gerenciar marcações de fotos na galeria
 
@@ -313,7 +368,14 @@ def gallery_marked_user_manager(request, is_authenticated=False, is_admin=False,
 
 # Marcar foto como confirmada
 @authenticated_user
-def check_mark_gallery(request, gallery_id, user_id, is_authenticated=False, is_admin=False, is_media_manager=False, is_devotion_manager=False, is_coordinator=False, is_umadjaf=False):
+def check_mark_gallery(request, gallery_id, user_id,
+                       is_authenticated,
+                       is_admin,
+                       is_media_manager,
+                       is_devotion_manager,
+                       is_coordinator,
+                       is_umadjaf
+                       ):
     '''
     Função para marcar foto como confirmada na galeria
 
