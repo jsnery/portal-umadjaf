@@ -36,7 +36,13 @@
 
         <nav class="profile-menu">
             <div class="d-flex justify-content-between w-100">
-                <!-- Grupo Esquerdo (ADM) -->
+                <div>
+                    {% if is_admin %}
+                        <a class="nav-link btn-adm text-grey" href="">
+                            <i class="fas fa-user-shield"></i>
+                        </a>
+                    {% endif %}
+                </div>
         
                 <!-- Grupo Central (Menu) -->
                 <div class="nav nav-tabs justify-content-center flex-nowrap" id="nav-tab" role="tablist">
