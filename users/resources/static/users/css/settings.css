@@ -1,11 +1,11 @@
 /* Estilos de Configuração Geral */
 #settingsx {
-    margin-top: 24vh;
+    margin-top: 26vh;
 }
 
 @media (max-width: 720px) {
     #settingsx {
-        margin-top: 22vh;
+        margin-top: 24vh;
     }
 }
 
