@@ -1,17 +1,17 @@
 /* Estilos Principais */
 #pub {
-    margin-top: 24vh;
+    margin-top: 26vh;
 }
 
 @media (max-width: 720px) {
     #pub {
-        margin-top: 22vh;
+        margin-top: 24vh;
     }
 }
 
 @media (max-height: 667px) {
     #pub {
-        margin-top: 28vh;
+        margin-top: 29vh;
     }
 }
 
