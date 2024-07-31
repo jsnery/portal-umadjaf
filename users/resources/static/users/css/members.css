@@ -1,19 +1,19 @@
 /* Estilos Básicos do Membro do Grupo */
 #group-member {
-    margin-top: 24vh;
+    margin-top: 26vh;
     padding: 20px;
 }
 
 /* Responsividade para Membro do Grupo */
 @media (max-width: 720px) {
     #group-member {
-        margin-top: 22vh;
+        margin-top: 24vh;
     }
 }
 
 @media (max-height: 667px) {
     #group-member {
-        margin-top: 28vh;
+        margin-top: 29vh;
     }
 }
 
