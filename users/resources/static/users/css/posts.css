@@ -1,11 +1,11 @@
 /* Estilos Principais */
 #pub {
-    margin-top: 26vh;
+    margin-top: 28vh;
 }
 
 @media (max-width: 720px) {
     #pub {
-        margin-top: 24vh;
+        margin-top: 26vh;
     }
 }
 
