@@ -107,6 +107,7 @@ def publish_articles(request,
         'articles/create_articles.html',
         context={
             'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
             'alert': notification,
         }
     )

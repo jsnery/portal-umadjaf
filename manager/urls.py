@@ -3,13 +3,12 @@ from . import views
 
 app_name = 'manager'
 urlpatterns = [
-    # Adm panel
-    path('adm/', views.adm_panel, name='admin'),
 
     # Users manager
     path('adm/users/', views.users, name='users'),
     path('adm/delete_user/<int:user_id>', views.delete_user, name='delete_user'),
     path('adm/user_edit/<int:user_id>', views.user_edit, name='user_edit'),
+    path('adm/users/get', views.search_users, name='search_users'),
 
     # Roles manager
     path('adm/permissions/', views.users_roles, name='users_roles'),

@@ -194,6 +194,7 @@ def eventos_manager(request,
         'events/pages/eventos_manager.html',
         context={
             'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
             'calendar_all': calendar
         }
     )

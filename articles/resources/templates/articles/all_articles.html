@@ -77,7 +77,7 @@
     
     <a id="float-btn" href="{% url 'articles:publish' %}" class="floating-btn">+</a>
     {% if is_admin or is_devotion_manager %}
-        <a id="float-btn" href="{% url 'articles:articles_manager' %}" class="floating-btn2"><i class=""></i></a>
+        <a id="float-btn" href="{% url 'articles:articles_manager' %}" class="floating-btn2"><i class="fa fa-edit"></i></a>
     {% endif %}
 
     {% include 'global/partials/footer.html' %}

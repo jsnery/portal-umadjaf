@@ -4,6 +4,7 @@ from utils.decorators import authenticated_user
 from users.models import IsUmadjaf, Roles, User, UserRoles
 from .forms import (CongregationForm, IsUmadjafForm, UserForm, UserRolesForm)
 from .models import Congregations
+from django.core.paginator import Paginator
 
 
 '''
@@ -18,52 +19,6 @@ Ele entrega os seguintes parâmetros para as views:
     - is_coordinator: Indica se o usuário é um coordenador.
     - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
 '''
-
-
-# Funções do novo painel de controle
-@authenticated_user
-def adm_panel(request,
-              is_authenticated,
-              is_admin,
-              is_media_manager,
-              is_devotion_manager,
-              is_coordinator,
-              is_umadjaf
-              ):
-    '''
-    Página do painel de controle
-
-    Esta view renderiza a página do painel de controle do site. A página
-    contém links para as páginas de gerenciamento de usuários, cargos,
-    congregações e membros da UMADJAF.
-
-    Parâmetros:
-        - request: Requisição HTTP.
-        - is_authenticated: Indica se o usuário está autenticado.
-        - is_admin: Indica se o usuário é um administrador.
-        - is_media_manager: Indica se o usuário é um gerente de mídia.
-        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
-        - is_coordinator: Indica se o usuário é um coordenador.
-        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
-
-    Retorna:
-        - A página do painel de controle.
-    '''
-
-    if not is_authenticated:
-        return redirect('login')
-
-    if not is_admin:
-        return redirect('home')
-
-    return render(
-        request,
-        'manager/pages/adm_panel.html',
-        context={
-            'is_authenticated': is_authenticated
-        }
-    )
-
 
 # Funções de gerenciamento de usuários
 @authenticated_user
@@ -101,15 +56,77 @@ def users(request,
     if not is_admin:
         return redirect('home')
 
-    users = User.objects.all()  # Busca todos os usuários cadastrados
+    users = User.objects.all().order_by('-id')  # Busca todos os usuários cadastrados
     roles = Roles.objects.all()  # Busca todos os cargos cadastrados
+    congregations = Congregations.objects.all()
+
+    users_paginator = Paginator(users, 10)  # 8 artigos por página
+    page_number = request.GET.get('page')  # Página atual
+    page_users = users_paginator.get_page(page_number)
+
     return render(
         request,
         'manager/pages/users/users.html',
         context={
             'is_authenticated': is_authenticated,
-            'users_all': users,
-            'roles': roles
+            'is_admin': is_admin,
+            'users_all': page_users,
+            'roles': roles,
+            'congregations': congregations
+        }
+    )
+
+
+@authenticated_user
+def search_users(request,
+                 is_authenticated,
+                 is_admin,
+                 is_media_manager,
+                 is_devotion_manager,
+                 is_coordinator,
+                 is_umadjaf
+                 ):
+
+    users = User.objects.all().order_by('-id')
+    congregations = Congregations.objects.all()
+    roles = Roles.objects.all()
+
+    areas = {
+        '0': '--',
+        '1': 'Área 1',
+        '2': 'Área 2',
+        '3': 'Área 3',
+    }
+
+    area = request.GET.get('areaSelect')
+    congregation = request.GET.get('congregationSelect')
+    if congregation:
+        cong = Congregations.objects.get(id=congregation)
+        users = users.filter(church=cong.id)
+
+    elif area:
+        area = areas[area]
+        cong = Congregations.objects.filter(area=area)
+        cong_id = [str(i['id']) for i in cong.values()]
+        for user in users:
+            if user.church not in cong_id:
+                users = users.exclude(id=user.id)
+
+    else:
+        redirect('manager:users')
+
+    users_paginator = Paginator(users, 10)  # 8 artigos por página
+    page_number = request.GET.get('page')  # Página atual
+    page_users = users_paginator.get_page(page_number)
+
+    return render(
+        request, 'manager/pages/users/users.html',
+        context={
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'users_all': page_users,
+            'roles': roles,
+            'congregations': congregations
         }
     )
 
@@ -268,6 +285,7 @@ def users_roles(request,
         'manager/pages/permissions/users_roles.html',
         context={
             'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
             'users_roles_all': users_roles_all
         }
     )
@@ -369,6 +387,7 @@ def congregations(request,
         'manager/pages/congregations/congregation.html',
         context={
             'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
             'congregations_all': congregations
         }
     )
@@ -557,6 +576,7 @@ def members(request,
         'manager/pages/members/check.html',
         context={
             'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
             'members_all': members
         }
     )

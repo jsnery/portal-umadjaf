@@ -274,6 +274,7 @@ def does_not_exists(request,
         request,
         'home/pages/does_not_exists.html',
         context={
-            'is_authenticated': is_authenticated
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin
         }
     )

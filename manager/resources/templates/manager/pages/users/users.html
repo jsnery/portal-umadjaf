@@ -8,160 +8,198 @@
         <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
         <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-        <title>Lista de Usuários</title>
+        <title>Usuários</title>
     {% endblock head %}
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .card-img-top {
+            width: 100%; /* Faz com que a imagem cubra a largura total do card */
+            height: 0; /* Inicialmente definido para 0 */
+            padding-top: 100%; /* A altura se torna igual à largura, mantendo a proporção 1x1 */
+            aspect-ratio: 1 / 1; /* Define a proporção da imagem */
+            background-size: cover; /* Garante que a imagem de fundo cubra a área sem ser cortada */
+            background-position: center; /* Centraliza a imagem de fundo */
+        }
+        
+        .cardz .card-body {
+            padding: 0.5rem; /* Espaçamento interno para o corpo do card */
+        }
+        
+        .cardz .card-title {
+            margin: 0; /* Remove a margem padrão do título */
+            font-size: 1rem; /* Tamanho da fonte do título */
+            text-align: center; /* Alinha o texto do título ao centro */
         }
 
-        table, th, td {
-            border: 1px solid black;
+        .cardz {
+            border: 1px solid #000;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            max-width: 300px;
+            margin: auto; /* Centraliza o card */
         }
 
-        th, td {
-            padding: 15px;
-            text-align: left;
+        @media (max-width: 768px) {
+            .cardz-container {
+                display: flex;
+                justify-content: center;
+            }
+    
+            .cardz {
+                margin: auto; /* Centraliza o card */
+            }
         }
 
-        th {
-            background-color: #f2f2f2;
+        .modal-content {
+            border-radius: 10px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tr:nth-child(odd) {
-            background-color: #f2f2f2;
-        }
-
-        tr:hover {
-            background-color: #f2f2f2;
-        }
-
-        a {
-            text-decoration: none;
-            color: black;
-        }
-
-        a:hover {
-            color: blue;
-        }
-
-        h1 {
-            text-align: center;
-            color: #fff;
-        }
-
-        .container {
+        .modal-content2 {
             margin-top: 50px;
-        }
-
-        .btn {
-            margin-top: 10px;
-        }
-
-        #user-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-    
-        #user-table th, #congregation-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-    
-        #user-table th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #111111;
-            color: white;
-        }
-    
-        #user-table tr:nth-child(even) {
+            border-radius: 10px;
             background-color: #f2f2f2;
         }
+
+        .modal-img-top {
+            width: 200px; /* Define um tamanho fixo para a largura */
+            height: 200px; /* Define um tamanho fixo para a altura */
+            background-size: cover; /* Garante que a imagem de fundo cubra a área sem ser cortada */
+            background-position: center; /* Centraliza a imagem de fundo */
+            margin: auto; /* Centraliza a imagem no modal */
+            border-radius: 50%; /* Define um raio de borda de 50% para criar um círculo */
+        }
     
-        #user-table tr:hover {
-            background-color: #ddd;
+        .modal-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .dataTables_wrapper {
-            background-color: #fff; /* Altere para a cor de fundo desejada */
-            margin-bottom: 0px;
+        #section-two {
+            padding: 0px 40px;
         }
 
+        /* Pagination */
+        .page-links {
+            display: flex;
+            justify-content: center; /* Centraliza os links horizontalmente */
+            align-items: center; /* Centraliza os links verticalmente (se necessário) */
+            margin-top: auto; /* Empurra a div para o fundo se estiver dentro de um flex container */
+            /* margin-bottom: 40px; */
+            z-index: 900;
+            width: 100%; /* Garante que a div ocupe a largura total */
+            position: fixed; /* Fixa a div na parte inferior da viewport */
+            bottom: 0; /* Posiciona a div no fundo da página */
+            background-color: #f8f9fa; /* Cor de fundo (opcional) */
+            padding: 10px 0; /* Espaçamento interno para separar o conteúdo das bordas */
+        }
     </style>
 <body>
     <!-- Barra de Navegação -->
-    {% include 'manager/pages/partials/navbar.html' %}
+    {% include 'global/partials/navbar.html' %}
 
 
-    <div class="articles-container">
+    {% comment %} <div class="articles-container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="text-align: center; flex-grow: 1; margin-bottom: 23px;">Lista de Usuários</h1>
+            <h1 style="text-align: center; flex-grow: 1; margin-bottom: 23px; color: #fff;">Lista de Usuários</h1>
         </div>
-    </div>
+    </div> {% endcomment %}
+    <form action="{% url 'manager:search_users' %}" method="get" class="mb-3">
+        <div class="input-group">
+            <select class="form-select form-control" id="areaSelect" name="areaSelect">
+                <option value="">Selecione um evento</option>
+                <option value="1">Área 1</option>
+                <option value="2">Área 2</option>
+                <option value="3">Área 3</option>
+                <option value="0">Sem Área</option>
+            </select>
+            <select class="form-select form-control" id="congregationSelect" name="congregationSelect">
+                <option value="">Selecione uma congregação</option>
+                {% for c in congregations %}
+                    <option value="{{ c.id }}">{{ c.name }} ({{ c.area }})</option>
+                {% endfor %}
+            </select>
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </div>
+    </form>
 
-    <table id="user-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome Completo</th>
-                <th>Nascimento</th>
-                <th>Gênero</th>
-                <th>Congregação</th>
-                <th>UMADJAF</th>
-                <th>Privilegios</th>
-                <th>Ultimo Acesso</th>
-                <th>Menu</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users_all %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.complete_name }}</td>
-                <td>{{ user.birthday }}</td>
-
-                {% if user.gender == 'M' %}
-                    <td>Masculino</td>
-                {% else %}
-                    <td>Feminino</td>
-                {% endif %}
-                
-                <td>{% return_church_name user.church %}</td>
-                <td>{% get_user_umadjaf user.id %}</td>
-                <td>{% get_user_role user.id%}</td>
-                <td>{{ user.last_login }}</td>
-                <td>
-                    <a href="{% url 'manager:user_edit' user.id %}" class="edit-link"><i class="fa fa-edit"></i></a>
-                    <div class="modal fade" id="editModal-{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                            <h5 class="modal-title" id="editModalLabel">Editar Usuário</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                            </div>
-                            <div id="modal-body-{{user.id}}" class="modal-body">
-                                <form id="edituser-{{user.id}}" method="POST" action="{% url 'manager:user_edit' user.id %}">
-                                    
-                                </form>
+    <section id="section-two">
+        <div class="row users-container">
+            {% for user in users_all.object_list %}
+                <div class="col-md-2 mb-4">
+                    <a href="#moreModal-{{user.id}}" class="more-link" style="text-decoration: none; color: inherit;" data-toggle="modal">
+                        <div class="card cardz">
+                            <div class="card-img-top" style="background-image: url('{% return_profile_picture user %}');" alt="{{ user.complete_name }}"></div>
+                            <div class="card-body pub-title">
+                                <h5 class="card-title">{{ user.complete_name|truncatechars:30 }}</h5>
+                                <h5 class="card-title">({% return_church_area user.church %})</h5>
                             </div>
                         </div>
+                    </a>
+                    <div class="modal fade moreModal1" id="moreModal-{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="moreModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div class="modal-profile">
+                                        <div class="modal-img-top" style="background-image: url('{% return_profile_picture user %}');" alt="{{ user.complete_name }}"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-body">
+                                    <H5>
+                                        <strong>Nome Completo:</strong> {{ user.complete_name }}<br>
+                                        <strong>Data de Nascimento:</strong> {{ user.birthday }}<br>
+                                        <strong>Congregação:</strong> {% return_church_name user.church %}<br>
+                                        <strong>UMADJAF:</strong> {% get_user_umadjaf user.id %}<br>
+                                        <strong>Privilégios:</strong> {% get_user_role user.id %}<br>
+                                        <strong>Último Acesso:</strong> {{ user.last_login }}<br>
+                                    </H5>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{% url 'manager:user_edit' user.id %}" class="btn btn-primary edit-link">Editar</a>
+                                    <div class="modal fade" id="editModal-{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                        <div class="modal-content modal-content2">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title" id="editModalLabel">Editar Usuário</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            </div>
+                                            <div id="modal-body-{{user.id}}" class="modal-body">
+                                                <form id="edituser-{{user.id}}" method="POST" action="{% url 'manager:user_edit' user.id %}">
+                                                    
+                                                </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <a href="{% url 'manager:delete_user' user.id %}" class="btn btn-danger">Excluir</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <a href="{% url 'manager:delete_user' user.id %}"><i class="fas fa-trash"></i></a>
-                </td>
-            </tr>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center" style="color: white; font-weight: bold; font-size: 20px;">
+                    Nenhum membro encontrado.
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
+        </div>
+    </section>
+    <div class="page-links">
+        {% if users_all.has_previous %}
+            <a href="?page=1" class="page-link">Primeira</a>
+            <a href="?page={{ users_all.previous_page_number }}" class="page-link">Anterior</a>
+        {% endif %}
+        <span class="page-link">Página {{ users_all.number }} de {{ users_all.paginator.num_pages }}</span>
+        {% if users_all.has_next %}
+            <a href="?page={{ users_all.next_page_number }}" class="page-link">Próxima</a>
+            <a href="?page={{ users_all.paginator.num_pages }}" class="page-link">Última</a>
+        {% endif %}
+    </div>
     
 
     <!-- Seção de Rodapé -->
@@ -173,6 +211,19 @@
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function() {
+            $('.more-link').click(function(e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var userId = url.split('/').pop();
+                $.get(url, function(data) {
+                    $('#modal-body-' + userId + ' #moreuser-' + userId).html(data);
+                    $('#moreModal-' + userId).modal('show');
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
             $('.edit-link').click(function(e) {
                 e.preventDefault();
                 var url = $(this).attr('href');
@@ -181,17 +232,6 @@
                     $('#modal-body-' + userId + ' #edituser-' + userId).html(data);
                     $('#editModal-' + userId).modal('show');
                 });
-            });
-        });
-    </script>
-    <script>
-        $(document).ready( function () {
-            $('#user-table').DataTable({
-                paging: true,
-                ordering: true,
-                info: true,
-                pageLength: 20,  // Define o número inicial de itens por página
-                lengthMenu: [[20, 40, 60, 100], [20, 40, 60, 100]]  // Define as opções de itens por página
             });
         });
     </script>

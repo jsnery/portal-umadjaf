@@ -1,5 +1,5 @@
 from django import template  # type: ignore
-from users.models import UserRoles, IsUmadjaf, User
+from users.models import UserRoles, IsUmadjaf, User, UserProfiles
 from manager.models import Congregations
 
 register = template.Library()  # Serve para registrar as funções abaixo
@@ -56,3 +56,18 @@ def return_user_name(user_id):
     except User.DoesNotExist:
         user = 'Não Encontrado'
     return user
+
+
+@register.simple_tag
+def return_profile_picture(user_id):
+    photo = UserProfiles.objects.get(user_id=user_id).profile_picture
+    return photo.url
+
+
+@register.simple_tag
+def return_church_area(church_id):
+    try:
+        church = Congregations.objects.get(id=church_id).area
+    except IsUmadjaf.DoesNotExist:
+        church = 'Sem Área'
+    return church

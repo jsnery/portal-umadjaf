@@ -18,6 +18,36 @@
             <a class="nav-link" href="{% url 'articles:all_articles' %}">
                 <i class="bi bi-book-fill"></i><!-- Adiciona o ícone de artigos -->
             </a>
+            {% if is_admin %}
+            <div class="dropdown">
+                <a class="nav-link">
+                    <i class="fas fa-user-shield"></i>
+                </a>
+                <div class="dropdown-content">
+                    <a class="nav-link" href="{% url 'manager:users' %}">
+                        <i class="fas fa-user-cog"></i> Usuários
+                    </a>
+                    <a class="nav-link" href="{% url 'manager:congregations' %}">
+                        <i class="fas fa-church"></i> Igrejas
+                    </a>
+                    <a class="nav-link" href="{% url 'manager:members' %}">
+                        <i class="fas fa-address-card"></i> Umadjaf
+                    </a>
+                    <a class="nav-link" href="{% url 'manager:users_roles' %}">
+                        <i class="fas fa-key"></i> Equipe
+                    </a>
+                    <a class="nav-link" href="{% url 'events:eventos_manager' %}">
+                        <i class="fa fa-calendar"></i> Eventos
+                    </a>
+                    <a class="nav-link" href="{% url 'articles:articles_manager' %}">
+                        <i class="fa fa-italic"></i>  Devocionais
+                    </a>
+                    <a class="nav-link" href="{% url 'carrousel' %}">
+                        <i class="fas fa-columns"></i> Carrosel
+                    </a>
+                </div>
+            </div>
+            {% endif %}
             <div class="dropdown">
                 <a class="nav-link">
                     <i class="bi bi-person-fill"></i> <!-- Adiciona o ícone de perfil -->
