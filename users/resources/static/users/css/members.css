@@ -1,13 +1,13 @@
 /* Estilos Básicos do Membro do Grupo */
 #group-member {
-    margin-top: 26vh;
+    margin-top: 28vh;
     padding: 20px;
 }
 
 /* Responsividade para Membro do Grupo */
 @media (max-width: 720px) {
     #group-member {
-        margin-top: 24vh;
+        margin-top: 26vh;
     }
 }
 
