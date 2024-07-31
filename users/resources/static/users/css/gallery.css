@@ -1,17 +1,17 @@
 /* Estilos Gerais da Galeria */
 #gallery {
-    margin-top: 23vh;
+    margin-top: 26vh;
 }
 
 @media (max-width: 720px) {
     #gallery {
-        margin-top: 21vh;
+        margin-top: 24vh;
     }
 }
 
 @media (max-height: 667px) {
     #gallery {
-        margin-top: 26vh;
+        margin-top: 28vh;
     }
 }
 
