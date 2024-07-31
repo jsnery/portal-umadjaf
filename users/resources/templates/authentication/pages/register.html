@@ -83,6 +83,9 @@
             // Remove non-digits and replace with empty string
             let cleaned = ('' + input.value).replace(/\D/g, '');
         
+            // Ensure the string is at most 11 digits
+            cleaned = cleaned.substring(0, 11);
+        
             // Check if the input is of correct length
             let match = cleaned.match(/^(\d{2})(\d{4,5})(\d{4})$/);
             if (match) {

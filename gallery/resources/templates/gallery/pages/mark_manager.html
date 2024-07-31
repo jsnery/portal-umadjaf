@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="{% static 'home/css/home.css' %}">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
         <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-        <title>Gerenciamento de Fotos</title>
+        <title>Checagem de marcação</title>
     {% endblock head %}
     <style>
         table {
@@ -146,7 +146,7 @@
 
     <div class="articles-container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="text-align: center; flex-grow: 1; margin-bottom: 23px;">Gerenciamento de Fotos</h1>
+            <h1 style="text-align: center; flex-grow: 1; margin-bottom: 23px;">Analise de marcação</h1>
         </div>
     </div>
 
@@ -155,28 +155,101 @@
             <tr>
                 <th>ID</th>
                 <th>Evento</th>
-                <th>Data do evento</th>
-                <th>Data de upload</th>
-                <th>Enviado por</th>
+                <th>Usuário</th>
+                <th>Verficado <i class="fas fa-check-circle" style="color: #007bff;"></i></th>
                 <th>Menu</th>
             </tr>
         </thead>
         <tbody>
-            {% for c in galleries %}
+            {% for c in galleries_marked %}
             <tr>
                 <td>{{ c.id }}</td>
-                <td>{% get_event_name c.event_id %}</td>
-                <td>{{ c.event_date }}</td>
-                <td>{{ c.uploaded_at }}</td>
-                <td>{% get_user_complete_name c.author_id %}</td>
+                <td>{% get_event_name c.gallery_marked.gallery.event_id %}</td>
+                <td>{% get_user_complete_name c.user_id %}</td>
+                {% if c.marked_confirm %}
+                    <td>Marcado <i class="fas fa-check-circle" style="color: #007bff;"></i></td>
+                {% else %}
+                    <td>Aguardando...</td>
+                {% endif %}
                 <td>
+                    <a onclick="selectPhoto(this, '{{ c.user_id }}')"><i class="fa fa-user"></i></a>
+                    <div id="photoModal-{{ c.user_id }}" class="modal">
+                        <div class="modal-card">
+                            <img class="modal-content" id="selected-photo" src="{% get_user_picture c.user_id %}" >
+                            <!-- Contêiner para o título e o botão -->
+                            {% if is_umadjaf %}
+                                {% get_gallery_marked_confirm user_id c.id as get_confirm %}
+                                {% with gallery_id=c.id %}
+                                {% if get_confirm == 'checked' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-check"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+    
+                                {% elif get_confirm == 'waiting' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-dash"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% else %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:mark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% endif %}
+                                {% endwith %}
+                            {% endif %}
+                        </div>
+                    </div>
                     <a onclick="selectPhoto(this, '{{ c.id }}')"><i class="fas fa-eye"></i></a>
                     <div id="photoModal-{{ c.id }}" class="modal">
                         <div class="modal-card">
-                            <img class="modal-content" id="selected-photo" src="{{ c.image.url }}" >
+                            <img class="modal-content" id="selected-photo" src="{{ c.gallery_marked.gallery.image.url }}" >
+                            <!-- Contêiner para o título e o botão -->
+                            {% if is_umadjaf %}
+                                {% get_gallery_marked_confirm user_id c.id as get_confirm %}
+                                {% with gallery_id=c.id %}
+                                {% if get_confirm == 'checked' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-check"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+    
+                                {% elif get_confirm == 'waiting' %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:unmark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark-dash"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% else %}
+                                        <div class="modal-header" style="">
+                                            <a href="{% url 'gallery:mark_gallery' gallery_id %}">
+                                                <button type="button" class="btn btn-primary modal-button-top-right">
+                                                    <i class="bi bi-bookmark"></i> <!-- Ícone de pessoa do Bootstrap Icons -->
+                                                </button>
+                                            </a>
+                                        </div>
+                                {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </div>
                     </div>
-                    <a href="{% url 'gallery:gallery_photo_delete' c.id %}"><i class="fa fa-times-circle" style="color: #ff0000;"></i></a>
+                    <a href="{% url 'gallery:check_mark_gallery' c.gallery_marked.gallery.id c.user_id %}"><i class="fas fa-check-circle" style="color: #007bff;"></i></a>
+                    <a href="{% url 'gallery:unmark_gallery' c.gallery_marked.gallery.id %}"><i class="fa fa-times-circle	" style="color: #ff0000;"></i></a>
                 </td>
             </tr>
             {% endfor %}

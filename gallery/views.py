@@ -4,6 +4,7 @@ from events.models import Event
 from .models import Gallery, GalleryMarked, GalleryMarkedUser
 from django.http import HttpResponseRedirect
 from datetime import datetime
+from django.core.paginator import Paginator
 
 
 '''
@@ -18,6 +19,98 @@ Ele entrega os seguintes parâmetros para as views:
     - is_coordinator: Indica se o usuário é um coordenador.
     - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
 '''
+
+
+# Adicionar foto à galeria
+@authenticated_user
+def add_to_gallery(request,
+                   is_authenticated,
+                   is_admin,
+                   is_media_manager,
+                   is_devotion_manager,
+                   is_coordinator,
+                   is_umadjaf
+                   ):
+    '''
+    Função para adicionar foto à galeria de fotos dos eventos
+
+    Esta função adiciona uma foto à galeria de fotos dos eventos. A função
+    renderiza a página de adição de fotos à galeria.
+
+    Parâmetros:
+        - request: Requisição HTTP.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorna:
+        - A página de adição de fotos à galeria.
+    '''
+
+    notification = False
+
+    if not is_authenticated:
+        return redirect('gallery:gallery')
+
+    if not (is_media_manager or is_admin):
+        return redirect('gallery:gallery')
+
+    all_events = Event.objects.all().order_by('-id')
+
+    if request.method == 'POST':
+        event_id = request.POST.get('event_id')
+        image = request.FILES.get('image')
+        author_id = request.user.id
+
+        if not Event.objects.filter(id=event_id).exists():
+            event_date = request.POST.get('event_date')
+            if event_date == '':
+                notification = True
+                return render(
+                    request,
+                    'gallery/pages/add_to_gallery.html',
+                    context={
+                        'is_authenticated': is_authenticated,
+                        'is_admin': is_admin,
+                        'is_media_manager': is_media_manager,
+                        'all_events': all_events,
+                        'notification': notification
+                    }
+                )
+            event_date_ = datetime.strptime(event_date, '%Y-%m-%d')
+        else:
+            event_date_ = Event.objects.get(id=event_id).date
+
+        if event_id == 0 or event_id == '0':
+            event_id = int(''.join([i for i in event_date if i.isdigit()]))
+
+        gallery = Gallery(
+            event_id=event_id,
+            event_date=event_date_,
+            image=image,
+            author_id=author_id
+        )
+        gallery.save()
+
+        gallery_marked = GalleryMarked(gallery=gallery)
+        gallery_marked.save()
+
+        return redirect('gallery:add_to_gallery')
+
+    return render(
+        request,
+        'gallery/pages/add_to_gallery.html',
+        context={
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
+            'all_events': all_events,
+            'notification': notification
+        }
+    )
 
 
 # Galeria de fotos dos eventos
@@ -52,6 +145,11 @@ def gallery(request,
     events = Event.objects.all().order_by('-id')
     user_id = request.user.id
 
+    gallerie_paginator = Paginator(gallerie, 10)  # 8 artigos por página
+    page_number = request.GET.get('page')  # Página atual
+    page_gallerie = gallerie_paginator.get_page(page_number)
+    user_id = request.user.id
+
     return render(
         request, 'gallery/pages/gallery.html',
         context={
@@ -60,7 +158,7 @@ def gallery(request,
             'is_media_manager': is_media_manager,
             'is_umadjaf': is_umadjaf,
             'user_id': user_id,
-            'galleries': gallerie,
+            'galleries': page_gallerie,
             'events': events
         }
     )
@@ -96,20 +194,26 @@ def search_gallery(request,
         - A página de galeria de fotos dos eventos com as fotos do evento selecionado.
     '''
 
-    galleries = Gallery.objects.all().order_by('-id')
+    gallerie = Gallery.objects.all().order_by('-id')
     events = Event.objects.all().order_by('-id')
     user_id = request.user.id
 
     search = request.GET.get('eventSelect')
-    # print("Pesquisa: ", search)
     if search:
-        galleries = Gallery.objects.filter(event_id=search).order_by('-id')
+        print("Pesquisa: ", search)
+        gallerie = Gallery.objects.filter(event_id=search).order_by('-id')
 
         if search == '0':
-            galleries = Gallery.objects.filter(event_id__gt=1000).order_by('-id')
+            gallerie = Gallery.objects.all().order_by('-id')
+            for event in events:
+                gallerie = gallerie.exclude(event_id=event.id)
+    else:
+        redirect('gallery:gallery')
 
-        if search == '':
-            galleries = Gallery.objects.all().order_by('-id')
+    gallerie_paginator = Paginator(gallerie, 10)  # 8 artigos por página
+    page_number = request.GET.get('page')  # Página atual
+    page_gallerie = gallerie_paginator.get_page(page_number)
+    user_id = request.user.id
 
     return render(
         request, 'gallery/pages/gallery.html',
@@ -119,10 +223,73 @@ def search_gallery(request,
             'is_media_manager': is_media_manager,
             'is_umadjaf': is_umadjaf,
             'user_id': user_id,
-            'galleries': galleries,
+            'galleries': page_gallerie,
             'events': events
         }
     )
+
+
+# Gerenciador de Galeria
+@authenticated_user
+def gallery_manager(request,
+                    is_authenticated,
+                    is_admin,
+                    is_media_manager,
+                    is_devotion_manager,
+                    is_coordinator,
+                    is_umadjaf
+                    ):
+
+    if not is_authenticated:
+        return redirect('gallery:gallery')
+
+    if not (is_media_manager or is_admin):
+        return redirect('gallery:gallery')
+
+    galleries = Gallery.objects.all().order_by('-id')
+
+    return render(
+        request, 'gallery/pages/manager_gallery.html',
+        context={
+            'is_authenticated': is_authenticated,
+            'is_admin': is_admin,
+            'is_media_manager': is_media_manager,
+            'galleries': galleries
+        }
+    )
+
+
+@authenticated_user
+def gallery_photo_delete(request, photo_id,
+                         is_authenticated,
+                         is_admin,
+                         is_media_manager,
+                         is_devotion_manager,
+                         is_coordinator,
+                         is_umadjaf
+                         ):
+
+    if not is_authenticated:
+        return redirect('gallery:gallery')
+
+    if not (is_media_manager or is_admin):
+        return redirect('gallery:gallery')
+
+    gallery = Gallery.objects.get(id=photo_id)
+    print(gallery)
+    gallery.delete()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+'''
+As funções abaixo são utilizadas para gerenciar as marcações de fotos na
+galeria de fotos dos eventos.
+
+Os usuários podem solicitar a marcação de fotos na galeria de fotos dos
+eventos. Os gerentes de mídia e administradores podem gerenciar as marcações
+de fotos na galeria de fotos dos eventos.
+'''
 
 
 # Solicitar marcação de foto
@@ -226,98 +393,6 @@ def unmark_gallery(request, gallery_id,
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-# Adicionar foto à galeria
-@authenticated_user
-def add_to_gallery(request,
-                   is_authenticated,
-                   is_admin,
-                   is_media_manager,
-                   is_devotion_manager,
-                   is_coordinator,
-                   is_umadjaf
-                   ):
-    '''
-    Função para adicionar foto à galeria de fotos dos eventos
-
-    Esta função adiciona uma foto à galeria de fotos dos eventos. A função
-    renderiza a página de adição de fotos à galeria.
-
-    Parâmetros:
-        - request: Requisição HTTP.
-        - is_authenticated: Indica se o usuário está autenticado.
-        - is_admin: Indica se o usuário é um administrador.
-        - is_media_manager: Indica se o usuário é um gerente de mídia.
-        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
-        - is_coordinator: Indica se o usuário é um coordenador.
-        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
-
-    Retorna:
-        - A página de adição de fotos à galeria.
-    '''
-
-    notification = False
-
-    if not is_authenticated:
-        return redirect('gallery:gallery')
-
-    if not (is_media_manager or is_admin):
-        return redirect('gallery:gallery')
-
-    all_events = Event.objects.all().order_by('-id')
-
-    if request.method == 'POST':
-        event_id = request.POST.get('event_id')
-        image = request.FILES.get('image')
-        author_id = request.user.id
-
-        if not Event.objects.filter(id=event_id).exists():
-            event_date = request.POST.get('event_date')
-            if event_date == '':
-                notification = True
-                return render(
-                    request,
-                    'gallery/pages/add_to_gallery.html',
-                    context={
-                        'is_authenticated': is_authenticated,
-                        'is_admin': is_admin,
-                        'is_media_manager': is_media_manager,
-                        'all_events': all_events,
-                        'notification': notification
-                    }
-                )
-            event_date_ = datetime.strptime(event_date, '%Y-%m-%d')
-        else:
-            event_date_ = Event.objects.get(id=event_id).date
-
-        if event_id == 0 or event_id == '0':
-            event_id = int(''.join([i for i in event_date if i.isdigit()]))
-
-        gallery = Gallery(
-            event_id=event_id,
-            event_date=event_date_,
-            image=image,
-            author_id=author_id
-        )
-        gallery.save()
-
-        gallery_marked = GalleryMarked(gallery=gallery)
-        gallery_marked.save()
-
-        return redirect('gallery:add_to_gallery')
-
-    return render(
-        request,
-        'gallery/pages/add_to_gallery.html',
-        context={
-            'is_authenticated': is_authenticated,
-            'is_admin': is_admin,
-            'is_media_manager': is_media_manager,
-            'all_events': all_events,
-            'notification': notification
-        }
-    )
-
-
 # Gerenciamento de marcações de fotos
 @authenticated_user
 def gallery_marked_user_manager(request,
@@ -356,7 +431,7 @@ def gallery_marked_user_manager(request,
     galleries_marked_user = GalleryMarkedUser.objects.all().order_by('-id')
 
     return render(
-        request, 'gallery/pages/manager_gallery.html',
+        request, 'gallery/pages/mark_manager.html',
         context={
             'is_authenticated': is_authenticated,
             'is_admin': is_admin,
@@ -366,7 +441,7 @@ def gallery_marked_user_manager(request,
     )
 
 
-# Marcar foto como confirmada
+# Marcação de foto confirmada
 @authenticated_user
 def check_mark_gallery(request, gallery_id, user_id,
                        is_authenticated,

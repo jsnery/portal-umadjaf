@@ -1,5 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
+from utils.utils import encrypt
 
 
 # Função de formatação de número de telefone
@@ -29,7 +30,14 @@ class NumberPhoneBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         UserModel = get_user_model()
         number_phone = kwargs.get('number_phone', username)
+
+        print(number_phone, 'BACKEND 1')
         number_phone = format_number_phone(number_phone)
+
+        print(number_phone, 'BACKEND 2')
+        number_phone = encrypt(number_phone)
+
+        print(number_phone, 'BACKEND 3')
         try:
             user = UserModel.objects.get(number_phone=number_phone)
         except UserModel.DoesNotExist:

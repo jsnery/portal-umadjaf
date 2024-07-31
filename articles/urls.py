@@ -7,8 +7,8 @@ urlpatterns = [
     # Gereniar artigos
     re_path(r'^devocional/criar/?$', views.publish_articles, name='publish'),
     re_path(r'^devocional/one/(?P<article_id>\d+)/?$', views.article, name='article'),
-    re_path(r'^devocional/all/?$', views.all_articles, name='all_articles'),
-    re_path(r'^devocional/all/s/?$', views.search_articles, name='search_articles'),
+    re_path(r'^devocional/?$', views.all_articles, name='all_articles'),
+    re_path(r'^devocional/get?$', views.search_articles, name='search_articles'),
 
     # Articles manager
     path('devocional/manager/', views.articles_manager, name='articles_manager'),

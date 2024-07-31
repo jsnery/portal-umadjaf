@@ -7,6 +7,8 @@ class RedirectMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        if response.status_code == 404:
-            return HttpResponseRedirect('404')
+        common_errors = [403, 404, 500]
+        if response.status_code in common_errors:
+            return HttpResponseRedirect('/404')
+
         return response

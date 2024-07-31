@@ -24,7 +24,7 @@
     </form>
     <section id="section-two">
         <div class="row articles-container">
-            {% for article in articles %}
+            {% for article in articles.object_list %}
                 <div class="col-md-4 mb-4">
                     <a href="{% url 'articles:article' article.id %}" style="text-decoration: none; color: inherit;">
                         <div class="card cardz">
@@ -62,11 +62,22 @@
             {% endfor %}
         </div>
     </section>
+    <div class="page-links">
+        {% if articles.has_previous %}
+            <a href="?page=1" class="page-link">Primeira</a>
+            <a href="?page={{ articles.previous_page_number }}" class="page-link">Anterior</a>
+        {% endif %}
+        <span class="page-link">Página {{ articles.number }} de {{ articles.paginator.num_pages }}</span>
+        {% if articles.has_next %}
+            <a href="?page={{ articles.next_page_number }}" class="page-link">Próxima</a>
+            <a href="?page={{ articles.paginator.num_pages }}" class="page-link">Última</a>
+        {% endif %}
+    </div>
 
     
     <a id="float-btn" href="{% url 'articles:publish' %}" class="floating-btn">+</a>
     {% if is_admin or is_devotion_manager %}
-        <a id="float-btn" href="{% url 'articles:articles_manager' %}" class="floating-btn2"><i class="fa fa-edit"></i></a>
+        <a id="float-btn" href="{% url 'articles:articles_manager' %}" class="floating-btn2"><i class=""></i></a>
     {% endif %}
 
     {% include 'global/partials/footer.html' %}

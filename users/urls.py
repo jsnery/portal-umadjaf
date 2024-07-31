@@ -12,6 +12,7 @@ urlpatterns = [
         views.other_profile,
         name='other_profile'
         ),
+    path('w/<other_user_id>/', views.redirect_whatsapp, name='redirect_whatsapp'),
     re_path(
         r'^in/notfound/?$',
         views.profile_does_not_exists,

@@ -6,6 +6,7 @@ from users.models import User
 from django.utils import timezone
 from django.shortcuts import redirect
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 
 today = timezone.now()
@@ -187,6 +188,10 @@ def all_articles(request,
     possuem a propriedade 'post_unlock' como True, e são ordenados em ordem
     decrescente pelo campo 'id'.
 
+    A lista de devocionais é paginada, exibindo 8 devocionais por página.
+    O usuário pode navegar entre as páginas utilizando os botões de paginação
+    exibidos na página.
+
     Parâmetros:
         - request: A requisição HTTP recebida.
         - is_authenticated: Indica se o usuário está autenticado.
@@ -197,16 +202,20 @@ def all_articles(request,
         - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
 
     Retorna:
-        - Uma resposta HTTP contendo a página de todos os devocionais liberados.
+        - Uma resposta HTTP contendo a página de todos os devocionais
+          liberados.
     '''
 
     articles = Articles.objects.all().filter(post_unlock=True).order_by('-id')
+    articles_paginator = Paginator(articles, 9)  # 8 artigos por página
+    page_number = request.GET.get('page')  # Página atual
+    page_articles = articles_paginator.get_page(page_number)
     user_id = request.user.id
 
     return render(
         request, 'articles/all_articles.html',
         {
-            'articles': articles,
+            'articles': page_articles,
             'is_umadjaf': is_umadjaf,
             'is_authenticated': is_authenticated,
             'user_id': user_id,
@@ -267,15 +276,20 @@ def search_articles(request,
         for word in words:
             query |= Q(title__icontains=word) | Q(text__icontains=word) | Q(versicle__icontains=word)
         articles = Articles.objects.filter(query).distinct().filter(post_unlock=True).order_by('-id')
-        print("Artigos encontrados: ", articles)
+        # print("Artigos encontrados: ", articles)
     else:
         articles = Articles.objects.none()
-        print("Nenhum artigo encontrado")
+        # print("Nenhum artigo encontrado")
+
+    articles_paginator = Paginator(articles, 9)  # 8 artigos por página
+    page_number = request.GET.get('page')  # Página atual
+    page_articles = articles_paginator.get_page(page_number)
+    user_id = request.user.id
 
     return render(
         request, 'articles/all_articles.html',
         {
-            'articles': articles,
+            'articles': page_articles,
             'is_umadjaf': is_umadjaf,
             'is_authenticated': is_authenticated,
             'user_id': user_id,

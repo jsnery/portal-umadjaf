@@ -56,7 +56,7 @@
                 <!-- Grupo Direito (Whatsapp) -->
                 <div>
                     {% if is_admin or is_coordinator %}
-                    <a class="nav-link btn-config" href="{% return_user_whatsapp user.id %}">
+                    <a class="nav-link btn-config" href="{% url 'users:redirect_whatsapp' user.id %}">
                         <i class="fab fa-whatsapp fa-1x" style="font-size: 1.3em;"></i>
                     </a>
                     {% endif %}

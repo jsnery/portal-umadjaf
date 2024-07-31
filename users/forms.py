@@ -27,8 +27,6 @@ class ProfileUsePictureForm(forms.ModelForm):
 
 
 class ProfileUserForm(forms.ModelForm):
-    number_phone = forms.CharField(
-        label='Telefone', widget=forms.TextInput(attrs={'autocomplete': 'off'}))
     complete_name = forms.CharField(
         label='Nome Completo', widget=forms.TextInput(attrs={'autocomplete': 'off'}))
     church = forms.ModelChoiceField(
@@ -39,7 +37,7 @@ class ProfileUserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['number_phone', 'complete_name',
+        fields = ['complete_name',
                   'church']
 
     def __init__(self, *args, **kwargs):

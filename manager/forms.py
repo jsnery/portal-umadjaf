@@ -1,7 +1,7 @@
 from django import forms  # type: ignore
 from users.models import IsUmadjaf, Roles, User, UserRoles
 from .models import Congregations
-from events.models import Event
+from utils.utils import encrypt, decrypt
 
 
 # Formulários do novo painel de controle
@@ -21,13 +21,24 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = User
-        # Adicione aqui os campos que você deseja editar
         fields = ['complete_name', 'number_phone', 'church']
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        if 'instance' in kwargs:
+            initial = kwargs['instance']
+            if initial.number_phone:
+                encrypted_phone = initial.number_phone
+                decrypted_phone = decrypt(encrypted_phone)
+                self.initial['number_phone'] = decrypted_phone
+
+    def clean_number_phone(self):
+        number_phone = self.cleaned_data['number_phone']
+        encrypted_phone = encrypt(number_phone)
+        return encrypted_phone
 
     def save(self, commit=True):
         instance = super().save(commit=False)
-        print((self.cleaned_data['church'].id))
-        print(instance)
         instance.church = int(self.cleaned_data['church'].id)
         if commit:
             instance.save()
@@ -85,4 +96,3 @@ class CongregationForm(forms.ModelForm):
         model = Congregations
         # Adicione aqui os campos que você deseja editar
         fields = ['name', 'address']
-

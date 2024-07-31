@@ -1,5 +1,6 @@
 from django.db import models  # type: ignore
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from utils.utils import decrypt
 
 
 # Upload de fotos de perfil
@@ -48,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         - is_superuser: bool
     '''
     complete_name = models.CharField(max_length=100)
-    number_phone = models.CharField(max_length=15, unique=True)
+    number_phone = models.CharField(max_length=500, unique=True)
     birthday = models.DateField()
     gender = models.CharField(max_length=1, choices=[
         ('M', 'Masculino'),
@@ -83,6 +84,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.is_active and (
             self.is_superuser or self.user_permissions.filter(
                 content_type__app_label=app_label).exists())
+
+    @property
+    def uncrypted_number_phone(self):
+        '''
+        Retorna o número de telefone descriptografado.
+        '''
+        return decrypt(self.number_phone)
 
 
 # Permissões do usuário

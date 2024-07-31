@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect, render
 from utils.decorators import authenticated_user
+from utils.utils import encrypt
 from django.http import JsonResponse
 from manager.models import Congregations
 from articles.models import Articles
@@ -94,7 +95,7 @@ def register(request,
         try:
             new_user = User(
                 complete_name=request.POST['full_name'],
-                number_phone=number_phone,
+                number_phone=encrypt(number_phone),
                 birthday=request.POST['birth_date'],
                 gender=request.POST['gender'],
                 church=request.POST['church'],
@@ -184,12 +185,16 @@ def login_(request,
     if is_authenticated:
         return redirect('users:profile')
     if request.method == 'POST':
-        number_phone = format_number_phone(request.POST['number_phone'])
+        number_phone = request.POST['number_phone']
+
+        print(number_phone, 'LOGIN 1')
         password = request.POST['password']
         # user = User.objects.filter(number_phone=number_phone).first()
         user = authenticate(
             request, number_phone=number_phone, password=password)
 
+        # print(user)
+        # print('terminou')
         if user is not None:
             if check_password(password, user.password):
                 login(request, user)  # type: ignore
@@ -438,6 +443,48 @@ def other_profile(request, other_user_id,
             'gallery': gallery,
         }
     )
+
+
+@authenticated_user
+def redirect_whatsapp(request, other_user_id,
+                      is_authenticated,
+                      is_admin,
+                      is_media_manager,
+                      is_devotion_manager,
+                      is_coordinator,
+                      is_umadjaf
+                      ):
+    '''
+    Redirecionamento para o WhatsApp
+
+    Responsável por redirecionar o usuário para o WhatsApp
+
+    Parâmetros:
+        - request: A requisição HTTP recebida.
+        - other_user_id: O ID do usuário a ser exibido.
+        - is_authenticated: Indica se o usuário está autenticado.
+        - is_admin: Indica se o usuário é um administrador.
+        - is_media_manager: Indica se o usuário é um gerente de mídia.
+        - is_devotion_manager: Indica se o usuário é um gerente de devoções.
+        - is_coordinator: Indica se o usuário é um coordenador.
+        - is_umadjaf: Indica se o usuário é um membro da UMADJAF.
+
+    Retorno:
+        - HttpResponse (redirect)
+    '''
+
+    if not is_authenticated:
+        return redirect('users:login')
+
+    if not (is_admin or is_coordinator):
+        return redirect('users:profile')
+
+    try:  # Tenta pegar o perfil do usuário
+        user = User.objects.get(id=other_user_id)
+    except Exception:  # Se não conseguir, retorna um erro
+        return redirect('users:profile_does_not_exists')
+
+    return redirect(f'https://wa.me/55{user.uncrypted_number_phone}')
 
 
 # Função de perfil não encontrado

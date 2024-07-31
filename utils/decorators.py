@@ -50,12 +50,12 @@ def authenticated_user(view_func):
             is_umadjaf = False
 
         return view_func(request, *args, **kwargs,
-                         is_authenticated=is_authenticated,
-                         is_admin=is_admin,
-                         is_media_manager=is_media_manager,
-                         is_devotion_manager=is_devotion_manager,
-                         is_coordinator=is_coordinator,
-                         is_umadjaf=is_umadjaf
-                         )
+                        is_authenticated=is_authenticated,
+                        is_admin=is_admin,
+                        is_media_manager=is_media_manager,
+                        is_devotion_manager=is_devotion_manager,
+                        is_coordinator=is_coordinator,
+                        is_umadjaf=is_umadjaf
+                        )
 
     return wrapper

@@ -120,7 +120,7 @@
                     <tr>
                         <td>{{ i.user_id.id }}</td>
                         <td>{{ i.user_id.complete_name }}</td>
-                        <td>{{ i.user_id.number_phone }}</td>
+                        <td>{{ i.user_id.uncrypted_number_phone }}</td>
                         <td>{{ i.role_id }}</td>
                         <td>
                             <a href="{% url 'manager:permissions_changer' i.user_id.id %}" class="edit-link"><i class="fa fa-edit"></i></a>
